@@ -1,29 +1,51 @@
-#include "application.hpp"
+#include "Application.hpp"
+#include "state/TestState.hpp"
+#include "state/FinalState.hpp"
 
 Application::Application()
 {
     auto video_modes = sf::VideoMode::getFullscreenModes();
-    m_window.create(*video_modes.begin(), // Best video mode is the first
-                    std::string(windowName),
+    mWindow.create(*video_modes.begin(), // Best video mode is the first
+                    std::string(kWindowName),
                     sf::Style::Fullscreen);
-    m_window.setFramerateLimit(framerateLimit);
-    m_window.setVerticalSyncEnabled(true);
+    mWindow.setFramerateLimit(kFramerateLimit);
+    mWindow.setVerticalSyncEnabled(true);
+
+    mState.SetupState<TestState>();
+    mNextState.SetupState<FinalState>();
 }
 
 int Application::run()
 {
-    while (m_window.isOpen()) {
-        sf::Event event;
-        while (m_window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                m_window.close();
-            }
-            if ((event.type == sf::Event::KeyPressed)
-                && (event.key.code == sf::Keyboard::Escape)) {
-                m_window.close();
-            }
+    while (mWindow.isOpen()) {
+        HandleEvents();
+        mState.Update();
+        if (mState.HasFinished()) {
+            UpdateStates();
         }
     }
 
     return 0;
+}
+
+void Application::HandleEvents()
+{
+    sf::Event evt;
+    while (mWindow.pollEvent(evt)) {
+        if (evt.type == sf::Event::Closed) {
+            mWindow.close();
+        }
+        mState.HandleEvent(evt);
+    }
+}
+
+void Application::UpdateStates()
+{
+    if (mNextState.HasFinished()) { // Only happens if next state is FinalState
+        mWindow.close();
+        return;
+    }
+
+    mState = std::move(mNextState);
+    mNextState.SetupState<FinalState>();
 }

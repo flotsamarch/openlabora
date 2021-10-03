@@ -3,15 +3,24 @@
 
 #include <string_view>
 #include <SFML/Window.hpp>
+#include "state/State.hpp"
 
 /* RAII class for game application */
 class Application
 {
-    static constexpr int framerateLimit{ 144 };
-    static constexpr std::string_view windowName{ "OpenLabora" };
-    sf::Window m_window;
+    static constexpr int kFramerateLimit{ 144 };
+    static constexpr std::string_view kWindowName{ "OpenLabora" };
+    sf::Window mWindow;
+    State mState;
+    State mNextState;
+    void HandleEvents();
+    void UpdateStates();
 public:
     Application();
+    Application(const Application&) = delete;
+    Application(Application&&) = delete;
+    Application& operator=(const Application&) = delete;
+    Application& operator=(Application&&) = delete;
     int run();
 };
 
