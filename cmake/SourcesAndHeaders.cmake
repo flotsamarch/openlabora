@@ -1,7 +1,7 @@
 set(sources
-    src/application.cpp
-    src/state/State.cpp
-    src/state/TestState.cpp
+    src/state/StateMachine.cpp
+    src/state/gs/GSMainMenu.cpp
+    src/Application.cpp
 )
 
 set(exe_sources
@@ -10,13 +10,14 @@ set(exe_sources
 )
 
 set(headers
-    include/application.hpp
-    include/state/GameState.hpp
-    include/state/State.hpp
-    include/state/StateFinal.hpp
-    include/state/TestState.hpp
+    include/state/StateMachine.hpp
+    include/state/gs/GameState.hpp
+    include/state/gs/GSMainMenu.hpp
+    include/state/gs/GSFinal.hpp
+    include/state/gs/GSTest.hpp
+    include/Application.hpp
 )
 
 set(test_sources
-  src/tmp_test.cpp
+  src/StateMachineTests.cpp
 )

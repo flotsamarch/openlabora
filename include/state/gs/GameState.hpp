@@ -6,13 +6,13 @@
 class GameState
 {
 protected:
-    bool bHasFinished{ false };
+    bool bIsComplete{ false };
 public:
     GameState() = default;
     virtual ~GameState() = default;
     virtual void HandleEvent(const sf::Event& evt) = 0;
     virtual void Update() = 0;
-    inline bool HasFinished() const { return bHasFinished; };
+    inline bool IsComplete() const { return bIsComplete; };
 };
 
 
