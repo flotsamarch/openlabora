@@ -1,7 +1,7 @@
-#include "GameState.hpp"
-
 #ifndef GSTEST_HPP_
 #define GSTEST_HPP_
+
+#include "GameState.hpp"
 
 class GSTest final : public GameState
 {
