@@ -2,17 +2,12 @@
 #define GAMESTATE_HPP_
 
 #include <SFML/Window/Event.hpp>
+#include "state/BaseState.hpp"
 
-class GameState
+class GameState : public BaseState
 {
-protected:
-    bool bIsComplete{ false };
 public:
-    GameState() = default;
-    virtual ~GameState() = default;
-    virtual void HandleEvent(const sf::Event& evt) = 0;
-    virtual void Update() = 0;
-    inline bool IsComplete() const { return bIsComplete; };
+    virtual ~GameState() override = default;
 };
 
 

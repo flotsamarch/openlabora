@@ -2,19 +2,18 @@
 #define APPLICATION_HPP_
 
 #include <string_view>
-#include <SFML/Window.hpp>
 #include "state/StateMachine.hpp"
+#include "Renderer.hpp"
 
 /* RAII class for game application */
-class Application
+class Application final
 {
-    static constexpr int kFramerateLimit{ 144 };
-    static constexpr std::string_view kWindowName{ "OpenLabora" };
-    sf::Window mWindow;
+    Renderer mRenderer;
     StateMachine mStateMachine;
     void HandleEvents();
 public:
-    Application();
+    Application() = default;
+    ~Application() = default;
     Application(const Application&) = delete;
     Application(Application&&) = delete;
     Application& operator=(const Application&) = delete;

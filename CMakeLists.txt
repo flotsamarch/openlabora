@@ -122,10 +122,22 @@ verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}
 #endif()
 #
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-system sfml-network sfml-graphics sfml-window)
+find_package(SFGUI CONFIG REQUIRED)
+
+target_link_libraries(
+  ${PROJECT_NAME}
+      PRIVATE
+      sfml-system sfml-network sfml-graphics sfml-window
+      SFGUI::SFGUI
+)
 
 if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-  target_link_libraries(${PROJECT_NAME}_LIB PRIVATE sfml-system sfml-network sfml-graphics sfml-window)
+  target_link_libraries(
+    ${PROJECT_NAME}_LIB
+    PRIVATE
+    sfml-system sfml-network sfml-graphics sfml-window
+    SFGUI::SFGUI
+  )
 endif()
 # For Windows, it is necessary to link with the MultiThreaded library.
 # Depending on how the rest of the project's dependencies are linked, it might be necessary
