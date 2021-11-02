@@ -7,6 +7,7 @@
 class GameState : public BaseState
 {
 public:
+    GameState(State& state) : BaseState{ state } {};
     virtual ~GameState() override = default;
 };
 

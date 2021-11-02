@@ -6,10 +6,10 @@
 class UISMainMenu final : public UiState
 {
 public:
-    UISMainMenu() = default;
-    virtual ~UISMainMenu() override final = default;
+    UISMainMenu(State&);
+    virtual ~UISMainMenu() override final;
     virtual void HandleEvent(const sf::Event& evt) override final;
-    virtual void Update() override final;
+    virtual void Update(const float secondsSinceLastUpdate) override final;
 };
 
 

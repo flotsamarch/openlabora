@@ -1,12 +1,15 @@
 #include "Application.hpp"
+#include <iostream>
 
 int Application::run()
 {
+    sf::Clock clock;
     while (mRenderer.IsWindowOpen()) {
+        float secondsSinceLastCall = clock.restart().asSeconds();
         HandleEvents();
-        mStateMachine.UpdateState();
-        mStateMachine.AdvanceCompleteState();
-        if (mStateMachine.HaveReachedFinalState()) {
+        mState.Update(secondsSinceLastCall);
+        mRenderer.Render(secondsSinceLastCall);
+        if (mState.IsSameState<StateInitializers::FinalState>()) {
             break;
         }
     }
@@ -21,6 +24,7 @@ void Application::HandleEvents()
         if (evt.type == sf::Event::Closed) {
             mRenderer.RequestCloseWindow();
         }
-        mStateMachine.HandleEvent(evt);
+        mRenderer.HandleEvent(evt);
+        mState.HandleEvent(evt);
     }
 }

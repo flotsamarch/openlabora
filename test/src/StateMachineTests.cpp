@@ -38,7 +38,7 @@ TEST_F(StateMachineTest, NonCompleteStateStays)
 
 TEST_F(StateMachineTest, UpdateStateDoesNotFail)
 {
-    ASSERT_NO_FATAL_FAILURE(mStateMachine.UpdateState());
+    ASSERT_NO_FATAL_FAILURE(mStateMachine.UpdateState(0.f));
 }
 
 TEST_F(StateMachineTest, HandleEventDoesNotFail)
@@ -48,7 +48,7 @@ TEST_F(StateMachineTest, HandleEventDoesNotFail)
 
 TEST_F(StateMachineTest, CompleteStateAndAdvance)
 {
-    mStateMachine.UpdateState();
+    mStateMachine.UpdateState(0.f);
     ASSERT_NO_FATAL_FAILURE(mStateMachine.AdvanceCompleteState());
     ASSERT_TRUE(mStateMachine.HaveReachedFinalState());
 }
@@ -65,14 +65,14 @@ TEST_F(StateMachineTest, StateFlow)
     mStateMachine.PushState<StateInitializers::TestState>();
 
     for (int i = 0; i < 10; i++) {
-        mStateMachine.UpdateState();
+        mStateMachine.UpdateState(0.f);
         mStateMachine.AdvanceCompleteState();
         mStateMachine.PushState<StateInitializers::TestState>();
     }
 
-    mStateMachine.UpdateState();
+    mStateMachine.UpdateState(0.f);
     mStateMachine.AdvanceCompleteState();
-    mStateMachine.UpdateState();
+    mStateMachine.UpdateState(0.f);
     mStateMachine.AdvanceCompleteState();
 
     ASSERT_TRUE(mStateMachine.HaveReachedFinalState());

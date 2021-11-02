@@ -9,7 +9,8 @@
 class Application final
 {
     Renderer mRenderer;
-    StateMachine mStateMachine;
+    State mState{ StateInitializers::MainMenuState{}, *this };
+    StateMachine mStateMachine{ *this, mState };
     void HandleEvents();
 public:
     Application() = default;
@@ -18,7 +19,10 @@ public:
     Application(Application&&) = delete;
     Application& operator=(const Application&) = delete;
     Application& operator=(Application&&) = delete;
+
     int run();
+    Renderer& GetRenderer() & { return mRenderer; }
+    StateMachine& GetStateMachine() & { return mStateMachine; }
 };
 
 #endif // APPLICATION_HPP_

@@ -2,6 +2,7 @@ set(sources
     src/Renderer.cpp
     src/state/StateMachine.cpp
     src/state/gs/GSMainMenu.cpp
+    src/state/ui/UISMainMenu.cpp
     src/Application.cpp
 )
 

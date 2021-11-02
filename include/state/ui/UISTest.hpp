@@ -7,10 +7,11 @@ class UISTest final : public UiState
 {
 public:
     virtual ~UISTest() override final = default;
-    virtual void HandleEvent([[maybe_unused]]const sf::Event& evt) override final
-    { bIsComplete = true; };
+    virtual void HandleEvent([[maybe_unused]]const sf::Event&) override final
+        { bIsComplete = true; };
 
-    virtual void Update() override final { bIsComplete = true; };
+    virtual void Update([[maybe_unused]]const float timeSinceLastUpdate)
+        override final { bIsComplete = true; };
 };
 
 
