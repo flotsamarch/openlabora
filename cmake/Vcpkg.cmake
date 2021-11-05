@@ -1,4 +1,5 @@
-if(${PROJECT_NAME}_ENABLE_VCPKG)  
+if(${PROJECT_NAME}_ENABLE_VCPKG)
+  set(VCPKG_FEATURE_FLAGS "versions")
   #
   # If `vcpkg.cmake` (from https://github.com/microsoft/vcpkg) does not exist, download it.
   #
