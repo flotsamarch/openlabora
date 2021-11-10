@@ -9,7 +9,7 @@
 class Application final
 {
     Renderer mRenderer;
-    State mState{ StateInitializers::MainMenuState{}, *this };
+    State mState{ StateInitializers::MainMenuState{}, *this, mState };
     StateMachine mStateMachine{ *this, mState };
     void HandleEvents();
 public:

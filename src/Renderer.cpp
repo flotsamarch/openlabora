@@ -6,10 +6,9 @@
 
 Renderer::Renderer()
 {
-    auto video_modes = sf::VideoMode::getFullscreenModes();
-    mWindow.create(*video_modes.begin(), // Best video mode is the first
-                    std::string(kWindowName),
-                    sf::Style::Fullscreen);
+    mWindow.create(mVideoMode,
+                   std::string(kWindowName),
+                   sf::Style::Fullscreen);
     mWindow.setFramerateLimit(kFramerateLimit);
     mWindow.setVerticalSyncEnabled(true);
 
@@ -34,4 +33,12 @@ void Renderer::Render(float secondsSinceLastUpdate)
 void Renderer::HandleEvent(const sf::Event& evt)
 {
     mDesktop.HandleEvent(evt);
+}
+
+void Renderer::RemoveWidgets(std::vector<sfg::Widget::Ptr>::iterator begin,
+                             std::vector<sfg::Widget::Ptr>::iterator end)
+{
+    for (auto widget = begin; widget != end; widget++) {
+        mDesktop.Remove(*widget);
+    }
 }

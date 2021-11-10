@@ -17,6 +17,7 @@ class Renderer final
     sf::RenderWindow mWindow;
     sfg::SFGUI mSfgui;
     sfg::Desktop mDesktop;
+    sf::VideoMode mVideoMode{ *sf::VideoMode::getFullscreenModes().begin() };
     bool bWindowClosureRequested { false };
 public:
     Renderer();
@@ -26,13 +27,16 @@ public:
     Renderer& operator=(const Renderer&) = delete;
     Renderer& operator=(Renderer&&) = delete;
 
-    bool IsWindowOpen() const noexcept { return mWindow.isOpen(); };
+    bool IsWindowOpen() const { return mWindow.isOpen(); };
     bool PollEvent(sf::Event& evt) { return !bWindowClosureRequested
             && mWindow.pollEvent(evt); };
     void RequestCloseWindow() noexcept { bWindowClosureRequested = true; };
     void Render(const float secondsSinceLastUpdate);
     void HandleEvent(const sf::Event& evt);
     sfg::Desktop& GetDesktop() & noexcept { return mDesktop; }
+    sf::VideoMode GetVideoMode() { return mVideoMode; }
+    void RemoveWidgets(std::vector<sfg::Widget::Ptr>::iterator begin,
+        std::vector<sfg::Widget::Ptr>::iterator end);
 };
 
 #endif // RENDERER_HPP_

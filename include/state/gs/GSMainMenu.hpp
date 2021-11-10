@@ -9,7 +9,6 @@ public:
     GSMainMenu(State&);
     virtual ~GSMainMenu() override final = default;
     virtual void HandleEvent(const sf::Event& evt) override final;
-    virtual void Update(const float secondsSinceLastUpdate) override final;
 };
 
 #endif // GSMAINMENU_HPP_

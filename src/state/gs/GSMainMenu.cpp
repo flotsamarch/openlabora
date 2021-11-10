@@ -15,8 +15,3 @@ void GSMainMenu::HandleEvent(const sf::Event& evt)
     }
     return;
 }
-
-void GSMainMenu::Update(const float secondsSinceLastUpdate)
-{
-    return;
-}
