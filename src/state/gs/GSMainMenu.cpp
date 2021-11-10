@@ -1,6 +1,9 @@
 #include "state/gs/GSMainMenu.hpp"
-#include "state/StateMachine.hpp"
 #include "Application.hpp"
+#include "state/StateMachine.hpp"
+#include "state/StateInitializers.hpp"
+#include "state/gs/GSFinal.hpp"
+#include "state/ui/UISFinal.hpp"
 
 GSMainMenu::GSMainMenu(State& state) : GameState{ state }
 {

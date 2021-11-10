@@ -39,6 +39,8 @@ State::State(TStatePair, Application& app, State& state) : mApp { app }
 
     static_assert(std::is_base_of<GameState, gs_t>::value,
                   "CreateState(): GS must inherit from GameState");
+    static_assert(std::is_base_of<UiState, ui_t>::value,
+                  "CreateState(): GS must inherit from GameState");
 
     mGameState = std::make_unique<gs_t>(state);
     mUiState = std::make_unique<ui_t>(state);
@@ -51,6 +53,7 @@ bool State::IsSameState() const noexcept
     using gs_t = typename TStatePair::gs_type;
     using ui_t = typename TStatePair::ui_type;
 
+    // dynamic_cast doesnt throw when used with pointer types
     return dynamic_cast<const gs_t*>(mGameState.get()) != nullptr &&
         dynamic_cast<const ui_t*>(mUiState.get()) != nullptr;
 }

@@ -3,7 +3,10 @@
 
 #include <string_view>
 #include "state/StateMachine.hpp"
+#include "state/StateInitializers.hpp"
 #include "Renderer.hpp"
+#include "state/gs/GSMainMenu.hpp"
+#include "state/ui/UISMainMenu.hpp"
 
 /* RAII class for game application */
 class Application final

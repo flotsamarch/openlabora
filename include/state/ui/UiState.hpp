@@ -8,7 +8,8 @@
 
 class Renderer;
 
-namespace sfg {
+namespace sfg
+{
     class Desktop;
 }
 

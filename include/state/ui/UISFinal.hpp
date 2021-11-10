@@ -6,7 +6,7 @@
 class UISFinal final : public UiState
 {
 public:
-    UISFinal(State& state) : UiState{ state } { bIsComplete = true; };
+    UISFinal(State& state) : UiState{ state } {};
 };
 
 #endif // UISFINAL_HPP_

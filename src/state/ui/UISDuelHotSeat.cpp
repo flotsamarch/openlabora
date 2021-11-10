@@ -1,8 +1,11 @@
 #include "state/ui/UISDuelHotSeat.hpp"
 #include "SFGUI/Button.hpp"
 #include "SFGUI/Box.hpp"
-#include "state/StateMachine.hpp"
 #include "Application.hpp"
+#include "state/StateMachine.hpp"
+#include "state/StateInitializers.hpp"
+#include "state/gs/GSFinal.hpp"
+#include "state/ui/UISFinal.hpp"
 
 UISDuelHotSeat::UISDuelHotSeat(State& state) : UiState { state }
 {

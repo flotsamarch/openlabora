@@ -1,8 +1,14 @@
 #include "state/ui/UISMainMenu.hpp"
 #include "SFGUI/Button.hpp"
 #include "SFGUI/Box.hpp"
-#include "state/StateMachine.hpp"
 #include "Application.hpp"
+#include "state/StateMachine.hpp"
+#include "state/StateInitializers.hpp"
+#include "state/gs/GSFinal.hpp"
+#include "state/ui/UISFinal.hpp"
+#include "state/gs/GSDuelHotSeat.hpp"
+#include "state/ui/UISDuelHotSeat.hpp"
+
 
 UISMainMenu::UISMainMenu(State& state) : UiState { state }
 {
