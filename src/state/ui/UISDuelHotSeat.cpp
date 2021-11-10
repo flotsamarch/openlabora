@@ -6,10 +6,11 @@
 #include "state/StateInitializers.hpp"
 #include "state/gs/GSFinal.hpp"
 #include "state/ui/UISFinal.hpp"
+#include "Renderer.hpp"
 
 UISDuelHotSeat::UISDuelHotSeat(State& state) : UiState { state }
 {
-    auto video_mode = GetRenderer().GetVideoMode();
+    auto video_mode = GetRenderer()->GetVideoMode();
     float col_width = video_mode.width / 3.f;
     float screen_center_y = video_mode.height / 2.f;
     float btn_height = 40.f;

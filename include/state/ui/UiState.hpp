@@ -17,7 +17,7 @@ class UiState : public BaseState
 {
 protected:
     std::vector<sfg::Widget::Ptr> mWidgets;
-    Renderer& GetRenderer() & noexcept;
+    Renderer* GetRenderer() const noexcept;
     sfg::Desktop& GetDesktop() & noexcept;
     void AddWidgetToDesktop(sfg::Widget::Ptr);
     void RemoveAllWidgets();
