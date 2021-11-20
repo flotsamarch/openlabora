@@ -6,7 +6,7 @@
 class UISFinal final : public UiState
 {
 public:
-    UISFinal(State& state) : UiState{ state } {};
+    UISFinal(std::shared_ptr<State> state) : UiState{ state } {};
 };
 
 #endif // UISFINAL_HPP_

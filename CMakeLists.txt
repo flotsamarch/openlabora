@@ -57,7 +57,7 @@ include(cmake/Vcpkg.cmake)
 include(cmake/SourcesAndHeaders.cmake)
 
 # Build executable
-add_executable(${PROJECT_NAME} ${exe_sources})
+add_executable(${PROJECT_NAME} ${headers} ${exe_sources})
 
 # Tests
 if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)

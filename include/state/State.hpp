@@ -3,36 +3,40 @@
 
 #include <memory>
 #include <SFML/Window/Event.hpp>
+#include "state/gs/GameState.hpp"
+#include "state/ui/UiState.hpp"
+#include "IApplication.hpp"
 
 class Application;
+
 class UiState;
 class GameState;
 
 // Main game application state holder
-class State final
+class State final : public std::enable_shared_from_this<State>
 {
     std::unique_ptr<GameState> mGameState;
     std::unique_ptr<UiState> mUiState;
-    Application& mApp;
+    IApplication& mApp;
 public:
-    State(const State&) = delete;
-    State& operator=(const State&) = delete;
-    State(State&&) noexcept;
-    State& operator=(State&&) noexcept;
+    State(IApplication& app) : mApp { app } {};
 
     template <class TStatePair>
-    State(TStatePair, Application&, State&);
+    void ChangeState();
+
     template <class TStatePair>
     bool inline IsSameState() const noexcept;
 
-    Application& GetApplication() & noexcept { return mApp; }
+    IApplication& GetApp() const noexcept { return mApp; }
+
     void Update(const float secondsSinceLastCall);
+
     void HandleEvent(const sf::Event&);
 };
 
-// State constructor that uses StateInitializer typedefs
+
 template <class TStatePair>
-State::State(TStatePair, Application& app, State& state) : mApp { app }
+void State::ChangeState()
 {
     using gs_t = typename TStatePair::gs_type;
     using ui_t = typename TStatePair::ui_type;
@@ -42,11 +46,13 @@ State::State(TStatePair, Application& app, State& state) : mApp { app }
     static_assert(std::is_base_of<UiState, ui_t>::value,
                   "CreateState(): GS must inherit from GameState");
 
-    mGameState = std::make_unique<gs_t>(state);
-    mUiState = std::make_unique<ui_t>(state);
+    mGameState.reset();
+    mGameState = std::make_unique<gs_t>(shared_from_this());
+    mUiState.reset();
+    mUiState = std::make_unique<ui_t>(shared_from_this());
 }
 
-// Compare state to typedef from StateInitializer
+// Compare state to typedef from AppStateDef
 template <class TStatePair>
 bool State::IsSameState() const noexcept
 {
@@ -54,8 +60,9 @@ bool State::IsSameState() const noexcept
     using ui_t = typename TStatePair::ui_type;
 
     // dynamic_cast doesnt throw when used with pointer types
-    return dynamic_cast<const gs_t*>(mGameState.get()) != nullptr &&
-        dynamic_cast<const ui_t*>(mUiState.get()) != nullptr;
+    bool bIsValidGS = dynamic_cast<const gs_t*>(mGameState.get()) != nullptr;
+    bool bIsValidUIS = dynamic_cast<const ui_t*>(mUiState.get()) != nullptr;
+    return bIsValidGS && bIsValidUIS;
 }
 
 #endif // STATE_HPP_

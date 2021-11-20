@@ -1,15 +1,10 @@
 #include "Application.hpp"
 #include <iostream>
 #include "Renderer.hpp"
+#include "state/State.hpp"
 #include "state/gs/GSFinal.hpp"
 #include "state/ui/UISFinal.hpp"
-
-Application::Application()
-{
-    mRenderer = std::make_unique<Renderer>();
-}
-
-Application::~Application() = default;
+#include "state/AppStateDefs.hpp"
 
 int Application::run()
 {
@@ -17,9 +12,9 @@ int Application::run()
     while (mRenderer->IsWindowOpen()) {
         float secondsSinceLastCall = clock.restart().asSeconds();
         HandleEvents();
-        mState.Update(secondsSinceLastCall);
+        mState->Update(secondsSinceLastCall);
         mRenderer->Render(secondsSinceLastCall);
-        if (mState.IsSameState<StateInitializers::FinalState>()) {
+        if (mState->IsSameState<AppStateDefs::FinalState>()) {
             break;
         }
     }
@@ -35,6 +30,6 @@ void Application::HandleEvents()
             mRenderer->RequestCloseWindow();
         }
         mRenderer->HandleEvent(evt);
-        mState.HandleEvent(evt);
+        mState->HandleEvent(evt);
     }
 }

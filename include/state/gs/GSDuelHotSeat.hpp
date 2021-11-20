@@ -6,10 +6,11 @@
 class GSDuelHotSeat final : public GameState
 {
 public:
-    GSDuelHotSeat(State&);
-    virtual ~GSDuelHotSeat() override final = default;
-    virtual void HandleEvent(const sf::Event& evt) override final;
-    virtual void Update(const float secondsSinceLastUpdate) override final;
+    GSDuelHotSeat(std::shared_ptr<State>);
+
+    void HandleEvent(const sf::Event& evt) override final;
+
+    void Update(const float secondsSinceLastUpdate) override final;
 };
 
 #endif // GSDUELHOTSEAT_HPP_

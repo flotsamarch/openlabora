@@ -1,16 +1,17 @@
 #include "state/ui/UISMainMenu.hpp"
-#include "SFGUI/Button.hpp"
-#include "SFGUI/Box.hpp"
-#include "Application.hpp"
-#include "state/StateMachine.hpp"
-#include "state/StateInitializers.hpp"
+
+#include <cassert>
+#include <SFGUI/Button.hpp>
+#include <SFGUI/Box.hpp>
+#include "state/State.hpp"
+#include "state/AppStateDefs.hpp"
 #include "state/gs/GSFinal.hpp"
 #include "state/ui/UISFinal.hpp"
 #include "state/gs/GSDuelHotSeat.hpp"
 #include "state/ui/UISDuelHotSeat.hpp"
-#include "Renderer.hpp"
+#include "IRenderer.hpp"
 
-UISMainMenu::UISMainMenu(State& state) : UiState { state }
+UISMainMenu::UISMainMenu(std::shared_ptr<State> state) : UiState { state }
 {
     auto video_mode = GetRenderer()->GetVideoMode();
     float col_width = video_mode.width / 3.f;
@@ -21,15 +22,18 @@ UISMainMenu::UISMainMenu(State& state) : UiState { state }
 
     auto duel_btn = sfg::Button::Create("Duel");
     auto quit_btn = sfg::Button::Create("Quit");
+    auto state_ptr = mState;
 
-    duel_btn->GetSignal(sfg::Widget::OnLeftClick).Connect([&state]{
-        state.GetApplication().GetStateMachine()
-            .ChangeState<StateInitializers::DuelHotSeatState>();
-        });
-    quit_btn->GetSignal(sfg::Widget::OnLeftClick).Connect([&state]{
-        state.GetApplication().GetStateMachine()
-            .ChangeState<StateInitializers::FinalState>();
-        });
+    duel_btn->GetSignal(sfg::Widget::OnLeftClick).Connect([state_ptr] ()
+    {
+        assert(!state_ptr.expired());
+        state_ptr.lock()->ChangeState<AppStateDefs::DuelHotSeatState>();
+    });
+    quit_btn->GetSignal(sfg::Widget::OnLeftClick).Connect([state_ptr] ()
+    {
+        assert(!state_ptr.expired());
+        state_ptr.lock()->ChangeState<AppStateDefs::FinalState>();
+    });
 
     auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, box_padding);
 

@@ -1,14 +1,15 @@
 #include "state/ui/UISDuelHotSeat.hpp"
-#include "SFGUI/Button.hpp"
-#include "SFGUI/Box.hpp"
-#include "Application.hpp"
-#include "state/StateMachine.hpp"
-#include "state/StateInitializers.hpp"
+
+#include <cassert>
+#include <SFGUI/Button.hpp>
+#include <SFGUI/Box.hpp>
+#include "state/State.hpp"
+#include "state/AppStateDefs.hpp"
 #include "state/gs/GSFinal.hpp"
 #include "state/ui/UISFinal.hpp"
-#include "Renderer.hpp"
+#include "IRenderer.hpp"
 
-UISDuelHotSeat::UISDuelHotSeat(State& state) : UiState { state }
+UISDuelHotSeat::UISDuelHotSeat(std::shared_ptr<State> state) : UiState { state }
 {
     auto video_mode = GetRenderer()->GetVideoMode();
     float col_width = video_mode.width / 3.f;
@@ -17,10 +18,11 @@ UISDuelHotSeat::UISDuelHotSeat(State& state) : UiState { state }
     float total_height = btn_height;
 
     auto quit_btn = sfg::Button::Create("Quit");
+    auto state_ptr = mState;
 
-    quit_btn->GetSignal(sfg::Widget::OnLeftClick).Connect([&state]{
-        state.GetApplication().GetStateMachine()
-            .ChangeState<StateInitializers::FinalState>();
+    quit_btn->GetSignal(sfg::Widget::OnLeftClick).Connect([state_ptr]{
+        assert(!state_ptr.expired());
+        state_ptr.lock()->ChangeState<AppStateDefs::FinalState>();
         });
 
     auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);

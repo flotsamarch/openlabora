@@ -4,26 +4,29 @@
 #include <vector>
 #include <SFGUI/Widget.hpp>
 #include "state/BaseState.hpp"
-#include "state/State.hpp"
+#include "IRenderer.hpp"
+#include "GUI/IDesktop.hpp"
 
-class Renderer;
+class State;
 
-namespace sfg
-{
-    class Desktop;
-}
-
+// General UI logic base class
 class UiState : public BaseState
 {
 protected:
     std::vector<sfg::Widget::Ptr> mWidgets;
-    Renderer* GetRenderer() const noexcept;
-    sfg::Desktop& GetDesktop() & noexcept;
+
+    IRenderer* GetRenderer() const;
+
+    IDesktop& GetDesktop() &;
+
     void AddWidgetToDesktop(sfg::Widget::Ptr);
+
+    // Remove all widgets that are created by THIS instance
     void RemoveAllWidgets();
 public:
-    UiState(State& state) : BaseState{ state } {};
-    virtual ~UiState() override { RemoveAllWidgets(); }
+    UiState(std::shared_ptr<State> state) : BaseState{ state } {};
+
+    ~UiState() noexcept;
 };
 
 #endif // UISTATE_HPP_

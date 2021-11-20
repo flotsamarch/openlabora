@@ -6,8 +6,7 @@
 class GSFinal final : public GameState
 {
 public:
-    GSFinal(State& state) : GameState{ state } {};
-    virtual ~GSFinal() override final = default;
+    GSFinal(std::shared_ptr<State> state) : GameState{ state } {};
 };
 
 #endif // GSFINAL_HPP_

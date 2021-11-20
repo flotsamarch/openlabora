@@ -1,5 +1,5 @@
 set(sources
-    src/Renderer.cpp
+    src/GUI/IDesktop.cpp
     src/state/State.cpp
     src/state/ui/UiState.cpp
     src/state/gs/GSMainMenu.cpp
@@ -15,10 +15,12 @@ set(exe_sources
 )
 
 set(headers
+    include/IRenderer.hpp
     include/Renderer.hpp
+    include/GUI/IDesktop.hpp
+    include/GUI/Desktop.hpp
     include/state/State.hpp
-    include/state/StateMachine.hpp
-    include/state/StateInitializers.hpp
+    include/state/AppStateDefs.hpp
     include/state/BaseState.hpp
     include/state/gs/GameState.hpp
     include/state/gs/GSMainMenu.hpp
@@ -28,6 +30,7 @@ set(headers
     include/state/ui/UISMainMenu.hpp
     include/state/ui/UISFinal.hpp
     include/state/ui/UISDuelHotSeat.hpp
+    include/IApplication.hpp
     include/Application.hpp
 )
 

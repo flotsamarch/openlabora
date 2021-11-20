@@ -6,7 +6,7 @@
 class UISDuelHotSeat final : public UiState
 {
 public:
-    UISDuelHotSeat(State&);
+    UISDuelHotSeat(std::shared_ptr<State>);
 };
 
 #endif // UISDUELHOTSEAT_HPP_

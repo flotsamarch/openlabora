@@ -2,31 +2,40 @@
 #define APPLICATION_HPP_
 
 #include <string_view>
-#include "state/StateMachine.hpp"
-#include "state/StateInitializers.hpp"
-#include "state/gs/GSMainMenu.hpp"
-#include "state/ui/UISMainMenu.hpp"
-
-class Renderer;
+#include <memory>
+#include "IApplication.hpp"
+#include "state/State.hpp"
 
 /* RAII class for game application */
-class Application
+class Application final : public IApplication
 {
-    std::unique_ptr<Renderer> mRenderer;
-    State mState{ StateInitializers::MainMenuState{}, *this, mState };
-    StateMachine mStateMachine{ *this, mState };
+protected:
+    std::unique_ptr<IRenderer> mRenderer;
+    std::shared_ptr<State> mState;
     void HandleEvents();
 public:
-    Application();
-    ~Application();
+    template<class TRenderer, class TStatePair>
+    Application(TRenderer, TStatePair);
+
     Application(const Application&) = delete;
     Application(Application&&) = delete;
     Application& operator=(const Application&) = delete;
     Application& operator=(Application&&) = delete;
 
     int run();
-    Renderer* GetRenderer() const noexcept { return mRenderer.get(); }
-    StateMachine& GetStateMachine() & { return mStateMachine; }
+
+    IRenderer* GetRenderer() const noexcept override { return mRenderer.get(); }
+
+    std::shared_ptr<State> GetState() const noexcept override { return mState; }
 };
+
+template<class TRenderer, class TStatePair>
+Application::Application(TRenderer, TStatePair) :
+    mRenderer{ std::make_unique<typename TRenderer::renderer_t>() },
+    mState { std::make_shared<State>(*this) }
+{
+    mState->ChangeState<TStatePair>();
+}
+
 
 #endif // APPLICATION_HPP_

@@ -6,7 +6,7 @@
 class UISMainMenu final : public UiState
 {
 public:
-    UISMainMenu(State&);
+    UISMainMenu(std::shared_ptr<State>);
 };
 
 

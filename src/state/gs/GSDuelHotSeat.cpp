@@ -1,8 +1,6 @@
 #include "state/gs/GSDuelHotSeat.hpp"
-#include "state/StateMachine.hpp"
-#include "Application.hpp"
 
-GSDuelHotSeat::GSDuelHotSeat(State& state) : GameState{ state }
+GSDuelHotSeat::GSDuelHotSeat(std::shared_ptr<State> state) : GameState{ state }
 {
 }
 

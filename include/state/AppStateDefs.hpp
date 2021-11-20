@@ -1,5 +1,5 @@
-#ifndef STATEINITIALIZERS_HPP_
-#define STATEINITIALIZERS_HPP_
+#ifndef APPSTATEDEFS_HPP_
+#define APPSTATEDEFS_HPP_
 
 class GSFinal;
 class UISFinal;
@@ -9,7 +9,7 @@ class GSDuelHotSeat;
 class UISDuelHotSeat;
 
 // Helper struct and typedefs that store valid (GameState, UiState) pairs
-namespace StateInitializers
+namespace AppStateDefs
 {
     namespace
     {
@@ -25,4 +25,4 @@ namespace StateInitializers
     using DuelHotSeatState = StatePair<GSDuelHotSeat, UISDuelHotSeat>;
 };
 
-#endif // STATEINITIALIZERS_HPP_
+#endif // APPSTATEDEFS_HPP_

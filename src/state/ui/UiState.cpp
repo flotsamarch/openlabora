@@ -1,14 +1,29 @@
 #include "state/ui/UiState.hpp"
 
-#include "Application.hpp"
-#include "Renderer.hpp"
+#include <cassert>
 
-Renderer* UiState::GetRenderer() const noexcept
+#include "IRenderer.hpp"
+#include "IApplication.hpp"
+#include "state/State.hpp"
+
+UiState::~UiState() noexcept
 {
-    return mState.GetApplication().GetRenderer();
+    try {
+        RemoveAllWidgets();
+    }
+    catch (std::runtime_error&) {}
 }
 
-sfg::Desktop& UiState::GetDesktop() & noexcept
+IRenderer* UiState::GetRenderer() const
+{
+    if (mState.expired()) {
+        // Should only happen on program termination
+        throw std::runtime_error("State is no longer valid");
+    }
+    return mState.lock()->GetApp().GetRenderer();
+}
+
+IDesktop& UiState::GetDesktop() &
 {
     return GetRenderer()->GetDesktop();
 }
@@ -16,11 +31,10 @@ sfg::Desktop& UiState::GetDesktop() & noexcept
 void UiState::AddWidgetToDesktop(sfg::Widget::Ptr widget)
 {
     mWidgets.push_back(widget);
-    mState.GetApplication().GetRenderer()->GetDesktop().Add(widget);
+    GetDesktop().Add(widget);
 }
 
 void UiState::RemoveAllWidgets()
 {
-    mState.GetApplication().GetRenderer()->RemoveWidgets(mWidgets.begin(),
-                                                        mWidgets.end());
+    GetDesktop().RemoveWidgets(mWidgets.begin(), mWidgets.end());
 }

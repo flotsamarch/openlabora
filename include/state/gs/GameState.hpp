@@ -4,11 +4,11 @@
 #include <SFML/Window/Event.hpp>
 #include "state/BaseState.hpp"
 
+// General game logic base class
 class GameState : public BaseState
 {
 public:
-    GameState(State& state) : BaseState{ state } {};
-    virtual ~GameState() override = default;
+    GameState(std::shared_ptr<State> state) : BaseState{ state } {};
 };
 
 
