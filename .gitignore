@@ -5,6 +5,9 @@ CMakeFiles/*
 [Tt]esting/*
 [Ss]cripts/*
 
+# Ccls
+.ccls*
+
 ### VisualStudioCode ###
 .vscode/*
 .vscode/settings.json
