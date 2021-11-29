@@ -3,8 +3,8 @@
 
 #include <memory>
 #include <SFML/Window/Event.hpp>
-#include "state/gs/GameState.hpp"
-#include "state/ui/UiState.hpp"
+#include "state/gs/IGameState.hpp"
+#include "state/ui/IUiState.hpp"
 #include "IApplication.hpp"
 
 class Application;
@@ -15,8 +15,8 @@ class GameState;
 // Main game application state holder
 class State final : public std::enable_shared_from_this<State>
 {
-    std::unique_ptr<GameState> mGameState;
-    std::unique_ptr<UiState> mUiState;
+    std::unique_ptr<IGameState> mGameState;
+    std::unique_ptr<IUiState> mUiState;
     IApplication& mApp;
 public:
     State(IApplication& app) : mApp { app } {};
@@ -32,6 +32,10 @@ public:
     void Update(const float secondsSinceLastCall);
 
     void HandleEvent(const sf::Event&);
+
+    IGameState* GetGameState() const noexcept { return mGameState.get(); }
+
+    IUiState* GetUiState() const noexcept { return mUiState.get(); }
 };
 
 
@@ -41,9 +45,9 @@ void State::ChangeState()
     using gs_t = typename TStatePair::gs_type;
     using ui_t = typename TStatePair::ui_type;
 
-    static_assert(std::is_base_of<GameState, gs_t>::value,
+    static_assert(std::is_base_of<IGameState, gs_t>::value,
                   "CreateState(): GS must inherit from GameState");
-    static_assert(std::is_base_of<UiState, ui_t>::value,
+    static_assert(std::is_base_of<IUiState, ui_t>::value,
                   "CreateState(): GS must inherit from GameState");
 
     mGameState.reset();

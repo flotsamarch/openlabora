@@ -1,7 +1,6 @@
 #ifndef APPLICATION_HPP_
 #define APPLICATION_HPP_
 
-#include <string_view>
 #include <memory>
 #include "IApplication.hpp"
 #include "state/State.hpp"
@@ -22,7 +21,7 @@ public:
     Application& operator=(const Application&) = delete;
     Application& operator=(Application&&) = delete;
 
-    int run();
+    int run() override;
 
     IRenderer* GetRenderer() const noexcept override { return mRenderer.get(); }
 

@@ -6,14 +6,6 @@
 #include "IApplication.hpp"
 #include "state/State.hpp"
 
-UiState::~UiState() noexcept
-{
-    try {
-        RemoveAllWidgets();
-    }
-    catch (std::runtime_error&) {}
-}
-
 IRenderer* UiState::GetRenderer() const
 {
     if (mState.expired()) {

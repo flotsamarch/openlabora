@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFGUI/SFGUI.hpp>
 #include <SFGUI/Window.hpp>
+#include <string_view>
 #include <memory>
 #include "IRenderer.hpp"
 #include "GUI/IDesktop.hpp"

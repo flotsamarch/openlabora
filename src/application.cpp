@@ -1,5 +1,5 @@
-#include "Application.hpp"
 #include <iostream>
+#include "Application.hpp"
 #include "Renderer.hpp"
 #include "state/State.hpp"
 #include "state/gs/GSFinal.hpp"

@@ -1,5 +1,4 @@
 set(sources
-    src/GUI/IDesktop.cpp
     src/state/State.cpp
     src/state/ui/UiState.cpp
     src/state/gs/GSMainMenu.cpp
@@ -21,11 +20,13 @@ set(headers
     include/GUI/Desktop.hpp
     include/state/State.hpp
     include/state/AppStateDefs.hpp
-    include/state/BaseState.hpp
+    include/state/ILogicState.hpp
+    include/state/gs/IGameState.hpp
     include/state/gs/GameState.hpp
     include/state/gs/GSMainMenu.hpp
     include/state/gs/GSDuelHotSeat.hpp
     include/state/gs/GSFinal.hpp
+    include/state/ui/IUiState.hpp
     include/state/ui/UiState.hpp
     include/state/ui/UISMainMenu.hpp
     include/state/ui/UISFinal.hpp
