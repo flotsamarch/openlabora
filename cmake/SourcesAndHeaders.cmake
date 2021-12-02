@@ -36,5 +36,5 @@ set(headers
 )
 
 set(test_sources
-  src/StateMachineTests.cpp
+  src/ApplicationTests.cpp
 )
