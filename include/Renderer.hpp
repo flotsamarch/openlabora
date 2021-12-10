@@ -85,8 +85,6 @@ Renderer<TDesktop, TGui, TWindow>::Renderer() :
                               static_cast<float>(mVideoMode.height)));
     mWindow.setView(mView);
 
-    // Some SFGUI hack
-    // TODO remove once we start using SFML for rendering
     mWindow.resetGLStates();
 }
 
