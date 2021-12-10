@@ -1,4 +1,6 @@
 set(sources
+    src/game/Playfield.cpp
+    src/game/Location.cpp
     src/state/State.cpp
     src/state/ui/UiState.cpp
     src/state/ui/UISEscapeMenu.cpp
@@ -15,6 +17,11 @@ set(exe_sources
 )
 
 set(headers
+    include/game/Playfield.hpp
+    include/game/Location.hpp
+    include/game/PlayfieldInitArray.hpp
+    include/resource/ResourceManager.hpp
+    include/resource/IResourceManager.hpp
     include/IRenderer.hpp
     include/Renderer.hpp
     include/GUI/IDesktop.hpp

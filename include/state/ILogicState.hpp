@@ -10,6 +10,8 @@ public:
 
     virtual void HandleEvent(const sf::Event&) = 0;
 
+    virtual void HandleEventImpl(const sf::Event&) = 0;
+
     virtual void Update(const float secondsSinceLastUpdate) = 0;
 };
 

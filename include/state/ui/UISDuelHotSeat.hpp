@@ -1,9 +1,9 @@
 #ifndef UISDUELHOTSEAT_HPP_
 #define UISDUELHOTSEAT_HPP_
 
-#include "UiState.hpp"
+#include "UISEscapeMenu.hpp"
 
-class UISDuelHotSeat final : public UiState
+class UISDuelHotSeat final : public UISEscapeMenu
 {
 public:
     UISDuelHotSeat(std::shared_ptr<State>);

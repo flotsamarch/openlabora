@@ -26,6 +26,7 @@ class Renderer final : public IRenderer
     TWindow mWindow;
     TGui mSfgui;
     TDesktop mDesktop;
+    sf::View mView;
     sf::VideoMode mVideoMode{ *sf::VideoMode::getFullscreenModes().begin() };
     bool bWindowClosureRequested { false };
 public:
@@ -45,25 +46,44 @@ public:
     void RequestCloseWindow() noexcept override
     { bWindowClosureRequested = true; };
 
-    void Render(const float secondsSinceLastUpdate) override;
+    void Render(const float secondsSinceLastUpdate,
+                GameObject::Iter begin,
+                GameObject::Iter end) override;
 
     void HandleEvent(const sf::Event& evt) override;
 
     IDesktop& GetDesktop() & noexcept override { return mDesktop; }
 
     sf::VideoMode GetVideoMode() override { return mVideoMode; }
+
+    void MoveView(float offset_x, float offset_y) override
+        { mView.move(-offset_x, -offset_y); }
+
+    void MoveView(const sf::Vector2f& offset) override { mView.move(-offset); }
+
+    sf::Vector2f mapPixelToCoords(const sf::Vector2i& point) override
+        { return mWindow.mapPixelToCoords(point); }
+
+    sf::Vector2i mapCoordsToPixel(const sf::Vector2f& point) override
+        { return mWindow.mapCoordsToPixel(point); }
 };
 
 template<class TDesktop, class TGui, class TWindow>
-Renderer<TDesktop, TGui, TWindow>::Renderer() : mDesktop { TDesktop{} },
-                                                mSfgui { TGui{} },
-                                                mWindow { TWindow{} }
+Renderer<TDesktop, TGui, TWindow>::Renderer() :
+    mDesktop { TDesktop{} },
+    mSfgui { TGui{} },
+    mWindow { TWindow{} }
+
 {
     mWindow.create(mVideoMode,
                    std::string(kWindowName),
                    sf::Style::Fullscreen);
     mWindow.setFramerateLimit(kFramerateLimit);
     mWindow.setVerticalSyncEnabled(true);
+    mView.reset(sf::FloatRect(0.f, 0.f,
+                              static_cast<float>(mVideoMode.width),
+                              static_cast<float>(mVideoMode.height)));
+    mWindow.setView(mView);
 
     // Some SFGUI hack
     // TODO remove once we start using SFML for rendering
@@ -77,10 +97,17 @@ Renderer<TDesktop, TGui, TWindow>::~Renderer() noexcept
 }
 
 template<class TDesktop, class TGui, class TWindow>
-void Renderer<TDesktop, TGui, TWindow>::Render(float secondsSinceLastUpdate)
+void Renderer<TDesktop, TGui, TWindow>::Render(float secondsSinceLastUpdate,
+                                               GameObject::Iter begin,
+                                               GameObject::Iter end)
 {
     mDesktop.Update(secondsSinceLastUpdate);
     mWindow.clear();
+    mWindow.setView(mView);
+    for (auto item = begin; item != end; ++item)
+    {
+        mWindow.draw(item->get()->GetSprite());
+    }
     mSfgui.Display(mWindow);
     mWindow.display();
 }

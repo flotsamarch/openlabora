@@ -13,7 +13,9 @@ int Application::run()
         float secondsSinceLastCall = clock.restart().asSeconds();
         HandleEvents();
         mState->Update(secondsSinceLastCall);
-        mRenderer->Render(secondsSinceLastCall);
+        mRenderer->Render(secondsSinceLastCall,
+                          mState->GetGameState()->GetGameObjectBegin(),
+                          mState->GetGameState()->GetGameObjectEnd());
         if (mState->IsSameState<AppStateDefs::FinalState>()) {
             break;
         }

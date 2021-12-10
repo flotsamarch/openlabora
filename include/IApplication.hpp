@@ -2,6 +2,7 @@
 #define IAPPLICATION_HPP_
 
 #include "IRenderer.hpp"
+#include "resource/IResourceManager.hpp"
 
 class State;
 
@@ -11,6 +12,8 @@ public:
     virtual ~IApplication() noexcept {};
 
     virtual IRenderer* GetRenderer() const noexcept = 0;
+
+    virtual const IResourceManager& GetResourceManager() const noexcept = 0;
 
     virtual std::shared_ptr<State> GetState() const noexcept = 0;
 

@@ -31,6 +31,8 @@ public:
 
     void HandleEvent(const sf::Event&) override {};
 
+    void HandleEventImpl(const sf::Event&) override {};
+
     void Update([[maybe_unused]]const float seconds) override {};
 };
 

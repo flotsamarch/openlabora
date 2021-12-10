@@ -10,7 +10,7 @@ GSMainMenu::GSMainMenu(std::shared_ptr<State> state) : GameState{ state }
 {
 }
 
-void GSMainMenu::HandleEvent(const sf::Event& evt)
+void GSMainMenu::HandleEventImpl(const sf::Event& evt)
 {
     if ((evt.type == sf::Event::KeyPressed)
         && (evt.key.code == sf::Keyboard::Escape)) {

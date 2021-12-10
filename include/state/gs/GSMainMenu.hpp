@@ -8,7 +8,7 @@ class GSMainMenu final : public GameState
 public:
     GSMainMenu(std::shared_ptr<State>);
 
-    void HandleEvent(const sf::Event& evt) override final;
+    void HandleEventImpl(const sf::Event& evt) override;
 };
 
 #endif // GSMAINMENU_HPP_
