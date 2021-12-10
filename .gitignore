@@ -4,6 +4,7 @@ CMakeCache.*
 CMakeFiles/*
 [Tt]esting/*
 [Ss]cripts/*
+[Rr]es/*
 
 # Ccls
 .ccls*
