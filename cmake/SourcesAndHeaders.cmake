@@ -1,6 +1,7 @@
 set(sources
     src/state/State.cpp
     src/state/ui/UiState.cpp
+    src/state/ui/UISEscapeMenu.cpp
     src/state/gs/GSMainMenu.cpp
     src/state/ui/UISMainMenu.cpp
     src/state/gs/GSDuelHotSeat.cpp
@@ -28,6 +29,7 @@ set(headers
     include/state/gs/GSFinal.hpp
     include/state/ui/IUiState.hpp
     include/state/ui/UiState.hpp
+    include/state/ui/UISEscapeMenu.hpp
     include/state/ui/UISMainMenu.hpp
     include/state/ui/UISFinal.hpp
     include/state/ui/UISDuelHotSeat.hpp
