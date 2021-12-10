@@ -9,15 +9,6 @@
 #include "IRenderer.hpp"
 #include "GUI/IDesktop.hpp"
 
-namespace RendererDefs
-{
-    template<class TRenderer>
-    struct RendererType
-    {
-        using renderer_t = TRenderer;
-    };
-}
-
 template<class TDesktop, class TGui, class TWindow>
 class Renderer final : public IRenderer
 {
@@ -29,14 +20,16 @@ class Renderer final : public IRenderer
     sf::View mView;
     sf::VideoMode mVideoMode{ *sf::VideoMode::getFullscreenModes().begin() };
     bool bWindowClosureRequested { false };
+
 public:
     Renderer();
     ~Renderer() noexcept;
 
     Renderer(const Renderer&) = delete;
-    Renderer(Renderer&&) = delete;
     Renderer& operator=(const Renderer&) = delete;
-    Renderer& operator=(Renderer&&) = delete;
+
+    Renderer(Renderer&&) = default;
+    Renderer& operator=(Renderer&&) = default;
 
     bool IsWindowOpen() const override { return mWindow.isOpen(); };
 

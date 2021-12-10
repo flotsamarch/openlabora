@@ -16,7 +16,7 @@ protected:
     std::vector<sfg::Widget::Ptr> mWidgets;
 
 protected:
-    IRenderer* GetRenderer() const override final;
+    IRenderer& GetRenderer() const & override final;
 
     IDesktop& GetDesktop() & override final;
 

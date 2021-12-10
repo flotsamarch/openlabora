@@ -7,7 +7,7 @@
 
 GSDuelHotSeat::GSDuelHotSeat(std::shared_ptr<State> state) : GameState{ state }
 {
-    auto& res_mgr = state->GetApp().GetResourceManager();
+    auto&& res_mgr = state->GetApp().GetResourceManager();
     auto build_ghost =
         std::make_unique<Location>(res_mgr, Location::LocationType::Forest);
     auto playfield = std::make_unique<Playfield>(res_mgr);
@@ -24,22 +24,22 @@ void GSDuelHotSeat::HandleEventImpl(const sf::Event& evt)
 {
     assert(!mState.expired());
     auto state = mState.lock();
-    auto renderer = state->GetApp().GetRenderer();
+    auto&& renderer = state->GetApp().GetRenderer();
     switch (evt.type) {
         case sf::Event::MouseMoved:
         {
             if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-                renderer->MoveView(mMouseDeltaX, mMouseDeltaY);
+                renderer.MoveView(mMouseDeltaX, mMouseDeltaY);
             }
             break;
         }
         case sf::Event::MouseButtonReleased:
         {
             if (evt.mouseButton.button == sf::Mouse::Left && bBuildMode) {
-                auto& res_mgr = state->GetApp().GetResourceManager();
+                auto&& res_mgr = state->GetApp().GetResourceManager();
                 auto position = sf::Vector2i(mMouseX, mMouseY);
                 auto pf_position = mPlayfield->GetSprite().getPosition();
-                auto mouse_pos_local = renderer->mapPixelToCoords(position);
+                auto mouse_pos_local = renderer.mapPixelToCoords(position);
                 mPlayfield->CreateLocationAtPoint(mouse_pos_local-pf_position,
                                                   Location::LocationType::Forest,
                                                   res_mgr);
@@ -66,10 +66,10 @@ void GSDuelHotSeat::HandleEventImpl(const sf::Event& evt)
 void GSDuelHotSeat::Update([[maybe_unused]]const float secondsSinceLastUpdate)
 {
     assert(!mState.expired());
-    auto renderer = mState.lock()->GetApp().GetRenderer();
+    auto&& renderer = mState.lock()->GetApp().GetRenderer();
     auto position = sf::Vector2i(mMouseX, mMouseY);
     auto pf_position = mPlayfield->GetSprite().getPosition();
-    auto mouse_pos_local = renderer->mapPixelToCoords(position);
+    auto mouse_pos_local = renderer.mapPixelToCoords(position);
     auto closest_tile_coords =
         mPlayfield->SnapPointToTile(mouse_pos_local-pf_position);
 

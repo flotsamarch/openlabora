@@ -13,7 +13,7 @@
 
 UISMainMenu::UISMainMenu(std::shared_ptr<State> state) : UiState { state }
 {
-    auto video_mode = GetRenderer()->GetVideoMode();
+    auto video_mode = GetRenderer().GetVideoMode();
     float col_width = video_mode.width / 3.f;
     float screen_center_y = video_mode.height / 2.f;
     float box_padding = 8.f;

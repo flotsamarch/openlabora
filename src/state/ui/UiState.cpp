@@ -6,7 +6,7 @@
 #include "IApplication.hpp"
 #include "state/State.hpp"
 
-IRenderer* UiState::GetRenderer() const
+IRenderer& UiState::GetRenderer() const &
 {
     if (mState.expired()) {
         // Should only happen on program termination
@@ -17,7 +17,7 @@ IRenderer* UiState::GetRenderer() const
 
 IDesktop& UiState::GetDesktop() &
 {
-    return GetRenderer()->GetDesktop();
+    return GetRenderer().GetDesktop();
 }
 
 void UiState::AddWidgetToDesktop(sfg::Widget::Ptr widget)

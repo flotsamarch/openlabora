@@ -4,6 +4,7 @@
 #include <memory>
 #include "IApplication.hpp"
 #include "resource/IResourceManager.hpp"
+#include "IRenderer.hpp"
 #include "state/State.hpp"
 
 /* RAII class for game application */
@@ -15,8 +16,9 @@ protected:
     std::shared_ptr<State> mState;
     void HandleEvents();
 public:
-    template<class TRenderer, class TResMgr, class TStatePair>
-    Application(TRenderer, TResMgr, TStatePair);
+    template<class TStatePair>
+    Application(TStatePair, std::unique_ptr<IRenderer>,
+                std::unique_ptr<IResourceManager>);
 
     Application(const Application&) = delete;
     Application(Application&&) = delete;
@@ -25,18 +27,20 @@ public:
 
     int run() override;
 
-    IRenderer* GetRenderer() const noexcept override { return mRenderer.get(); }
+    IRenderer& GetRenderer() const & noexcept override { return *mRenderer.get(); }
 
-    const IResourceManager& GetResourceManager() const noexcept override
+    const IResourceManager& GetResourceManager() const & noexcept override
         { return *mResourceManager; }
 
     std::shared_ptr<State> GetState() const noexcept override { return mState; }
 };
 
-template<class TRenderer, class TResMgr, class TStatePair>
-Application::Application(TRenderer, TResMgr, TStatePair) :
-    mRenderer{ std::make_unique<typename TRenderer::renderer_t>() },
-    mResourceManager{ std::make_unique<typename TResMgr::res_mgr_t>() },
+template<class TStatePair>
+Application::Application(TStatePair,
+            std::unique_ptr<IRenderer> renderer,
+            std::unique_ptr<IResourceManager> res_mgr) :
+    mRenderer{ std::move(renderer) },
+    mResourceManager{ std::move(res_mgr) },
     mState { std::make_shared<State>(*this) }
 {
     mState->ChangeState<TStatePair>();

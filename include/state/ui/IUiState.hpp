@@ -7,7 +7,7 @@
 
 class IUiState : virtual public ILogicState
 {
-    virtual IRenderer* GetRenderer() const = 0;
+    virtual IRenderer& GetRenderer() const & = 0;
 
     virtual IDesktop& GetDesktop() & = 0;
 
