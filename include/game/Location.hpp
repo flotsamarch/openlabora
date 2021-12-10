@@ -6,7 +6,7 @@
 #include "GameObject.hpp"
 #include "Tile.hpp"
 
-class Location : public GameObject
+class Location final : public GameObject
 {
 public:
     enum class LocationType { Empty, Forest, Peat };
