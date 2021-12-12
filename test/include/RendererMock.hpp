@@ -3,6 +3,7 @@
 
 #include <gmock/gmock.h>
 #include "IRenderer.hpp"
+#include "game/GameObject.hpp"
 
 namespace Test
 {
@@ -12,19 +13,31 @@ class RendererMock : public IRenderer
 {
 public:
     MOCK_METHOD(bool, IsWindowOpen, (), (const, override));
+
     MOCK_METHOD(bool, PollEvent, (sf::Event&), (override));
+
     MOCK_METHOD(void, RequestCloseWindow, (), (noexcept, override));
-    MOCK_METHOD(void, Render, (const float timeSinceLastUpdate), (override));
+
+    MOCK_METHOD(void, Render,
+                (const float, GameObject::Iter, GameObject::Iter), (override));
+
     MOCK_METHOD(void, HandleEvent, (const sf::Event&), (override));
+
     MOCK_METHOD(IDesktop&, GetDesktop, (), (ref(&), noexcept, override));
+
     MOCK_METHOD(sf::VideoMode, GetVideoMode, (), (override));
+
+    MOCK_METHOD(void, MoveView, (float offset_x, float offset_y), (override));
+
+    MOCK_METHOD(void, MoveView, (const sf::Vector2f& offset), (override));
+
+    MOCK_METHOD(sf::Vector2f, mapPixelToCoords,
+                (const sf::Vector2i&), (override));
+
+    MOCK_METHOD(sf::Vector2i, mapCoordsToPixel,
+                (const sf::Vector2f&), (override));
 };
 
-struct TestRenderer
-{
-    using renderer_t = ::testing::NiceMock<RendererMock>;
-
-};
 class DesktopMock : public IDesktop
 {
 public:

@@ -6,6 +6,7 @@
 #include "state/ui/UISFinal.hpp"
 #include "RendererMock.hpp"
 #include "TestStates.hpp"
+#include "ResourceManagerMock.hpp"
 #include <iostream>
 
 namespace Test
@@ -14,27 +15,27 @@ namespace Test
 using ::testing::Return;
 using ::testing::ReturnRef;
 using ::testing::_;
+using ::testing::NiceMock;
 
 class TFAppBasicTests : public ::testing::Test
 {
 protected:
-    Application mApp{ TestRenderer{}, AppStateDefs::FinalState{} };
+    Application mApp{ AppStateDefs::FinalState{},
+            std::make_unique<NiceMock<RendererMock>>(),
+            std::make_unique<NiceMock<ResourceManagerMock>>() };
 };
 
 class TFAppStateMachineTests : public ::testing::Test
 {
 protected:
-    Application mApp{ TestRenderer{}, StateMock{} };
+    Application mApp{ StateMock{},
+            std::make_unique<NiceMock<RendererMock>>(),
+            std::make_unique<NiceMock<ResourceManagerMock>>() };
     RendererMock* mRenderer;
 public:
     TFAppStateMachineTests() :
-        mRenderer{ static_cast<RendererMock*>(mApp.GetRenderer()) } {}
+        mRenderer{ static_cast<RendererMock*>(&mApp.GetRenderer()) } {}
 };
-
-TEST_F(TFAppBasicTests, RendererGetter)
-{
-    ASSERT_NE(mApp.GetRenderer(), nullptr);
-}
 
 TEST_F(TFAppBasicTests, StateGetter)
 {
@@ -43,7 +44,7 @@ TEST_F(TFAppBasicTests, StateGetter)
 
 TEST_F(TFAppBasicTests, AppClosesNoWindow)
 {
-    auto renderer = static_cast<RendererMock*>(mApp.GetRenderer());
+    auto renderer = static_cast<RendererMock*>(&mApp.GetRenderer());
 
     EXPECT_CALL(*renderer, IsWindowOpen())
         .Times(1)
@@ -54,7 +55,7 @@ TEST_F(TFAppBasicTests, AppClosesNoWindow)
 
 TEST_F(TFAppBasicTests, AppClosesInFinalState)
 {
-    auto renderer = static_cast<RendererMock*>(mApp.GetRenderer());
+    auto renderer = static_cast<RendererMock*>(&mApp.GetRenderer());
 
     EXPECT_CALL(*renderer, IsWindowOpen())
         .Times(1)
@@ -81,7 +82,7 @@ TEST_F(TFAppStateMachineTests, MainLoopUpdatesMemberObjects)
         .WillRepeatedly(Return(true))
         .RetiresOnSaturation();
 
-    EXPECT_CALL(*mRenderer, Render(_))
+    EXPECT_CALL(*mRenderer, Render(_, _, _))
         .Times(10);
 
     EXPECT_CALL(*mRenderer, PollEvent(_))
@@ -139,9 +140,15 @@ TEST_F(TFAppStateMachineTests, EventHandling)
 
 TEST(StateMachineTests, IsSameStateTest)
 {
-    Application app{ TestRenderer{}, StateMock{} };
-    Application app2{ TestRenderer{}, StateTest{} };
-    Application app3{ TestRenderer{}, AppStateDefs::FinalState{} };
+    Application app{ StateMock{},
+            std::make_unique<NiceMock<RendererMock>>(),
+            std::make_unique<NiceMock<ResourceManagerMock>>() };
+    Application app2{  StateTest{},
+            std::make_unique<NiceMock<RendererMock>>(),
+            std::make_unique<NiceMock<ResourceManagerMock>>() };
+    Application app3{ AppStateDefs::FinalState{},
+            std::make_unique<NiceMock<RendererMock>>(),
+            std::make_unique<NiceMock<ResourceManagerMock>>() };
 
     ASSERT_TRUE(app.GetState()->IsSameState<StateMock>());
     ASSERT_TRUE(app2.GetState()->IsSameState<StateTest>());
@@ -150,9 +157,12 @@ TEST(StateMachineTests, IsSameStateTest)
 
 TEST(StateMachineTests, ChangeStateTest)
 {
-    Application app{ TestRenderer{}, StateTest{} };
-    auto renderer = static_cast<RendererMock*>(app.GetRenderer());
-    ::testing::NiceMock<DesktopMock> desktop;
+    Application app{ StateTest{},
+            std::make_unique<NiceMock<RendererMock>>(),
+            std::make_unique<NiceMock<ResourceManagerMock>>() };
+
+    auto renderer = static_cast<RendererMock*>(&app.GetRenderer());
+    NiceMock<DesktopMock> desktop;
 
     EXPECT_CALL(*renderer, GetDesktop())
         .WillRepeatedly(ReturnRef(desktop));

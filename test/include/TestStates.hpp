@@ -30,7 +30,10 @@ class GSMock : public IGameState
 public:
     GSMock(std::shared_ptr<State>) {};
     MOCK_METHOD(void, HandleEvent, (const sf::Event&), (override));
+    MOCK_METHOD(void, HandleEventImpl, (const sf::Event&), (override));
     MOCK_METHOD(void, Update, (const float secondsSinceLastUpdate), (override));
+    MOCK_METHOD(GameObject::Iter, GetGameObjectBegin, (), (noexcept));
+    MOCK_METHOD(GameObject::Iter, GetGameObjectEnd, (), (noexcept));
 };
 
 class UISMock : public IUiState
@@ -38,8 +41,9 @@ class UISMock : public IUiState
 public:
     UISMock(std::shared_ptr<State>) {};
     MOCK_METHOD(void, HandleEvent, (const sf::Event&), (override));
+    MOCK_METHOD(void, HandleEventImpl, (const sf::Event&), (override));
     MOCK_METHOD(void, Update, (const float secondsSinceLastUpdate), (override));
-    MOCK_METHOD(IRenderer*, GetRenderer, (), (const, override));
+    MOCK_METHOD(IRenderer&, GetRenderer, (), (ref(&), const, override));
     MOCK_METHOD(IDesktop&, GetDesktop, (), (ref(&), override));
     MOCK_METHOD(void, AddWidgetToDesktop, (sfg::Widget::Ptr), (override));
     MOCK_METHOD(void, RemoveAllWidgets, (), (override));
