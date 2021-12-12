@@ -9,5 +9,9 @@ Location::Location(const IResourceManager& res_mgr, LocationType type)
 bool Location::IsPlaceableOn(LocationType location_t,
                                     Tile::TileType tile_t)
 {
-    return kPlaceableMap.find(location_t)->second == tile_t;
+  auto result = kPlaceableMap.find(location_t);
+  if (result == kPlaceableMap.end()) {
+    return false;
+  }
+  return result->second == tile_t;
 }

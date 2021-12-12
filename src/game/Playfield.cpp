@@ -119,13 +119,15 @@ void Playfield::CreateLocationAtPoint(const sf::Vector2f& point,
     auto indices = GetTileIndicesUnderPoint(point);
     auto tile_coords = SnapPointToTile(point);
 
-    assert (indices != std::nullopt); // Sanity check
+    if (indices == std::nullopt) {
+        return;
+    }
 
     if (!IsTileValidForPlacement(indices.value(), type)) {
         return;
     }
 
-    auto& location = mLocations[indices.value().y][indices.value().x];
+    auto&& location = mLocations[indices.value().y][indices.value().x];
     auto position = location->GetSprite().getPosition();
     location = std::make_unique<Location>(res_mgr, type);
     location->SetPosition(position);
