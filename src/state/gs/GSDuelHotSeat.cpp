@@ -2,26 +2,26 @@
 #include <cassert>
 #include "state/gs/GSDuelHotSeat.hpp"
 #include "state/State.hpp"
-#include "game/Playfield.hpp"
 #include "resource/ResourceManager.hpp"
 
 GSDuelHotSeat::GSDuelHotSeat(std::shared_ptr<State> state) : GameState{ state }
 {
     auto&& res_mgr = state->GetApp().GetResourceManager();
-    auto build_ghost =
-        std::make_unique<Location>(res_mgr, Location::LocationType::Forest);
-    auto playfield = std::make_unique<Playfield>(res_mgr);
 
-    mPlayfield = playfield.get();
-    mBuildGhost = build_ghost.get();
+    mPlayfield = std::make_shared<Playfield>(res_mgr);
+    mBuildGhost = std::make_shared<Location>(res_mgr, Location::LocationType::Forest);
     mBuildGhost->SetPosition(GameObject::kOutOfBounds);
 
-    mGameObjects.push_back(std::move(playfield));
-    mGameObjects.push_back(std::move(build_ghost));
+    mGameObjects.push_back(mPlayfield);
+    mGameObjects.push_back(mBuildGhost);
 }
 
 void GSDuelHotSeat::HandleEventImpl(const sf::Event& evt)
 {
+    if (bPaused) {
+        return;
+    }
+
     assert(!mState.expired());
     auto state = mState.lock();
     auto&& renderer = state->GetApp().GetRenderer();
@@ -33,38 +33,33 @@ void GSDuelHotSeat::HandleEventImpl(const sf::Event& evt)
             }
             break;
         }
-        case sf::Event::MouseButtonReleased:
+        case sf::Event::MouseButtonPressed:
         {
-            if (evt.mouseButton.button == sf::Mouse::Left && bBuildMode) {
+            if (evt.mouseButton.button == sf::Mouse::Left && bBuildModeEnabled) {
                 auto&& res_mgr = state->GetApp().GetResourceManager();
                 auto position = sf::Vector2i(mMouseX, mMouseY);
                 auto pf_position = mPlayfield->GetSprite().getPosition();
-                auto mouse_pos_local = renderer.mapPixelToCoords(position);
-                mPlayfield->CreateLocationAtPoint(mouse_pos_local-pf_position,
-                                                  Location::LocationType::Forest,
-                                                  res_mgr);
-                bBuildMode = false;
+                auto mouse_pos_pf = renderer.mapPixelToCoords(position);
+                mPlayfield->ChangeLocationTypeAtPoint(mouse_pos_pf-pf_position,
+                                                      mBuildGhost->GetType());
+                bBuildModeEnabled = false;
                 mBuildGhost->SetPosition(GameObject::kOutOfBounds);
             }
             break;
         }
-        case sf::Event::KeyPressed:
-        {
-            if (evt.key.code == 'b' - 'a') {
-                bBuildMode = !bBuildMode;
-                if (!bBuildMode) {
-                    mBuildGhost->SetPosition(GameObject::kOutOfBounds);
-                }
-            }
-        }
-        default:{}
+        // case sf::Event::KeyPressed:
+        // {}
+        default: {}
     }
 
-    return;
 }
 
 void GSDuelHotSeat::Update([[maybe_unused]]const float secondsSinceLastUpdate)
 {
+    if (bPaused) {
+        return;
+    }
+
     assert(!mState.expired());
     auto&& renderer = mState.lock()->GetApp().GetRenderer();
     auto position = sf::Vector2i(mMouseX, mMouseY);
@@ -73,8 +68,15 @@ void GSDuelHotSeat::Update([[maybe_unused]]const float secondsSinceLastUpdate)
     auto closest_tile_coords =
         mPlayfield->SnapPointToTile(mouse_pos_local-pf_position);
 
-    if (bBuildMode && mBuildGhost != nullptr) {
+    if (bBuildModeEnabled && mBuildGhost != nullptr) {
         mBuildGhost->SetPosition(closest_tile_coords);
     }
     return;
 }
+
+
+void GSDuelHotSeat::EnableBuildMode(Location::LocationType type)
+{
+    mBuildGhost->SetType(type);
+    bBuildModeEnabled = true;
+};

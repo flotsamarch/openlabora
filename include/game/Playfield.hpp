@@ -4,15 +4,15 @@
 #include <array>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <optional>
-#include "GameObject.hpp"
+#include "IDrawable.hpp"
 #include "Location.hpp"
 #include "Tile.hpp"
 
-class Playfield final : public GameObject
+class Playfield final : public IDrawable
 {
 public:
     static constexpr unsigned int kFieldHeight{ 16 };
-    static constexpr unsigned int kFieldWidth{ 12 };
+    static constexpr unsigned int kFieldWidth{ 9 };
     static constexpr unsigned int kTileHeight{ 150u };
     static constexpr unsigned int kTileWidth{ 100u };
     using LocationSubArray =
@@ -24,19 +24,25 @@ public:
 
     sf::Vector2f SnapPointToTile(const sf::Vector2f&) const noexcept;
 
-    LocationIter GetLocationUnderPoint(const sf::Vector2f&) const;
+    LocationIter GetLocationUnderPoint(const sf::Vector2f&);
 
 
-    void CreateLocationAtPoint(const sf::Vector2f& point,
-                               Location::LocationType,
-                               const IResourceManager&);
+    void ChangeLocationTypeAtPoint(const sf::Vector2f& point,
+                                   Location::LocationType);
 
-    constexpr LocationIter LocationsEnd() noexcept
+    constexpr LocationIter LocationsEnd() const noexcept
         { return mLocations.begin()->end(); };
+
+    const sf::Sprite& GetSprite() const noexcept override
+        { return mSprite; }
 private:
     std::array<std::array<Tile::TileType, kFieldWidth>, kFieldHeight> mTiles;
-    sf::RenderTexture mFieldTexture;
+    const IResourceManager& mResMgr;
     LocationArray mLocations;
+    sf::RenderTexture mGroundTexture;
+    sf::RenderTexture mLocationsTexture;
+    sf::RenderTexture mTexture;
+    sf::Sprite mSprite;
 
     bool IsTileValidForPlacement(const sf::Vector2u& indices,
                                  Location::LocationType) const;
@@ -44,7 +50,9 @@ private:
     std::optional<sf::Vector2u>
     GetTileIndicesUnderPoint(const sf::Vector2f&) const noexcept;
 
-    LocationIter GetLocationAt(const sf::Vector2u&) const;
+    LocationIter GetOrCreateLocationAt(const sf::Vector2u&,
+                                       Location::LocationType =
+                                       Location::LocationType::Empty);
 
     void DrawLocationOnFieldTexture(const Location&);
 };

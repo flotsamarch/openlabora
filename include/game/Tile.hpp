@@ -3,7 +3,7 @@
 
 namespace Tile
 {
-    enum class TileType { Forest, Hillside, Mountain, Water, Coast, Peat };
+    enum class TileType { Forest, Hill, Mountain, Water, Coast, Peat };
 }
 
 #endif // TILE_H_

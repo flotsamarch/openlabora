@@ -7,13 +7,18 @@
 #include "resource/ResourceManager.hpp"
 
 Playfield::Playfield(const IResourceManager& res_mgr) :
-    GameObject{ res_mgr }, mTiles{ kPlayfieldInitArray }
+    mTiles{ kPlayfieldInitArray }, mResMgr{ res_mgr }
 {
     std::unordered_map<Tile::TileType, sf::Texture> mTileTextures;
 
     mTileTextures[Tile::TileType::Forest] = res_mgr.GetTextureByName("forest");
+    mTileTextures[Tile::TileType::Coast] = res_mgr.GetTextureByName("coast");
+    mTileTextures[Tile::TileType::Water] = res_mgr.GetTextureByName("water");
+    mTileTextures[Tile::TileType::Peat] = res_mgr.GetTextureByName("peat_empty");
+    mTileTextures[Tile::TileType::Hill] = res_mgr.GetTextureByName("hill");
+    mTileTextures[Tile::TileType::Mountain] = res_mgr.GetTextureByName("mountain");
 
-    mFieldTexture.create(kTileWidth * kFieldWidth, kTileHeight * kFieldHeight);
+    mGroundTexture.create(kTileWidth * kFieldWidth, kTileHeight * kFieldHeight);
 
     for (std::size_t row{0u}, col{0u}; auto& sub_array : mTiles) {
             sf::Sprite sprite;
@@ -22,29 +27,15 @@ Playfield::Playfield(const IResourceManager& res_mgr) :
             float left = static_cast<float>(kTileWidth * col);
             float top = static_cast<float>(kTileHeight * row);
             sprite.setPosition(left, top);
-            mFieldTexture.draw(sprite);
+            mGroundTexture.draw(sprite);
             col++;
         }
         row++;
         col = 0u;
     }
 
-    for (std::size_t row{0u}, col{0u}; auto& sub_array : mLocations) {
-        for (auto& item : sub_array) {
-            item = std::make_unique<Location>(
-                res_mgr, Location::LocationType::Empty);
-            float left = static_cast<float>(kTileWidth * col);
-            float top = static_cast<float>(kTileHeight * row);
-            item->SetPosition(left, top);
-            col++;
-        }
-        row++;
-        col = 0u;
-    }
-
-    mFieldTexture.display();
-
-    mSprite.setTexture(mFieldTexture.getTexture(), true);
+    mGroundTexture.display();
+    mSprite.setTexture(mGroundTexture.getTexture(), true);
 }
 
 sf::Vector2f Playfield::SnapPointToTile(const sf::Vector2f& point) const noexcept
@@ -78,13 +69,23 @@ Playfield::GetTileIndicesUnderPoint(const sf::Vector2f& point) const noexcept
 
 
 Playfield::LocationIter
-Playfield::GetLocationAt(const sf::Vector2u& indices) const
+Playfield::GetOrCreateLocationAt(const sf::Vector2u& indices,
+                                 Location::LocationType type)
 {
-    return mLocations[indices.y].begin() + indices.x;
+    auto&& itlocation = mLocations[indices.y].begin() + indices.x;
+    auto&& location = *itlocation;
+
+    if (location == nullptr) {
+        location = std::make_unique<Location>(mResMgr, type);
+        location->SetPosition(static_cast<float>(indices.x * kTileWidth),
+                              static_cast<float>(indices.y * kTileHeight));
+    }
+
+    return itlocation;
 }
 
 Playfield::LocationIter
-Playfield::GetLocationUnderPoint(const sf::Vector2f& point) const
+Playfield::GetLocationUnderPoint(const sf::Vector2f& point)
 {
     auto indices = GetTileIndicesUnderPoint(point);
 
@@ -92,15 +93,16 @@ Playfield::GetLocationUnderPoint(const sf::Vector2f& point) const
         return mLocations.begin()->end();
     }
 
-    return GetLocationAt(indices.value());
+    return GetOrCreateLocationAt(indices.value());
 }
 
 bool Playfield::IsTileValidForPlacement(const sf::Vector2u& indices,
                                         Location::LocationType type) const
 {
-    auto& location = *GetLocationAt(indices);
+    auto&& location = mLocations[indices.y][indices.x];
 
-    if (location->GetType() != Location::LocationType::Empty) {
+    if (location != nullptr &&
+        location->GetType() != Location::LocationType::Empty) {
         return false;
     }
 
@@ -112,9 +114,8 @@ bool Playfield::IsTileValidForPlacement(const sf::Vector2u& indices,
     return true;
 }
 
-void Playfield::CreateLocationAtPoint(const sf::Vector2f& point,
-                                      Location::LocationType type,
-                                      const IResourceManager& res_mgr)
+void Playfield::ChangeLocationTypeAtPoint(const sf::Vector2f& point,
+                                          Location::LocationType type)
 {
     auto indices = GetTileIndicesUnderPoint(point);
     auto tile_coords = SnapPointToTile(point);
@@ -127,14 +128,14 @@ void Playfield::CreateLocationAtPoint(const sf::Vector2f& point,
         return;
     }
 
-    auto&& location = mLocations[indices.value().y][indices.value().x];
-    auto position = location->GetSprite().getPosition();
-    location = std::make_unique<Location>(res_mgr, type);
-    location->SetPosition(position);
+    auto&& location = *GetOrCreateLocationAt(indices.value(), type);
+    if (location->GetType() != type) {
+        location->SetType(type);
+    }
     DrawLocationOnFieldTexture(*location);
 }
 
 void Playfield::DrawLocationOnFieldTexture(const Location& location)
 {
-    mFieldTexture.draw(location.GetSprite());
+    mGroundTexture.draw(location.GetSprite());
 }

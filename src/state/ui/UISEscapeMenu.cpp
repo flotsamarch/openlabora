@@ -44,6 +44,9 @@ void UISEscapeMenu::HandleEvent(const sf::Event& evt)
         && (evt.key.code == sf::Keyboard::Escape)) {
         for (auto& item : mMenuWidgets) {
             item->Show(bIsMenuHidden);
+            assert(!mState.expired());
+            auto& state = static_cast<GameState&>(mState.lock()->GetGameState());
+            state.SetPaused(bIsMenuHidden);
             bIsMenuHidden = !bIsMenuHidden;
         }
     }
