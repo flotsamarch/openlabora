@@ -3,35 +3,44 @@
 
 #include <cassert>
 #include <unordered_map>
+#include <filesystem>
+#include <iostream>
 #include "IResourceManager.hpp"
 
 class ResourceManager final : public IResourceManager
 {
-    std::unordered_map<std::string_view, sf::Texture> mTextures;
+    std::unordered_map<std::string, sf::Texture> mTextures;
 public:
     const sf::Texture& GetTextureByName(std::string_view name) const override
     {
-        auto res = mTextures.find(name);
+        auto str = std::string{name};
+        auto res = mTextures.find(str);
+
         if (res == mTextures.end()) {
             return mTextures.find("coin")->second;
         }
-        return mTextures.find(name)->second;
+        return mTextures.find(str)->second;
     }
 
     ResourceManager()
     {
-        mTextures["coin"].loadFromFile("res\\coin.png");
-        mTextures["forest"].loadFromFile("res\\forest.png");
-        mTextures["coast"].loadFromFile("res\\coast.png");
-        mTextures["water"].loadFromFile("res\\water.png");
-        mTextures["peat_empty"].loadFromFile("res\\peat_empty.png");
-        mTextures["peat"].loadFromFile("res\\peat.png");
-        mTextures["hill"].loadFromFile("res\\hill.png");
-        mTextures["mountain"].loadFromFile("res\\mountain.png");
-        mTextures["location"].loadFromFile("res\\location.png");
-        mTextures["fishing"].loadFromFile("res\\fishing.png");
-        mTextures["claymound"].loadFromFile("res\\claymound.png");
-        mTextures["houseboat"].loadFromFile("res\\houseboat.png");
+        auto dir = std::filesystem::directory_entry("res/");
+        auto suffix = std::string_view(".png");
+
+        assert(dir.is_directory());
+
+        for (auto&& file : std::filesystem::directory_iterator{dir}) {
+            if (!file.is_regular_file()) {
+                continue;
+            }
+            const auto&& path = file.path().string();
+            if (path.substr(path.size() - suffix.size()) == suffix) {
+                const auto&& filename = file.path().filename().string();
+                auto texture_name =
+                    filename.substr(0, filename.size() - suffix.size());
+                mTextures[texture_name].loadFromFile(file.path().string());
+            }
+        }
     }
 };
 
