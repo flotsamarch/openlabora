@@ -15,18 +15,13 @@ IRenderer& UiState::GetRenderer() const &
     return mState.lock()->GetApp().GetRenderer();
 }
 
-IDesktop& UiState::GetDesktop() &
-{
-    return GetRenderer().GetDesktop();
-}
-
 void UiState::AddWidgetToDesktop(sfg::Widget::Ptr widget)
 {
     mWidgets.push_back(widget);
-    GetDesktop().Add(widget);
+    GetRenderer().AddWidgetToDesktop(widget);
 }
 
 void UiState::RemoveAllWidgets()
 {
-    GetDesktop().RemoveWidgets(mWidgets.begin(), mWidgets.end());
+    GetRenderer().RemoveWidgets(mWidgets.begin(), mWidgets.end());
 }

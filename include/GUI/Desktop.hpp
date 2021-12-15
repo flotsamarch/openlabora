@@ -58,16 +58,6 @@ public:
     {
         mDesktop.BringToFront(child);
     }
-
-    void RemoveWidgets(
-        std::vector<std::shared_ptr<sfg::Widget>>::iterator begin,
-        std::vector<std::shared_ptr<sfg::Widget>>::iterator end
-    ) override
-    {
-        for (auto widget = begin; widget != end; widget++) {
-            mDesktop.Remove(*widget);
-        }
-    }
 };
 
 #endif // DESKTOP_HPP_

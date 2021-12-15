@@ -3,9 +3,8 @@
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 #include <SFGUI/Widget.hpp>
-#include "GUI/IDesktop.hpp"
-#include "game/GameObject.hpp"
 
 class IRenderer
 {
@@ -18,13 +17,19 @@ public:
 
     virtual void RequestCloseWindow() noexcept = 0;
 
-    virtual void Render(const float timeSinceLastUpdate,
-                        GameObject::Iter begin,
-                        GameObject::Iter end) = 0;
+    virtual void Clear() = 0;
+
+    virtual void Draw(sf::Sprite) = 0;
+
+    virtual void Update(float timeSinceLastUpdate) = 0;
 
     virtual void HandleEvent(const sf::Event&) = 0;
 
-    virtual IDesktop& GetDesktop() & noexcept = 0;
+    virtual void AddWidgetToDesktop(sfg::Widget::Ptr) = 0;
+
+    virtual void RemoveWidgets(
+        std::vector<sfg::Widget::Ptr>::iterator begin,
+        std::vector<sfg::Widget::Ptr>::iterator end) = 0;
 
     virtual sf::VideoMode GetVideoMode() = 0;
 

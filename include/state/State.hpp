@@ -33,9 +33,9 @@ public:
 
     void HandleEvent(const sf::Event&);
 
-    IGameState* GetGameState() const noexcept { return mGameState.get(); }
+    IGameState& GetGameState() const noexcept { return *mGameState.get(); }
 
-    IUiState* GetUiState() const noexcept { return mUiState.get(); }
+    IUiState& GetUiState() const noexcept { return *mUiState.get(); }
 };
 
 

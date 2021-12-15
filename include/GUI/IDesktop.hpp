@@ -32,11 +32,6 @@ public:
     virtual sfg::Engine& GetEngine() = 0;
 
     virtual void BringToFront(std::shared_ptr<const sfg::Widget> child) = 0;
-
-    virtual void RemoveWidgets(
-        std::vector<std::shared_ptr<sfg::Widget>>::iterator begin,
-        std::vector<std::shared_ptr<sfg::Widget>>::iterator end
-    ) = 0;
 };
 
 inline IDesktop::~IDesktop() noexcept {}

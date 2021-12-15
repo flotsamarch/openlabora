@@ -3,13 +3,10 @@
 
 #include "state/ILogicState.hpp"
 #include "IRenderer.hpp"
-#include "GUI/IDesktop.hpp"
 
 class IUiState : virtual public ILogicState
 {
     virtual IRenderer& GetRenderer() const & = 0;
-
-    virtual IDesktop& GetDesktop() & = 0;
 
     virtual void AddWidgetToDesktop(sfg::Widget::Ptr) = 0;
 

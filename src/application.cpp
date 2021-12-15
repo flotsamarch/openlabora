@@ -13,9 +13,15 @@ int Application::run()
         float secondsSinceLastCall = clock.restart().asSeconds();
         HandleEvents();
         mState->Update(secondsSinceLastCall);
-        mRenderer->Render(secondsSinceLastCall,
-                          mState->GetGameState()->GetGameObjectBegin(),
-                          mState->GetGameState()->GetGameObjectEnd());
+        auto&& game_state = mState->GetGameState();
+
+        mRenderer->Clear();
+        for(auto&& item = game_state.GetGameObjectBegin(),
+                end = game_state.GetGameObjectEnd(); item < end; ++item) {
+            mRenderer->Draw((*item)->GetSprite());
+        }
+        mRenderer->Update(secondsSinceLastCall);
+
         if (mState->IsSameState<AppStateDefs::FinalState>()) {
             break;
         }

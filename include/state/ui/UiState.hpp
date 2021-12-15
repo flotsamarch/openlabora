@@ -18,8 +18,6 @@ protected:
 protected:
     IRenderer& GetRenderer() const & override final;
 
-    IDesktop& GetDesktop() & override final;
-
     void AddWidgetToDesktop(sfg::Widget::Ptr) override final;
 
     void RemoveAllWidgets() override final;

@@ -39,13 +39,20 @@ public:
     void RequestCloseWindow() noexcept override
     { bWindowClosureRequested = true; };
 
-    void Render(const float secondsSinceLastUpdate,
-                GameObject::Iter begin,
-                GameObject::Iter end) override;
+    // Must be called before Draw()
+    void Clear() override;
+
+    void Draw(sf::Sprite) override;
+
+    // Must be called after Draw()
+    void Update(float secondsSinceLastUpdate) override;
 
     void HandleEvent(const sf::Event& evt) override;
 
-    IDesktop& GetDesktop() & noexcept override { return mDesktop; }
+    void AddWidgetToDesktop(sfg::Widget::Ptr) override;
+
+    void RemoveWidgets(std::vector<sfg::Widget::Ptr>::iterator begin,
+        std::vector<sfg::Widget::Ptr>::iterator end) override;
 
     sf::VideoMode GetVideoMode() override { return mVideoMode; }
 
@@ -54,9 +61,11 @@ public:
 
     void MoveView(const sf::Vector2f& offset) override { mView.move(-offset); }
 
+    // Adjust point on screen to global space coordinate
     sf::Vector2f mapPixelToCoords(const sf::Vector2i& point) override
         { return mWindow.mapPixelToCoords(point); }
 
+    // Adjust global space coordinate to a point on screen
     sf::Vector2i mapCoordsToPixel(const sf::Vector2f& point) override
         { return mWindow.mapCoordsToPixel(point); }
 };
@@ -88,17 +97,39 @@ Renderer<TDesktop, TGui, TWindow>::~Renderer() noexcept
 }
 
 template<class TDesktop, class TGui, class TWindow>
-void Renderer<TDesktop, TGui, TWindow>::Render(float secondsSinceLastUpdate,
-                                               GameObject::Iter begin,
-                                               GameObject::Iter end)
+void Renderer<TDesktop, TGui, TWindow>::Clear()
 {
-    mDesktop.Update(secondsSinceLastUpdate);
     mWindow.clear();
     mWindow.setView(mView);
-    for (auto item = begin; item != end; ++item)
-    {
-        mWindow.draw(item->get()->GetSprite());
+}
+
+template<class TDesktop, class TGui, class TWindow>
+void Renderer<TDesktop, TGui, TWindow>::Draw(sf::Sprite sprite)
+{
+    mWindow.draw(sprite);
+}
+
+template<class TDesktop, class TGui, class TWindow>
+void Renderer<TDesktop, TGui, TWindow>::AddWidgetToDesktop(sfg::Widget::Ptr
+                                                           widget)
+{
+    mDesktop.Add(widget);
+}
+
+template<class TDesktop, class TGui, class TWindow>
+void Renderer<TDesktop, TGui, TWindow>::RemoveWidgets(
+    std::vector<sfg::Widget::Ptr>::iterator begin,
+    std::vector<sfg::Widget::Ptr>::iterator end)
+{
+    for (auto&& widget = begin; widget < end; ++widget) {
+        mDesktop.Remove(*widget);
     }
+}
+
+template<class TDesktop, class TGui, class TWindow>
+void Renderer<TDesktop, TGui, TWindow>::Update(float secondsSinceLastUpdate)
+{
+    mDesktop.Update(secondsSinceLastUpdate);
     mSfgui.Display(mWindow);
     mWindow.display();
 }
