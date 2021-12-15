@@ -32,8 +32,10 @@ public:
     MOCK_METHOD(void, HandleEvent, (const sf::Event&), (override));
     MOCK_METHOD(void, HandleEventImpl, (const sf::Event&), (override));
     MOCK_METHOD(void, Update, (const float secondsSinceLastUpdate), (override));
-    MOCK_METHOD(GameObject::Iter, GetGameObjectBegin, (), (noexcept));
-    MOCK_METHOD(GameObject::Iter, GetGameObjectEnd, (), (noexcept));
+    MOCK_METHOD(void, SetPaused, (bool), (noexcept, override));
+    MOCK_METHOD(bool, IsPaused, (), (noexcept, override));
+    MOCK_METHOD(IDrawable::Iter, GetGameObjectBegin, (), (noexcept));
+    MOCK_METHOD(IDrawable::Iter, GetGameObjectEnd, (), (noexcept));
 };
 
 class UISMock : public IUiState
@@ -44,7 +46,6 @@ public:
     MOCK_METHOD(void, HandleEventImpl, (const sf::Event&), (override));
     MOCK_METHOD(void, Update, (const float secondsSinceLastUpdate), (override));
     MOCK_METHOD(IRenderer&, GetRenderer, (), (ref(&), const, override));
-    MOCK_METHOD(IDesktop&, GetDesktop, (), (ref(&), override));
     MOCK_METHOD(void, AddWidgetToDesktop, (sfg::Widget::Ptr), (override));
     MOCK_METHOD(void, RemoveAllWidgets, (), (override));
 };

@@ -33,7 +33,7 @@ protected:
 TEST_F(TFPlayfieldTests, RequestsTextures)
 {
     EXPECT_CALL(mResMgr, GetTextureByName(_))
-        .Times(2 + Playfield::kFieldHeight * Playfield::kFieldWidth)
+        .Times(6)
         .WillRepeatedly(ReturnRef(mTexture));
 
     Playfield mPf{ mResMgr };
@@ -91,12 +91,13 @@ TEST_F(TFPlayfieldTests, LocationCreation)
     auto loctype3 = (*mPf.GetLocationUnderPoint(point3))->GetType();
 
     // Should be created
-    mPf.CreateLocationAtPoint(point1, Location::LocationType::Forest, mResMgr);
-    mPf.CreateLocationAtPoint(point2, Location::LocationType::Forest, mResMgr);
+    mPf.ChangeLocationTypeAtPoint(point1, Location::LocationType::HouseBoat);
+    mPf.ChangeLocationTypeAtPoint(point2,
+                                  Location::LocationType::FishingVillage);
     // Shouldn't be created
-    mPf.CreateLocationAtPoint(point3, Location::LocationType::Peat, mResMgr);
+    mPf.ChangeLocationTypeAtPoint(point3, Location::LocationType::Peat);
     EXPECT_NO_FATAL_FAILURE( \
-        mPf.CreateLocationAtPoint(oob, Location::LocationType::Forest, mResMgr));
+        mPf.ChangeLocationTypeAtPoint(oob, Location::LocationType::Forest));
 
     auto&& loc1 = *mPf.GetLocationUnderPoint(point1);
     auto&& loc2 = *mPf.GetLocationUnderPoint(point2);

@@ -3,11 +3,11 @@
 
 #include <gmock/gmock.h>
 #include "IRenderer.hpp"
+#include "GUI/IDesktop.hpp"
 #include "game/GameObject.hpp"
 
 namespace Test
 {
-
 
 class RendererMock : public IRenderer
 {
@@ -18,12 +18,19 @@ public:
 
     MOCK_METHOD(void, RequestCloseWindow, (), (noexcept, override));
 
-    MOCK_METHOD(void, Render,
-                (const float, GameObject::Iter, GameObject::Iter), (override));
+    MOCK_METHOD(void, Clear,(), (override));
+
+    MOCK_METHOD(void, Draw,(sf::Sprite), (override));
+
+    MOCK_METHOD(void, Update,(float timeSinceLastUpdate), (override));
 
     MOCK_METHOD(void, HandleEvent, (const sf::Event&), (override));
 
-    MOCK_METHOD(IDesktop&, GetDesktop, (), (ref(&), noexcept, override));
+    MOCK_METHOD(void, AddWidgetToDesktop, (sfg::Widget::Ptr), (override));
+
+    MOCK_METHOD(void, RemoveWidgets, (
+        std::vector<sfg::Widget::Ptr>::iterator begin,
+        std::vector<sfg::Widget::Ptr>::iterator end), (override));
 
     MOCK_METHOD(sf::VideoMode, GetVideoMode, (), (override));
 
@@ -67,10 +74,6 @@ public:
 
     MOCK_METHOD(void, BringToFront,
                 (std::shared_ptr<const sfg::Widget> child), (override));
-
-    MOCK_METHOD(void, RemoveWidgets,
-        (std::vector<std::shared_ptr<sfg::Widget>>::iterator begin,
-        std::vector<std::shared_ptr<sfg::Widget>>::iterator end), (override));
 };
 
 } // namespace Test

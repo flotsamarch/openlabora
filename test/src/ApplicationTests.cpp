@@ -7,6 +7,7 @@
 #include "RendererMock.hpp"
 #include "TestStates.hpp"
 #include "ResourceManagerMock.hpp"
+#include "DrawableMock.hpp"
 #include <iostream>
 
 namespace Test
@@ -69,8 +70,34 @@ TEST_F(TFAppBasicTests, AppClosesInFinalState)
 
 TEST_F(TFAppStateMachineTests, MainLoopUpdatesMemberObjects)
 {
-    auto game_state = static_cast<GSMock*>(mApp.GetState()->GetGameState());
-    auto ui_state = static_cast<UISMock*>(mApp.GetState()->GetUiState());
+    auto&& game_state = static_cast<GSMock&>(mApp.GetState()->GetGameState());
+    auto&& ui_state = static_cast<UISMock&>(mApp.GetState()->GetUiState());
+
+    sf::Sprite sprite;
+    auto drawable = std::make_shared<DrawableMock>();
+    std::vector<IDrawable::Ptr> objects;
+    objects.push_back(drawable);
+
+    EXPECT_CALL(*drawable, GetSprite())
+        .Times(10)
+        .WillRepeatedly(ReturnRef(sprite));
+
+    // Game state
+    EXPECT_CALL(game_state, Update(_))
+        .Times(10);
+
+    EXPECT_CALL(game_state, GetGameObjectBegin())
+        .Times(10)
+        .WillRepeatedly(Return(objects.begin()));
+
+    EXPECT_CALL(game_state, GetGameObjectEnd())
+        .Times(10)
+        .WillRepeatedly(Return(objects.end()));
+
+    // Ui state
+    EXPECT_CALL(ui_state, Update(_))
+        .Times(10);
+
     // Iterate 10 times then simulate window closure
     // Renderer
     EXPECT_CALL(*mRenderer, IsWindowOpen())
@@ -82,28 +109,25 @@ TEST_F(TFAppStateMachineTests, MainLoopUpdatesMemberObjects)
         .WillRepeatedly(Return(true))
         .RetiresOnSaturation();
 
-    EXPECT_CALL(*mRenderer, Render(_, _, _))
+    EXPECT_CALL(*mRenderer, Clear())
+        .Times(10);
+    EXPECT_CALL(*mRenderer, Draw(_))
+        .Times(10);
+    EXPECT_CALL(*mRenderer, Update(_))
         .Times(10);
 
     EXPECT_CALL(*mRenderer, PollEvent(_))
         .Times(10)
         .WillRepeatedly(Return(false));
 
-    // Game state
-    EXPECT_CALL(*game_state, Update(_))
-        .Times(10);
-
-    // Ui state
-    EXPECT_CALL(*ui_state, Update(_))
-        .Times(10);
 
     ASSERT_NO_FATAL_FAILURE(mApp.run());
 }
 
 TEST_F(TFAppStateMachineTests, EventHandling)
 {
-    auto game_state = static_cast<GSMock*>(mApp.GetState()->GetGameState());
-    auto ui_state = static_cast<UISMock*>(mApp.GetState()->GetUiState());
+    auto&& game_state = static_cast<GSMock&>(mApp.GetState()->GetGameState());
+    auto&& ui_state = static_cast<UISMock&>(mApp.GetState()->GetUiState());
 
     // Renderer
     EXPECT_CALL(*mRenderer, IsWindowOpen())
@@ -128,11 +152,11 @@ TEST_F(TFAppStateMachineTests, EventHandling)
     }
 
     // Game state
-    EXPECT_CALL(*game_state, HandleEvent(_))
+    EXPECT_CALL(game_state, HandleEvent(_))
         .Times(30);
 
     // Ui state
-    EXPECT_CALL(*ui_state, HandleEvent(_))
+    EXPECT_CALL(ui_state, HandleEvent(_))
         .Times(30);
 
     ASSERT_NO_FATAL_FAILURE(mApp.run());
@@ -164,9 +188,7 @@ TEST(StateMachineTests, ChangeStateTest)
     auto renderer = static_cast<RendererMock*>(&app.GetRenderer());
     NiceMock<DesktopMock> desktop;
 
-    EXPECT_CALL(*renderer, GetDesktop())
-        .WillRepeatedly(ReturnRef(desktop));
-    EXPECT_CALL(desktop, RemoveWidgets(_, _))
+    EXPECT_CALL(*renderer, RemoveWidgets(_, _))
         .Times(1);
 
     app.GetState()->ChangeState<AppStateDefs::FinalState>();
