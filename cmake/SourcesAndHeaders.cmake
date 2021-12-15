@@ -2,6 +2,7 @@ set(sources
     src/game/Playfield.cpp
     src/game/Location.cpp
     src/state/State.cpp
+    src/state/gs/GameState.cpp
     src/state/ui/UiState.cpp
     src/state/ui/UISEscapeMenu.cpp
     src/state/gs/GSMainMenu.cpp
