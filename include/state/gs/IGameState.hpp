@@ -1,22 +1,22 @@
 #ifndef IGAMESTATE_HPP_
 #define IGAMESTATE_HPP_
 
-#include <vector>
-#include "state/ILogicState.hpp"
+#include <SFML/Window/Event.hpp>
+#include <span>
 #include "game/IDrawable.hpp"
+#include "IRenderer.hpp"
 
-class IGameState : virtual public ILogicState
+class IGameState
 {
 public:
+    using DrawableSpan = std::span<std::weak_ptr<IDrawable>>;
     virtual ~IGameState() noexcept = 0;
 
-    virtual void SetPaused(bool) noexcept = 0;
+    virtual void HandleEvent(const sf::Event&, IRenderer&) = 0;
 
-    virtual bool IsPaused() noexcept = 0;
+    virtual void Update(const float secondsSinceLastUpdate, IRenderer&) = 0;
 
-    virtual IDrawable::Iter GetGameObjectBegin() noexcept = 0;
-
-    virtual IDrawable::Iter GetGameObjectEnd() noexcept = 0;
+    virtual DrawableSpan GetDrawableObjectsSpan() noexcept = 0;
 };
 
 inline IGameState::~IGameState() noexcept {};

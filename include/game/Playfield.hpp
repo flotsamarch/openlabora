@@ -3,58 +3,74 @@
 
 #include <array>
 #include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 #include <optional>
 #include "IDrawable.hpp"
-#include "Location.hpp"
-#include "Tile.hpp"
+#include "Entity.hpp"
 
-class Playfield final : public IDrawable
+class Playfield final : public Entity
 {
 public:
-    static constexpr unsigned int kFieldHeight{ 16 };
+    enum class TileType
+    {
+        None, Begin = None, Forest,
+        Hill, Mountain, Water, Coast,
+        Peat, End
+    };
+
+    struct TileInfo
+    {
+        sf::Vector2u indices{ 0u, 0u };
+        sf::Vector2f coord{ 0.f, 0.f };
+        TileType type{ TileType::None };
+    };
+
+    static constexpr unsigned int kFieldHeight{ 8 };
     static constexpr unsigned int kFieldWidth{ 9 };
     static constexpr unsigned int kTileHeight{ 150u };
     static constexpr unsigned int kTileWidth{ 100u };
-    using LocationSubArray =
-        std::array<std::unique_ptr<Location>, kFieldWidth>;
-    using LocationArray = std::array<LocationSubArray, kFieldHeight>;
-    using LocationIter = LocationSubArray::const_iterator;
+
+    // TODO make constexpr with latest SFML ver.
+    inline static const TileInfo kBadTile
+    {
+        sf::Vector2u{ 0u, 0u },
+        sf::Vector2f{ 0.f, 0.f },
+        TileType{ TileType::None }
+    };
 
     Playfield(const IResourceManager&);
 
-    sf::Vector2f SnapPointToTile(const sf::Vector2f&) const noexcept;
+    const sf::Drawable& GetDrawableObject() const noexcept override
+    { return *static_cast<sf::Sprite*>(mObject.get()); }
 
-    LocationIter GetLocationUnderPoint(const sf::Vector2f&);
-
-
-    void ChangeLocationTypeAtPoint(const sf::Vector2f& point,
-                                   Location::LocationType);
-
-    constexpr LocationIter LocationsEnd() const noexcept
-        { return mLocations.begin()->end(); };
-
-    const sf::Sprite& GetSprite() const noexcept override
-        { return mSprite; }
+    TileInfo GetTileInfoUnderPoint(const sf::Vector2f&) const;
 private:
-    std::array<std::array<Tile::TileType, kFieldWidth>, kFieldHeight> mTiles;
+    std::array<std::array<TileType, kFieldWidth>, kFieldHeight> mTiles;
     const IResourceManager& mResMgr;
-    LocationArray mLocations;
     sf::RenderTexture mGroundTexture;
-    sf::RenderTexture mLocationsTexture;
     sf::RenderTexture mTexture;
-    sf::Sprite mSprite;
-
-    bool IsTileValidForPlacement(const sf::Vector2u& indices,
-                                 Location::LocationType) const;
 
     std::optional<sf::Vector2u>
     GetTileIndicesUnderPoint(const sf::Vector2f&) const noexcept;
 
-    LocationIter GetOrCreateLocationAt(const sf::Vector2u&,
-                                       Location::LocationType =
-                                       Location::LocationType::Empty);
+    virtual void Move(float, float) override {};
 
-    void DrawLocationOnFieldTexture(const Location&);
+    virtual void Move(const sf::Vector2f&) override {};
+
+    virtual void SetPosition(float, float) override {};
+
+    virtual void SetPosition(const sf::Vector2f&) override {};
 };
+
+inline Playfield::TileType operator++ (Playfield::TileType& type) {
+    if (type == Playfield::TileType::End) {
+        return type;
+    }
+    type = static_cast<Playfield::TileType>(static_cast<int>(type) + 1);
+    return type;
+}
+
+bool operator==(const Playfield::TileInfo& lhs,
+                const Playfield::TileInfo& rhs);
 
 #endif // PLAYFIELD_HPP_

@@ -1,4 +1,5 @@
 set(sources
+    src/Renderer.cpp
     src/game/Playfield.cpp
     src/game/Location.cpp
     src/state/State.cpp
@@ -7,8 +8,9 @@ set(sources
     src/state/ui/UISEscapeMenu.cpp
     src/state/gs/GSMainMenu.cpp
     src/state/ui/UISMainMenu.cpp
-    src/state/gs/GSDuelHotSeat.cpp
-    src/state/ui/UISDuelHotSeat.cpp
+    src/state/gs/GSCommon.cpp
+    src/state/gs/GSDuel.cpp
+    src/state/ui/UISDuel.cpp
     src/Application.cpp
 )
 
@@ -18,6 +20,7 @@ set(exe_sources
 )
 
 set(headers
+    include/game/Entity.hpp
     include/game/Playfield.hpp
     include/game/Location.hpp
     include/game/PlayfieldInitArray.hpp
@@ -25,22 +28,20 @@ set(headers
     include/resource/IResourceManager.hpp
     include/IRenderer.hpp
     include/Renderer.hpp
-    include/GUI/IDesktop.hpp
-    include/GUI/Desktop.hpp
     include/state/State.hpp
     include/state/AppStateDefs.hpp
-    include/state/ILogicState.hpp
     include/state/gs/IGameState.hpp
     include/state/gs/GameState.hpp
     include/state/gs/GSMainMenu.hpp
-    include/state/gs/GSDuelHotSeat.hpp
     include/state/gs/GSFinal.hpp
+    include/state/gs/GSCommon.hpp
+    include/state/gs/GSDuel.hpp
     include/state/ui/IUiState.hpp
     include/state/ui/UiState.hpp
     include/state/ui/UISEscapeMenu.hpp
     include/state/ui/UISMainMenu.hpp
     include/state/ui/UISFinal.hpp
-    include/state/ui/UISDuelHotSeat.hpp
+    include/state/ui/UISDuel.hpp
     include/IApplication.hpp
     include/Application.hpp
 )

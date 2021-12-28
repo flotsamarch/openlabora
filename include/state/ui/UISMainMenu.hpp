@@ -6,7 +6,7 @@
 class UISMainMenu final : public UiState
 {
 public:
-    UISMainMenu(std::shared_ptr<State>);
+    UISMainMenu(std::shared_ptr<State>, const sf::VideoMode&);
 };
 
 

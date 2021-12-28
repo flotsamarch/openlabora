@@ -8,7 +8,7 @@ class UISEscapeMenu : public UiState
     bool bIsMenuHidden{ true };
     std::vector<sfg::Widget::Ptr> mMenuWidgets;
 public:
-    UISEscapeMenu(std::shared_ptr<State>);
+    UISEscapeMenu(std::shared_ptr<State>, const sf::VideoMode&);
 
     void HandleEvent(const sf::Event&) override;
 };

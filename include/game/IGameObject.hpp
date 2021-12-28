@@ -1,6 +1,0 @@
-#ifndef IGAMEOBJECT_HPP_
-#define IGAMEOBJECT_HPP_
-
-
-
-#endif // IGAMEOBJECT_HPP_

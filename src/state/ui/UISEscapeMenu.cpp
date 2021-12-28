@@ -5,14 +5,14 @@
 #include <SFGUI/Box.hpp>
 #include "state/State.hpp"
 #include "state/AppStateDefs.hpp"
-#include "state/gs/GSFinal.hpp"
-#include "state/ui/UISFinal.hpp"
+#include "state/gs/GSCommon.hpp"
 
-UISEscapeMenu::UISEscapeMenu(std::shared_ptr<State> state) : UiState { state }
+UISEscapeMenu::UISEscapeMenu(std::shared_ptr<State> state,
+                             const sf::VideoMode& vm)
+    : UiState { state, vm }
 {
-    auto video_mode = GetRenderer().GetVideoMode();
-    float col_width = video_mode.width / 3.f;
-    float screen_center_y = video_mode.height / 2.f;
+    float col_width = mVideoMode.width / 3.f;
+    float screen_center_y = mVideoMode.height / 2.f;
     float btn_height = 40.f;
     float total_height = btn_height;
 
@@ -21,7 +21,7 @@ UISEscapeMenu::UISEscapeMenu(std::shared_ptr<State> state) : UiState { state }
 
     quit_btn->GetSignal(sfg::Widget::OnLeftClick).Connect([state_ptr]{
         assert(!state_ptr.expired());
-        state_ptr.lock()->ChangeState<AppStateDefs::FinalState>();
+        state_ptr.lock()->SetNextState<AppStateDefs::FinalState>();
         });
 
     auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
@@ -34,18 +34,19 @@ UISEscapeMenu::UISEscapeMenu(std::shared_ptr<State> state) : UiState { state }
                                      col_width,
                                      total_height));
 
-    AddWidgetToDesktop(box);
+    mDesktop.Add(box);
     mMenuWidgets.push_back(box);
 }
 
 void UISEscapeMenu::HandleEvent(const sf::Event& evt)
 {
+    HandleEventCommon(evt);
     if ((evt.type == sf::Event::KeyPressed)
         && (evt.key.code == sf::Keyboard::Escape)) {
         for (auto& item : mMenuWidgets) {
             item->Show(bIsMenuHidden);
             assert(!mState.expired());
-            auto& state = static_cast<GameState&>(mState.lock()->GetGameState());
+            auto& state = static_cast<GSCommon&>(mState.lock()->GetGameState());
             state.SetPaused(bIsMenuHidden);
             bIsMenuHidden = !bIsMenuHidden;
         }

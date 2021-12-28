@@ -1,23 +1,21 @@
-#include "state/ui/UISDuelHotSeat.hpp"
+#include "state/ui/UISDuel.hpp"
 
 #include <cassert>
 #include <SFGUI/Button.hpp>
 #include <SFGUI/Box.hpp>
 #include "state/State.hpp"
 #include "state/AppStateDefs.hpp"
-#include "state/gs/GSFinal.hpp"
-#include "state/ui/UISFinal.hpp"
-#include "state/gs/GSDuelHotSeat.hpp"
+#include "state/gs/GSDuel.hpp"
 #include "IRenderer.hpp"
 #include "game/Location.hpp"
 
-UISDuelHotSeat::UISDuelHotSeat(std::shared_ptr<State> state) :
-    UISEscapeMenu{ state }
+UISDuel::UISDuel(std::shared_ptr<State> state,
+                               const sf::VideoMode& vm) :
+    UISEscapeMenu{ state, vm }
 {
-    auto video_mode = GetRenderer().GetVideoMode();
     auto btn_height = 40.f;
-    auto btn_width = 240.0f;
-    auto margin = 5.0f;
+    auto btn_width = 240.f;
+    auto margin = 5.f;
 
     auto state_ptr = mState;
 
@@ -36,7 +34,7 @@ UISDuelHotSeat::UISDuelHotSeat(std::shared_ptr<State> state) :
         btn->GetSignal(sfg::Widget::OnLeftClick).Connect([type, state_ptr]{
             assert(!state_ptr.expired());
             auto&& state =
-                static_cast<GSDuelHotSeat&>(state_ptr.lock()->GetGameState());
+                static_cast<GSDuel&>(state_ptr.lock()->GetGameState());
 
             if (!state.IsPaused()) {
                 state.EnableBuildMode(type);
@@ -47,9 +45,9 @@ UISDuelHotSeat::UISDuelHotSeat(std::shared_ptr<State> state) :
     }
 
     box->SetAllocation(sf::FloatRect(margin,
-                                     video_mode.height - margin - btn_height,
+                                     mVideoMode.height - margin - btn_height,
                                      (btn_width + margin) * buildable.size(),
                                      btn_height));
 
-    AddWidgetToDesktop(box);
+    mDesktop.Add(box);
 }

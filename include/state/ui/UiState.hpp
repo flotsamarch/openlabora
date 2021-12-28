@@ -3,7 +3,9 @@
 
 #include <memory>
 #include <vector>
+#include <SFGUI/Desktop.hpp>
 #include <SFGUI/Widget.hpp>
+#include <SFML/Window/VideoMode.hpp>
 #include "state/ui/IUiState.hpp"
 
 class State;
@@ -13,33 +15,31 @@ class UiState : public IUiState
 {
 protected:
     std::weak_ptr<State> mState;
-    std::vector<sfg::Widget::Ptr> mWidgets;
+    sfg::Desktop mDesktop;
+    const sf::VideoMode& mVideoMode;
 
-protected:
-    IRenderer& GetRenderer() const & override final;
+    void UpdateCommon(const float secondsSinceLastUpdate);
 
-    void AddWidgetToDesktop(sfg::Widget::Ptr) override final;
-
-    void RemoveAllWidgets() override final;
-
-public:
-    UiState(std::shared_ptr<State> state) : mState{ state } {};
-
-    inline ~UiState() noexcept = 0;
-
-    void HandleEvent(const sf::Event&) override {};
-
-    void HandleEventImpl(const sf::Event&) override {};
-
-    void Update([[maybe_unused]]const float seconds) override {};
-};
-
-inline UiState::~UiState() noexcept
-{
-    try {
-        RemoveAllWidgets();
+    void HandleEventCommon(const sf::Event& evt) {
+        mDesktop.HandleEvent(evt);
     }
-    catch (std::runtime_error&) {}
-}
+public:
+    UiState(std::shared_ptr<State> state, const sf::VideoMode& vm) :
+        mState{ state },
+        mVideoMode{ vm } {};
+
+    // inline
+    ~UiState() noexcept {
+        mDesktop.RemoveAll();
+        mDesktop.Refresh();
+    };
+
+    void HandleEvent(const sf::Event& evt) override {
+        HandleEventCommon(evt);
+    };
+
+    void Update(const float secondsSinceLastUpdate) override
+        { UpdateCommon(secondsSinceLastUpdate); };
+};
 
 #endif // UISTATE_HPP_

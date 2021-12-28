@@ -5,18 +5,12 @@
 #include "state/gs/GSMainMenu.hpp"
 #include "state/UI/UISMainMenu.hpp"
 #include "resource/ResourceManager.hpp"
-#include "GUI/Desktop.hpp"
 
 int main()
 {
-    using SfmlRenderer = Renderer<Desktop, sfg::SFGUI, sf::RenderWindow>;
-
-    auto renderer = std::make_unique<SfmlRenderer>();
-    auto res_mgr = std::make_unique<ResourceManager>();
-
-
+    auto renderer = std::make_unique<Renderer>();
     Application app{ AppStateDefs::MainMenuState{},
-        std::move(renderer), std::move(res_mgr)
+        std::move(renderer)
     };
 
     return app.run();

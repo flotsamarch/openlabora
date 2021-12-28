@@ -1,12 +1,12 @@
-#ifndef IMOVABLE_HPP_
-#define IMOVABLE_HPP_
+#ifndef ITRANSFORMABLE_HPP_
+#define ITRANSFORMABLE_HPP_
 
 #include "SFML/System/Vector2.hpp"
 
-class IMovable
+class ITransformable
 {
 public:
-    virtual ~IMovable() noexcept = 0;
+    virtual ~ITransformable() noexcept = 0;
 
     virtual void Move(float offset_x, float offset_y) = 0;
 
@@ -19,6 +19,6 @@ public:
     virtual sf::Vector2f GetPosition() = 0;
 };
 
-inline IMovable::~IMovable() noexcept {};
+inline ITransformable::~ITransformable() noexcept {};
 
-#endif // IMOVABLE_HPP_
+#endif // ITRANSFORMABLE_HPP_

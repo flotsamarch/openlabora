@@ -1,17 +1,16 @@
 #ifndef IUISTATE_HPP_
 #define IUISTATE_HPP_
 
-#include "state/ILogicState.hpp"
-#include "IRenderer.hpp"
+#include <SFML/Window/Event.hpp>
 
-class IUiState : virtual public ILogicState
+class IUiState
 {
-    virtual IRenderer& GetRenderer() const & = 0;
+public:
+    virtual ~IUiState() noexcept {};
 
-    virtual void AddWidgetToDesktop(sfg::Widget::Ptr) = 0;
+    virtual void HandleEvent(const sf::Event&) = 0;
 
-    // Remove all widgets that are created by THIS instance
-    virtual void RemoveAllWidgets() = 0;
+    virtual void Update(const float secondsSinceLastUpdate) = 0;
 };
 
 #endif // IUISTATE_HPP_

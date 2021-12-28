@@ -10,12 +10,12 @@ GSMainMenu::GSMainMenu(std::shared_ptr<State> state) : GameState{ state }
 {
 }
 
-void GSMainMenu::HandleEventImpl(const sf::Event& evt)
+void GSMainMenu::HandleEvent(const sf::Event& evt, IRenderer&)
 {
     if ((evt.type == sf::Event::KeyPressed)
         && (evt.key.code == sf::Keyboard::Escape)) {
         assert(!mState.expired());
-        mState.lock()->ChangeState<AppStateDefs::FinalState>();
+        mState.lock()->SetNextState<AppStateDefs::FinalState>();
     }
     return;
 }

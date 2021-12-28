@@ -2,13 +2,14 @@
 #include "game/Location.hpp"
 
 Location::Location(const IResourceManager& res_mgr, LocationType type)
-    : GameObject{ res_mgr, kTextureNames.find(type)->second },
-      mType{ type }
+    : mType{ type }, mResMgr{ res_mgr }
 {
+    mObject = std::make_unique<sf::Sprite>();
+    SetType(LocationType::Empty);
 }
 
 bool Location::IsPlaceableOn(LocationType location_t,
-                                    Tile::TileType tile_t)
+                             Playfield::TileType tile_t)
 {
     auto result = kPlaceableMap.find(location_t);
     if (result == kPlaceableMap.end()) {
@@ -22,5 +23,11 @@ void Location::SetType(LocationType type)
     mType = type;
     auto&& texture = kTextureNames.find(type);
     assert(texture != kTextureNames.end());
-    mSprite.setTexture(mResMgr.GetTextureByName(texture->second));
+    static_cast<sf::Sprite&>(*mObject).setTexture(
+        mResMgr.GetTextureByName(texture->second), true);
+}
+
+const sf::Drawable& Location::GetDrawableObject() const noexcept
+{
+    return static_cast<sf::Sprite&>(*mObject);
 }

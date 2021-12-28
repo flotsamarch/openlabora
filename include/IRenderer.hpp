@@ -19,19 +19,11 @@ public:
 
     virtual void Clear() = 0;
 
-    virtual void Draw(sf::Sprite) = 0;
+    virtual void Draw(const sf::Drawable&) = 0;
 
     virtual void Update(float timeSinceLastUpdate) = 0;
 
-    virtual void HandleEvent(const sf::Event&) = 0;
-
-    virtual void AddWidgetToDesktop(sfg::Widget::Ptr) = 0;
-
-    virtual void RemoveWidgets(
-        std::vector<sfg::Widget::Ptr>::iterator begin,
-        std::vector<sfg::Widget::Ptr>::iterator end) = 0;
-
-    virtual sf::VideoMode GetVideoMode() = 0;
+    virtual const sf::VideoMode& GetVideoMode() = 0;
 
     virtual void MoveView(float offset_x, float offset_y) = 0;
 
