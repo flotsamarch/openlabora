@@ -1,5 +1,6 @@
 set(sources
     src/Renderer.cpp
+    src/game/LandPurchaseMarker.cpp
     src/game/Playfield.cpp
     src/game/Location.cpp
     src/state/State.cpp
@@ -20,7 +21,10 @@ set(exe_sources
 )
 
 set(headers
+    include/game/ISelectable.hpp
     include/game/Entity.hpp
+    include/game/SelectableEntity.hpp
+    include/game/LandPurchaseMarker.hpp
     include/game/Playfield.hpp
     include/game/Location.hpp
     include/game/PlayfieldInitArray.hpp

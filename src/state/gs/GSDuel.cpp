@@ -28,19 +28,34 @@ void GSDuel::HandleEvent(const sf::Event& evt, IRenderer& renderer)
 
     assert(!mState.expired());
     auto state = mState.lock();
+    auto position = sf::Vector2i{ mMouseX, mMouseY };
+    auto mouse_pos_local = renderer.mapPixelToCoords(position);
     switch (evt.type) {
         case sf::Event::MouseMoved:
         {
             if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
                 renderer.MoveView(mMouseDeltaX, mMouseDeltaY);
             }
+
+            for (auto&& item : mSelectableObjects) {
+                if (item.expired()) {
+                    continue;
+                }
+
+                auto ptr = item.lock();
+                assert(ptr != nullptr);
+                if (ptr->IsUnderPoint(mouse_pos_local)) {
+                    ptr->OnHover();
+                } else {
+                    ptr->OnOut();
+                }
+            }
+
             break;
         }
         case sf::Event::MouseButtonPressed:
         {
             if (evt.mouseButton.button == sf::Mouse::Left && bBuildModeEnabled) {
-                auto position = sf::Vector2i(mMouseX, mMouseY);
-                auto mouse_pos_local = renderer.mapPixelToCoords(position);
                 auto pf_position = mPlayfields[Player1]->GetPosition();
 
                 ChangeLocationTypeAtPoint(mouse_pos_local - pf_position,

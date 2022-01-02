@@ -35,7 +35,7 @@ protected:
         mDrawableObjects.push_back(entity);
 
         if constexpr (std::derived_from<TEntity, ISelectable>) {
-            mSelectableObjects.emplace_back(entity);
+            mSelectableObjects.push_back(entity);
         }
         return entity;
     }
