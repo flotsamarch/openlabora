@@ -9,8 +9,11 @@ class UISEscapeMenu : public UiState
     std::vector<sfg::Widget::Ptr> mMenuWidgets;
 public:
     UISEscapeMenu(std::shared_ptr<State>, const sf::VideoMode&);
+    virtual ~UISEscapeMenu() noexcept = 0;
 
     void HandleEvent(const sf::Event&) override;
 };
+
+inline UISEscapeMenu::~UISEscapeMenu() noexcept {};
 
 #endif // UISESCAPEMENU_HPP_
