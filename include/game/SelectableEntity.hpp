@@ -1,8 +1,8 @@
-#ifndef SELECTABLEENTITY_HPP_
-#define SELECTABLEENTITY_HPP_
+#ifndef SELECTABLE_ENTITY_HPP_
+#define SELECTABLE_ENTITY_HPP_
 
-#include "Entity.hpp"
 #include "ISelectable.hpp"
+#include "Entity.hpp"
 
 class SelectableEntity : public Entity, public ISelectable
 {
@@ -11,11 +11,15 @@ protected:
     bool bWasEntered;
 
 public:
-    void Select() override { bIsSelected = true; }
+    virtual ~SelectableEntity() noexcept = 0;
+
+    void Select(IUiState&) override { bIsSelected = true; }
 
     void Deselect() override { bIsSelected = false; }
 
     bool IsSelected() const noexcept override final { return bIsSelected; };
 };
 
-#endif // SELECTABLEENTITY_HPP_
+inline SelectableEntity::~SelectableEntity() noexcept {};
+
+#endif // SELECTABLE_ENTITY_HPP_

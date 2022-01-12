@@ -16,7 +16,7 @@ public:
 
     virtual void SetPosition(const sf::Vector2f& offset) = 0;
 
-    virtual sf::Vector2f GetPosition() = 0;
+    virtual sf::Vector2f GetPosition() const = 0;
 };
 
 inline ITransformable::~ITransformable() noexcept {};

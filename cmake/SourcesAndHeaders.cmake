@@ -1,11 +1,13 @@
 set(sources
     src/Renderer.cpp
+    src/game/Plot.cpp
     src/game/LandPurchaseMarker.cpp
     src/game/Playfield.cpp
     src/game/Location.cpp
     src/state/State.cpp
     src/state/gs/GameState.cpp
     src/state/ui/UiState.cpp
+    src/state/ui/UISCommon.cpp
     src/state/ui/UISEscapeMenu.cpp
     src/state/gs/GSMainMenu.cpp
     src/state/ui/UISMainMenu.cpp
@@ -22,12 +24,14 @@ set(exe_sources
 
 set(headers
     include/game/ISelectable.hpp
+    include/game/IEntity.hpp
     include/game/Entity.hpp
+    include/game/Plot.hpp
+    include/game/Tile.hpp
     include/game/SelectableEntity.hpp
     include/game/LandPurchaseMarker.hpp
     include/game/Playfield.hpp
     include/game/Location.hpp
-    include/game/PlayfieldInitArray.hpp
     include/resource/ResourceManager.hpp
     include/resource/IResourceManager.hpp
     include/IRenderer.hpp
@@ -42,6 +46,7 @@ set(headers
     include/state/gs/GSDuel.hpp
     include/state/ui/IUiState.hpp
     include/state/ui/UiState.hpp
+    include/state/ui/UISCommon.hpp
     include/state/ui/UISEscapeMenu.hpp
     include/state/ui/UISMainMenu.hpp
     include/state/ui/UISFinal.hpp

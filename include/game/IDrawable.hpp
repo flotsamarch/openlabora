@@ -13,6 +13,8 @@ public:
 
     virtual const sf::Drawable& GetDrawableObject() const noexcept = 0;
 
+    virtual bool IsUnderPoint(const sf::Vector2f& point) const = 0;
+
     virtual ~IDrawable() noexcept {};
 };
 

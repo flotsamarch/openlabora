@@ -10,13 +10,26 @@ GSDuel::GSDuel(std::shared_ptr<State> state) : GSCommon { state }
     auto&& res_mgr = state->GetResourceManager();
 
     mPlayfields[Player1] = CreateEntity<Playfield>(res_mgr);
-    mBuildGhost = CreateEntity<Location>(res_mgr, Location::LocationType::Forest);
+    // mBuildGhost = CreateEntity<Location>(res_mgr, Location::LocationType::Forest);
 
-    mBuildGhost->SetPosition(Entity::kOutOfBounds);
+    // mBuildGhost->SetPosition(Entity::kOutOfBounds);
+    auto [plot_top, plot_bottom] =
+        mPlayfields[Player1]->GetLandTopAndBottomEdges(Plot::PlotType::Central);
 
-    auto size = sf::Vector2f(500.f, 500.f);
+    auto marker_pos = sf::Vector2f{ mPlayfields[Player1]->GetPosition().x,
+                                    plot_top - Tile::kTileHeight };
+    marker_pos.x +=
+        Tile::kTileWidth * Plot::GetPlotWidthTileCount(Plot::PlotType::Coastal);
 
-    auto marker = CreateEntity<LandPurchaseMarker>(size);
+    auto marker_central_top =
+        CreateEntity<LandPurchaseMarker>(Plot{Plot::kCentralPlotTop, res_mgr}, true);
+    marker_central_top->SetPosition(marker_pos);
+
+    marker_pos.y = plot_bottom;
+
+    auto marker_central_bottom =
+        CreateEntity<LandPurchaseMarker>(Plot{Plot::kCentralPlotBottom, res_mgr}, false);
+    marker_central_bottom->SetPosition(marker_pos);
 }
 
 void GSDuel::HandleEvent(const sf::Event& evt, IRenderer& renderer)
@@ -42,12 +55,12 @@ void GSDuel::HandleEvent(const sf::Event& evt, IRenderer& renderer)
                     continue;
                 }
 
-                auto ptr = item.lock();
-                assert(ptr != nullptr);
-                if (ptr->IsUnderPoint(mouse_pos_local)) {
-                    ptr->OnHover();
+                assert(!item.expired());
+                auto&& entity = static_cast<SelectableEntity&>(*item.lock());
+                if (entity.IsUnderPoint(mouse_pos_local)) {
+                    entity.OnHover();
                 } else {
-                    ptr->OnOut();
+                    entity.OnOut();
                 }
             }
 
@@ -58,12 +71,12 @@ void GSDuel::HandleEvent(const sf::Event& evt, IRenderer& renderer)
             if (evt.mouseButton.button == sf::Mouse::Left && bBuildModeEnabled) {
                 auto pf_position = mPlayfields[Player1]->GetPosition();
 
-                ChangeLocationTypeAtPoint(mouse_pos_local - pf_position,
-                                          *mPlayfields[Player1],
-                                          mBuildGhost->GetType());
+                // ChangeLocationTypeAtPoint(mouse_pos_local - pf_position,
+                                          // *mPlayfields[Player1],
+                                          // mBuildGhost->GetType());
 
                 bBuildModeEnabled = false;
-                mBuildGhost->SetPosition(Entity::kOutOfBounds);
+                // mBuildGhost->SetPosition(Entity::kOutOfBounds);
             }
             break;
         }
@@ -86,18 +99,19 @@ void GSDuel::Update(const float secondsSinceLastUpdate,
     auto mouse_pos_local = renderer.mapPixelToCoords(position);
     auto tile_info = mPlayfields[Player1]->
         GetTileInfoUnderPoint(mouse_pos_local-pf_position);
-    if (tile_info != Playfield::kBadTile &&
+    #if 0
+    if (tile_info != Tile::kBadTile &&
         bBuildModeEnabled && mBuildGhost != nullptr) {
         mBuildGhost->SetPosition(tile_info.coord);
     } else if (mBuildGhost->GetPosition() != Entity::kOutOfBounds) {
         mBuildGhost->SetPosition(Entity::kOutOfBounds);
     }
-
+    #endif
     return;
 }
 
 void GSDuel::EnableBuildMode(Location::LocationType type)
 {
-    mBuildGhost->SetType(type);
+    // mBuildGhost->SetType(type);
     bBuildModeEnabled = true;
 };

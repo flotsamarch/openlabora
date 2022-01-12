@@ -1,9 +1,9 @@
 #ifndef UISDUEL_HPP_
 #define UISDUEL_HPP_
 
-#include "UISEscapeMenu.hpp"
+#include "UISCommon.hpp"
 
-class UISDuel final : public UISEscapeMenu
+class UISDuel final : public UISCommon
 {
 public:
     UISDuel(std::shared_ptr<State>, const sf::VideoMode&);

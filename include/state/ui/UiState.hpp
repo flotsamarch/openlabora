@@ -17,29 +17,22 @@ protected:
     std::weak_ptr<State> mState;
     sfg::Desktop mDesktop;
     const sf::VideoMode& mVideoMode;
-
-    void UpdateCommon(const float secondsSinceLastUpdate);
-
-    void HandleEventCommon(const sf::Event& evt) {
-        mDesktop.HandleEvent(evt);
-    }
 public:
-    UiState(std::shared_ptr<State> state, const sf::VideoMode& vm) :
-        mState{ state },
-        mVideoMode{ vm } {};
+    UiState(std::shared_ptr<State> state, const sf::VideoMode& vm)
+        : mState{ state }, mVideoMode{ vm } {};
 
-    // inline
-    ~UiState() noexcept {
+    virtual ~UiState() noexcept
+    {
         mDesktop.RemoveAll();
         mDesktop.Refresh();
     };
 
-    void HandleEvent(const sf::Event& evt) override {
-        HandleEventCommon(evt);
+    void HandleEvent(const sf::Event& evt) override
+    {
+        mDesktop.HandleEvent(evt);
     };
 
-    void Update(const float secondsSinceLastUpdate) override
-        { UpdateCommon(secondsSinceLastUpdate); };
+    void Update(const float secondsSinceLastUpdate) override;
 };
 
 #endif // UISTATE_HPP_

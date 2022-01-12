@@ -1,5 +1,6 @@
 #include "state/gs/GSCommon.hpp"
 #include "state/State.hpp"
+#include "game/Tile.hpp"
 
 namespace
 {
@@ -39,8 +40,8 @@ void GSCommon::Update(const float secondsSinceLastUpdate,
 {
     UpdateCommon(secondsSinceLastUpdate, renderer);
 }
-
-LocationPtr GSCommon::GetOrCreateLocationOnTile(const Playfield::TileInfo& tile,
+#if 0
+LocationPtr GSCommon::GetOrCreateLocationOnTile(const Tile::TileInfo& tile,
                                                 Location::LocationType type)
 {
     auto&& location = mLocations[tile.indices.y][tile.indices.x];
@@ -51,7 +52,7 @@ LocationPtr GSCommon::GetOrCreateLocationOnTile(const Playfield::TileInfo& tile,
         location = std::make_shared<Location>(res_mgr, type);
         location->SetPosition(static_cast<float>(tile.coord.x),
                               static_cast<float>(tile.coord.y));
-        mDrawableObjects.push_back(location);
+)        mDrawableObjects.push_back(location);
         // TODO maybe also add this to mEntities
     }
 
@@ -64,7 +65,7 @@ LocationPtr GSCommon::ChangeLocationTypeAtPoint(const sf::Vector2f& point,
 {
     auto tile_info = playfield.GetTileInfoUnderPoint(point);
 
-    if (tile_info == Playfield::kBadTile ||
+    if (tile_info == Tile::kBadTile ||
         !Location::IsPlaceableOn(type, tile_info.type)) {
         return nullptr;
     }
@@ -76,3 +77,4 @@ LocationPtr GSCommon::ChangeLocationTypeAtPoint(const sf::Vector2f& point,
     }
     return location;
 }
+#endif

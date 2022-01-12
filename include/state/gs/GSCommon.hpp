@@ -2,15 +2,18 @@
 #define GSCOMMON_HPP_
 
 #include "GameState.hpp"
+#include "game/Tile.hpp"
 
 class GSCommon : public GameState
 {
+public:
+    enum PlayerAffiliation { Player1, Player2, Player3, Player4 };
+
 protected:
-    enum Affiliation { Player1, Player2, Player3, Player4 };
+    std::array<std::shared_ptr<Playfield>, 4> mPlayfields;
 
     std::shared_ptr<Location> mBuildGhost;
-    std::array<std::shared_ptr<Playfield>, 4> mPlayfields;
-    LocationArray mLocations;
+    // LocationArray mLocations;
 
     bool bBuildModeEnabled{ false };
     bool bPaused{ false };
@@ -23,14 +26,15 @@ protected:
 
     // Has to be called in every derived's Update()
     void UpdateCommon(const float secondsSinceLastUpdate, IRenderer&);
-
+    #if 0
     LocationPtr ChangeLocationTypeAtPoint(const sf::Vector2f&,
                                           const Playfield&,
                                           Location::LocationType);
 
-    LocationPtr GetOrCreateLocationOnTile(const Playfield::TileInfo&,
+    LocationPtr GetOrCreateLocationOnTile(const Tile::TileInfo&,
                                            Location::LocationType =
                                            Location::LocationType::Empty);
+    #endif
 
 public:
     GSCommon(std::shared_ptr<State>);
@@ -44,6 +48,11 @@ public:
     bool IsPaused() noexcept { return bPaused; }
 
     void EnableBuildMode(Location::LocationType);
+
+    std::shared_ptr<Playfield> GetActivePlayerPlayfield() const noexcept
+    {
+        return mPlayfields[Player1];
+    }
 };
 
 #endif // GSCOMMON_HPP_

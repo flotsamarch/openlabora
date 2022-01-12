@@ -1,20 +1,19 @@
 #ifndef ISELECTABLE_HPP_
 #define ISELECTABLE_HPP_
 
-#include "SFML/System/Vector2.hpp"
+#include <SFML/System/Vector2.hpp>
+#include "state/ui/IUiState.hpp"
 
 class ISelectable
 {
 public:
     virtual ~ISelectable() noexcept {};
 
-    virtual bool IsUnderPoint(const sf::Vector2f&) const noexcept = 0;
-
     virtual void OnHover() = 0;
 
     virtual void OnOut() = 0;
 
-    virtual void Select() = 0;
+    virtual void Select(IUiState&) = 0;
 
     virtual void Deselect() = 0;
 

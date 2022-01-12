@@ -17,12 +17,12 @@ UISEscapeMenu::UISEscapeMenu(std::shared_ptr<State> state,
     float total_height = btn_height;
 
     auto quit_btn = sfg::Button::Create("Quit");
-    auto state_ptr = mState;
+    auto&& state_ptr = mState;
 
     quit_btn->GetSignal(sfg::Widget::OnLeftClick).Connect([state_ptr]{
         assert(!state_ptr.expired());
         state_ptr.lock()->SetNextState<AppStateDefs::FinalState>();
-        });
+    });
 
     auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
     box->Show(false);
@@ -40,7 +40,7 @@ UISEscapeMenu::UISEscapeMenu(std::shared_ptr<State> state,
 
 void UISEscapeMenu::HandleEvent(const sf::Event& evt)
 {
-    HandleEventCommon(evt);
+    mDesktop.HandleEvent(evt);
     if ((evt.type == sf::Event::KeyPressed)
         && (evt.key.code == sf::Keyboard::Escape)) {
         for (auto& item : mMenuWidgets) {

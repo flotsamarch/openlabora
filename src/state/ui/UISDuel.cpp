@@ -10,8 +10,8 @@
 #include "game/Location.hpp"
 
 UISDuel::UISDuel(std::shared_ptr<State> state,
-                               const sf::VideoMode& vm) :
-    UISEscapeMenu{ state, vm }
+                 const sf::VideoMode& vm)
+    : UISCommon{ state, vm }
 {
     auto btn_height = 40.f;
     auto btn_width = 240.f;

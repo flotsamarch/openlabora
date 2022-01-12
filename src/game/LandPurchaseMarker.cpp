@@ -1,17 +1,13 @@
 #include "game/LandPurchaseMarker.hpp"
+#include "resource/IResourceManager.hpp"
+#include "state/ui/UISCommon.hpp"
 
-LandPurchaseMarker::LandPurchaseMarker(const sf::Vector2f& size)
+LandPurchaseMarker::LandPurchaseMarker(const Plot& plot,
+                                       bool moves_up)
+    : mPlot{ plot }, bMovesUp{ moves_up }
 {
-    mObject = std::make_unique<sf::RectangleShape>(size);
-    auto&& shape = GetShape();
-    shape.setFillColor(sf::Color::Transparent);
-    shape.setOutlineColor(sf::Color::Transparent);
-    shape.setOutlineThickness(5);
-}
-
-bool LandPurchaseMarker::IsUnderPoint(const sf::Vector2f& point) const noexcept
-{
-    return GetShape().getGlobalBounds().contains(point);
+    mObject = static_cast<const sf::Sprite&>(mPlot.GetDrawableObject());
+    mObject.setColor(sf::Color::Transparent);
 }
 
 void LandPurchaseMarker::OnHover()
@@ -22,7 +18,7 @@ void LandPurchaseMarker::OnHover()
 
     bWasEntered = true;
 
-    GetShape().setOutlineColor(sf::Color::Yellow);
+    mObject.setColor(kHalfTransparent);
 }
 
 void LandPurchaseMarker::OnOut()
@@ -33,5 +29,14 @@ void LandPurchaseMarker::OnOut()
 
     bWasEntered = false;
 
-    GetShape().setOutlineColor(sf::Color::Transparent);
+    mObject.setColor(sf::Color::Transparent);
+}
+
+void LandPurchaseMarker::Select(IUiState& ui_state)
+{
+    auto&& state = static_cast<UISCommon&>(ui_state);
+    if (state.DrawSelectPlotWindow(mPlot.GetType(), bMovesUp, mPlot.GetPosition())) {
+        Move(0.f, mPlot.GetType() == Plot::PlotType::Central ?
+             Tile::kTileHeight : 2 * Tile::kTileHeight);
+    }
 }

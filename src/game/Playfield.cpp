@@ -3,90 +3,85 @@
 #include <algorithm>
 #include <cmath>
 #include "game/Playfield.hpp"
-#include "game/PlayfieldInitArray.hpp"
 #include "resource/ResourceManager.hpp"
 
 namespace
 {
-    using TileInfo = Playfield::TileInfo;
+
+using TileInfo = Tile::TileInfo;
+using PlotType = Plot::PlotType;
+
 }
 
-Playfield::Playfield(const IResourceManager& res_mgr) :
-    mTiles{ kPlayfieldInitArray }, mResMgr{ res_mgr }
+Playfield::Playfield(const IResourceManager& res_mgr)
+    : mResMgr{ res_mgr }
 {
-    mObject = std::make_unique<sf::Sprite>();
-    std::unordered_map<TileType, sf::Texture> mTileTextures;
+    auto plot_top = Plot{ Plot::kCentralPlotTop, res_mgr };
+    auto plot_bottom = Plot{ Plot::kCentralPlotBottom, res_mgr };
+    auto offset_x = Tile::kTileWidth *
+        Plot::GetPlotWidthTileCount(PlotType::Coastal);
+    plot_top.SetPosition(offset_x, 0);
+    plot_bottom.SetPosition(offset_x, Tile::kTileHeight);
+    PushPlotBack(plot_top);
+    PushPlotBack(plot_bottom);
 
-    mTileTextures[TileType::Forest] = res_mgr.GetTextureByName("forest");
-    mTileTextures[TileType::Coast] = res_mgr.GetTextureByName("coast");
-    mTileTextures[TileType::Water] = res_mgr.GetTextureByName("water");
-    mTileTextures[TileType::Peat] = res_mgr.GetTextureByName("peat_empty");
-    mTileTextures[TileType::Hill] = res_mgr.GetTextureByName("hill");
-    mTileTextures[TileType::Mountain] = res_mgr.GetTextureByName("mountain");
+    mGroundTexture.create(Tile::kTileWidth * kFieldWidth,
+                          Tile::kTileHeight * kFieldHeight);
+    DrawPlotsAsSprite();
+}
 
-    mGroundTexture.create(kTileWidth * kFieldWidth, kTileHeight * kFieldHeight);
-
-    for (std::size_t row{0u}, col{0u}; auto& sub_array : mTiles) {
-            sf::Sprite sprite;
-            for (auto& item : sub_array) {
-                if (item == TileType::None) {
-                    continue;
-                }
-                sprite.setTexture(mTileTextures[item], true);
-                float left = static_cast<float>(kTileWidth * col);
-                float top = static_cast<float>(kTileHeight * row);
-                sprite.setPosition(left, top);
-                mGroundTexture.draw(sprite);
-                col++;
+void Playfield::DrawPlotsAsSprite()
+{
+    for (auto&& sub_plots : mPlots) {
+            for (auto&& item : sub_plots.second) {
+                auto&& plot_sprite = item.GetDrawableObject();
+                mGroundTexture.draw(plot_sprite);
         }
-        row++;
-        col = 0u;
     }
 
     mGroundTexture.display();
-    static_cast<sf::Sprite*>(mObject.get())->
-        setTexture(mGroundTexture.getTexture(), true);
+    mObject.setTexture(mGroundTexture.getTexture(), true);
 }
 
 TileInfo Playfield::GetTileInfoUnderPoint(const sf::Vector2f& point) const
 {
-
-    auto indices = GetTileIndicesUnderPoint(point);
-
-    if (indices == std::nullopt) {
-        return kBadTile;
+    // This is just a general check, we cannot rely on it for weirdly shaped pfs
+    if (!mObject.getGlobalBounds().contains(point)) {
+        return Tile::kBadTile;
     }
 
-    auto tile_info = TileInfo{};
-    tile_info.indices = indices.value();
-    tile_info.coord = sf::Vector2f{
-        static_cast<float>(tile_info.indices.x * kTileWidth),
-        static_cast<float>(tile_info.indices.y * kTileHeight)
-    };
-    tile_info.type = mTiles[tile_info.indices.y][tile_info.indices.x];
+    auto local_pos = GetPosition() - point;
 
-    return tile_info;
-}
-
-std::optional<sf::Vector2u>
-Playfield::GetTileIndicesUnderPoint(const sf::Vector2f& point) const noexcept
-{
-    if (point.x < 0 || point.y < 0
-        || point.x > kTileWidth * kFieldWidth
-        || point.y > kTileHeight * kFieldHeight) {
-        return {};
+    auto type = PlotType::Begin;
+    while (type != PlotType::End &&
+           local_pos.x < Tile::kTileWidth * Plot::GetPlotWidthTileCount(type)) {
+        local_pos.x -= Tile::kTileWidth;
+        ++type;
     }
 
-    return sf::Vector2u{
-        static_cast<unsigned int>(std::trunc(point.x / kTileWidth)),
-        static_cast<unsigned int>(std::trunc(point.y / kTileHeight))
-    };
+    auto&& plot_deq = mPlots.find(type);
+    if (plot_deq == mPlots.end() || plot_deq->second.empty()) {
+        return Tile::kBadTile;
+    }
+
+    auto plot_top = plot_deq->second.front().GetPosition().y;
+    auto plot_index = (plot_top - point.y) / Tile::kTileHeight;
+
+    if (plot_index < 0 || plot_index > plot_deq->second.size()) {
+        return Tile::kBadTile;
+    }
+
+    return plot_deq->second[plot_index].GetTileInfoUnderPoint(point);
 }
 
-bool operator==(const Playfield::TileInfo& lhs,
-                const Playfield::TileInfo& rhs)
+std::tuple<float, float>
+Playfield::GetLandTopAndBottomEdges(Plot::PlotType type) const
 {
-    return lhs.coord == rhs.coord &&
-        lhs.indices == rhs.indices &&
-        lhs.type == rhs.type;
+    auto&& plot_deq = mPlots.find(type);
+    if (plot_deq == mPlots.end() || plot_deq->second.empty()) {
+        return {0.f, 0.f};
+    }
+
+    return { plot_deq->second.front().GetPosition().y,
+        plot_deq->second.back().GetPosition().y + Tile::kTileHeight };
 }

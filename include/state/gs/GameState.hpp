@@ -8,7 +8,7 @@
 #include "game/Playfield.hpp"
 #include "game/IDrawable.hpp"
 #include "game/ISelectable.hpp"
-#include "game/Entity.hpp"
+#include "game/IEntity.hpp"
 #include "game/Location.hpp"
 
 class State;
@@ -22,7 +22,7 @@ protected:
     using LocationSubArray = std::array<LocationPtr, Playfield::kFieldWidth>;
     using LocationArray = std::array<LocationSubArray, Playfield::kFieldHeight>;
     // using LocationIter = LocationSubArray::const_iterator;
-    std::vector<std::shared_ptr<Entity>> mEntities;
+    std::vector<std::shared_ptr<IEntity>> mEntities;
     std::vector<std::weak_ptr<IDrawable>> mDrawableObjects;
     std::vector<std::weak_ptr<ISelectable>> mSelectableObjects;
     std::weak_ptr<State> mState;

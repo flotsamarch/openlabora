@@ -6,8 +6,9 @@
 #include "Entity.hpp"
 #include "ISelectable.hpp"
 #include "Playfield.hpp"
+#include "Tile.hpp"
 
-class Location final : public Entity//, public ISelectable
+class Location final : public Entity
 {
 public:
     enum class LocationType {
@@ -17,17 +18,15 @@ public:
 
     Location(const IResourceManager&, LocationType);
 
-    static bool IsPlaceableOn(LocationType, Playfield::TileType);
+    static bool IsPlaceableOn(LocationType, Tile::TileType);
     static std::string_view GetLocationName(LocationType type)
         { return kLocationNames.find(type)->second; }
 
     LocationType GetType() const noexcept { return mType; }
     void SetType(LocationType);
-
-    const sf::Drawable& GetDrawableObject() const noexcept override;
 private:
     using LocationStrMap = std::unordered_map<LocationType, std::string_view>;
-    using PlaceableMap = std::unordered_map<LocationType, Playfield::TileType>;
+    using PlaceableMap = std::unordered_map<LocationType, Tile::TileType>;
     LocationType mType;
     const IResourceManager& mResMgr;
 
@@ -43,11 +42,11 @@ private:
 
     inline static const PlaceableMap kPlaceableMap
     {
-        {Location::LocationType::Forest, Playfield::TileType::Forest},
-        {Location::LocationType::Peat, Playfield::TileType::Peat},
-        {Location::LocationType::HouseBoat, Playfield::TileType::Water},
-        {Location::LocationType::FishingVillage, Playfield::TileType::Coast},
-        {Location::LocationType::ClayMound, Playfield::TileType::Hill}
+        {Location::LocationType::Forest, Tile::TileType::Forest},
+        {Location::LocationType::Peat, Tile::TileType::Peat},
+        {Location::LocationType::HouseBoat, Tile::TileType::Water},
+        {Location::LocationType::FishingVillage, Tile::TileType::Coast},
+        {Location::LocationType::ClayMound, Tile::TileType::Hill}
     };
 
     inline static const LocationStrMap kLocationNames
