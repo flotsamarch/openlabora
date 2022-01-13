@@ -1,11 +1,15 @@
 #ifndef UISCOMMON_HPP_
 #define UISCOMMON_HPP_
 
-#include "UISEscapeMenu.hpp"
+#include <SFGUI/Widget.hpp>
+#include "UiState.hpp"
 #include "game/Plot.hpp"
 
-class UISCommon : public UISEscapeMenu
+// Base class for states that implement gameplay
+class UISCommon : public UiState
 {
+    bool bIsMenuHidden{ true };
+    std::vector<sfg::Widget::Ptr> mMenuWidgets;
 protected:
     void HandleEventCommon(const sf::Event&);
 

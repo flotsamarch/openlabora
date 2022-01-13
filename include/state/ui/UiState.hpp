@@ -18,6 +18,7 @@ protected:
     sfg::Desktop mDesktop;
     const sf::VideoMode& mVideoMode;
 public:
+    // TODO Think of a way to access videomode without dependency injection
     UiState(std::shared_ptr<State> state, const sf::VideoMode& vm)
         : mState{ state }, mVideoMode{ vm } {};
 
