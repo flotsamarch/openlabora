@@ -18,14 +18,16 @@ UISMainMenu::UISMainMenu(std::shared_ptr<State> state, const sf::VideoMode& vm) 
 
     auto duel_btn = sfg::Button::Create("Duel");
     auto quit_btn = sfg::Button::Create("Quit");
-    auto state_ptr = mState;
 
-    duel_btn->GetSignal(sfg::Widget::OnLeftClick).Connect([state_ptr] ()
+    duel_btn->GetSignal(sfg::Widget::OnLeftClick).Connect(
+    [state_ptr = this->mState]
     {
         assert(!state_ptr.expired());
         state_ptr.lock()->SetNextState<AppStateDefs::DuelState>();
     });
-    quit_btn->GetSignal(sfg::Widget::OnLeftClick).Connect([state_ptr] ()
+
+    quit_btn->GetSignal(sfg::Widget::OnLeftClick).Connect(
+    [state_ptr = this->mState]
     {
         assert(!state_ptr.expired());
         state_ptr.lock()->SetNextState<AppStateDefs::FinalState>();

@@ -16,11 +16,12 @@ UISCommon::UISCommon(std::shared_ptr<State> state,
     float total_height = btn_height;
 
     auto quit_btn = sfg::Button::Create("Quit");
-    auto&& state_ptr = mState;
 
-    quit_btn->GetSignal(sfg::Widget::OnLeftClick).Connect([state_ptr]{
-        assert(!state_ptr.expired());
-        state_ptr.lock()->SetNextState<AppStateDefs::FinalState>();
+    quit_btn->GetSignal(sfg::Widget::OnLeftClick).Connect(
+    [state = this->mState]
+    {
+        assert(!state.expired());
+        state.lock()->SetNextState<AppStateDefs::FinalState>();
     });
 
     auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
@@ -73,14 +74,14 @@ bool UISCommon::DrawSelectPlotWindow(Plot::PlotType type,
 {
     auto window = sfg::Window::Create(sfg::Window::Style::NO_STYLE);
     auto box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
-    auto&& state_ptr = mState;
 
     if (type == Plot::PlotType::Central) {
         auto plot_btn1 = sfg::Button::Create("Plot 1");
         auto plot_btn2 = sfg::Button::Create("Plot 2");
 
-        plot_btn1->GetSignal( sfg::Widget::OnLeftClick ).Connect(
-            [state_ptr, position, push_front]{
+        plot_btn1->GetSignal(sfg::Widget::OnLeftClick).Connect(
+        [state_ptr = this->mState, position, push_front]
+        {
             assert(!state_ptr.expired());
             auto&& state =
                 static_cast<GSCommon&>(state_ptr.lock()->GetGameState());
