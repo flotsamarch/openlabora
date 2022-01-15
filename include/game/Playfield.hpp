@@ -26,11 +26,13 @@ public:
     void PushPlotBack(const Plot& plot)
     {
         mPlots[plot.GetType()].push_back(plot);
+        DrawPlotsAsSprite();
     }
 
     void PushPlotFront(const Plot& plot)
     {
         mPlots[plot.GetType()].push_front(plot);
+        DrawPlotsAsSprite();
     }
 
     // Returns y coordinates of top and bottom edges of owned lands by plot type

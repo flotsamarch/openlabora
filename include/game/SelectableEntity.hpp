@@ -13,7 +13,7 @@ protected:
 public:
     virtual ~SelectableEntity() noexcept = 0;
 
-    void Select(IUiState&) override { bIsSelected = true; }
+    void Select(std::shared_ptr<State>) override { bIsSelected = true; }
 
     void Deselect() override { bIsSelected = false; }
 

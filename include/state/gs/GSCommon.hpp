@@ -13,10 +13,12 @@ protected:
     std::array<std::shared_ptr<Playfield>, 4> mPlayfields;
 
     std::shared_ptr<Location> mBuildGhost;
+    std::weak_ptr<ISelectable> mEntityUnderCursor;
     // LocationArray mLocations;
 
     bool bBuildModeEnabled{ false };
     bool bPaused{ false };
+    bool bMouseCapturedByGui{ false };
 
     int mMouseX = 0, mMouseY = 0;
     float mMouseDeltaX = 0, mMouseDeltaY = 0; // Delta between frames
@@ -44,6 +46,11 @@ public:
     void Update(const float secondsSinceLastUpdate, IRenderer&) override;
 
     void SetPaused(bool paused) noexcept { bPaused = paused; }
+
+    void SetMouseCapturedFlag(bool captured) noexcept
+    {
+        bMouseCapturedByGui = captured;
+    }
 
     bool IsPaused() noexcept { return bPaused; }
 

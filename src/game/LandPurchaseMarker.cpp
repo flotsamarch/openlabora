@@ -1,3 +1,4 @@
+#include "state/state.hpp"
 #include "game/LandPurchaseMarker.hpp"
 #include "resource/IResourceManager.hpp"
 #include "state/ui/UISCommon.hpp"
@@ -32,11 +33,8 @@ void LandPurchaseMarker::OnOut()
     mObject.setColor(sf::Color::Transparent);
 }
 
-void LandPurchaseMarker::Select(IUiState& ui_state)
+void LandPurchaseMarker::Select(std::shared_ptr<State> state)
 {
-    auto&& state = static_cast<UISCommon&>(ui_state);
-    if (state.DrawSelectPlotWindow(mPlot.GetType(), bMovesUp, mPlot.GetPosition())) {
-        Move(0.f, mPlot.GetType() == Plot::PlotType::Central ?
-             Tile::kTileHeight : 2 * Tile::kTileHeight);
-    }
+    auto&& ui_state = static_cast<UISCommon&>(state->GetUiState());
+    ui_state.DrawCentralPlotSelectionWindow(mPlot.GetType(), bMovesUp);
 }

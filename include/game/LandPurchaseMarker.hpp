@@ -19,7 +19,7 @@ public:
 
     void OnOut() override;
 
-    void Select(IUiState&) override;
+    void Select(std::shared_ptr<State>) override;
 
     // bool IsUnderPoint(const sf::Vector2f&) const override;
 };

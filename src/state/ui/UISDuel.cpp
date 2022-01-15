@@ -1,8 +1,8 @@
 #include "state/ui/UISDuel.hpp"
 
 #include <cassert>
-#include <SFGUI/Button.hpp>
 #include <SFGUI/Box.hpp>
+#include "GUI/IngameButton.hpp"
 #include "state/State.hpp"
 #include "state/AppStateDefs.hpp"
 #include "state/gs/GSDuel.hpp"
@@ -26,8 +26,8 @@ UISDuel::UISDuel(std::shared_ptr<State> state,
     auto box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL, margin);
 
     for (auto type : buildable) {
-        auto btn =
-            sfg::Button::Create(std::string(Location::GetLocationName(type)));
+        auto location_name = std::string(Location::GetLocationName(type));
+        auto btn = IngameButton::Create(mState.lock(), location_name);
 
         btn->GetSignal(sfg::Widget::OnLeftClick).Connect(
         [type, state_ptr = this->mState]

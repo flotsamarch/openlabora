@@ -21,20 +21,23 @@ GSDuel::GSDuel(std::shared_ptr<State> state) : GSCommon { state }
     marker_pos.x +=
         Tile::kTileWidth * Plot::GetPlotWidthTileCount(Plot::PlotType::Coastal);
 
-    auto marker_central_top =
-        CreateEntity<LandPurchaseMarker>(Plot{Plot::kCentralPlotTop, res_mgr}, true);
+    auto marker_central_top = CreateEntity<LandPurchaseMarker>(
+        Plot{Plot::kCentralPlotTop, res_mgr}, true);
+
     marker_central_top->SetPosition(marker_pos);
 
     marker_pos.y = plot_bottom;
 
-    auto marker_central_bottom =
-        CreateEntity<LandPurchaseMarker>(Plot{Plot::kCentralPlotBottom, res_mgr}, false);
+    auto marker_central_bottom = CreateEntity<LandPurchaseMarker>(
+        Plot{Plot::kCentralPlotBottom, res_mgr}, false);
+
     marker_central_bottom->SetPosition(marker_pos);
 }
 
 void GSDuel::HandleEvent(const sf::Event& evt, IRenderer& renderer)
 {
     HandleEventCommon(evt, renderer);
+
     if (bPaused) {
         return;
     }
@@ -43,6 +46,7 @@ void GSDuel::HandleEvent(const sf::Event& evt, IRenderer& renderer)
     auto state = mState.lock();
     auto position = sf::Vector2i{ mMouseX, mMouseY };
     auto mouse_pos_local = renderer.mapPixelToCoords(position);
+
     switch (evt.type) {
         case sf::Event::MouseMoved:
         {
@@ -50,24 +54,43 @@ void GSDuel::HandleEvent(const sf::Event& evt, IRenderer& renderer)
                 renderer.MoveView(mMouseDeltaX, mMouseDeltaY);
             }
 
+            if (bMouseCapturedByGui) {
+                break;
+            }
+
             for (auto&& item : mSelectableObjects) {
                 if (item.expired()) {
                     continue;
                 }
 
-                assert(!item.expired());
                 auto&& entity = static_cast<SelectableEntity&>(*item.lock());
                 if (entity.IsUnderPoint(mouse_pos_local)) {
+                    mEntityUnderCursor = item;
                     entity.OnHover();
                 } else {
+                    if (!mEntityUnderCursor.expired()
+                        && mEntityUnderCursor.lock() == item.lock())
+                    {
+                        mEntityUnderCursor.lock() = nullptr;
+                    }
                     entity.OnOut();
                 }
             }
-
             break;
         }
         case sf::Event::MouseButtonPressed:
         {
+            if (bMouseCapturedByGui) {
+                break;
+            }
+
+            if (evt.mouseButton.button == sf::Mouse::Left
+                && !mEntityUnderCursor.expired()
+                && mEntityUnderCursor.lock() != nullptr)
+            {
+                mEntityUnderCursor.lock()->Select(mState.lock());
+            }
+
             if (evt.mouseButton.button == sf::Mouse::Left && bBuildModeEnabled) {
                 auto pf_position = mPlayfields[Player1]->GetPosition();
 

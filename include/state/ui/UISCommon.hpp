@@ -2,6 +2,7 @@
 #define UISCOMMON_HPP_
 
 #include <SFGUI/Widget.hpp>
+#include <SFGUI/Window.hpp>
 #include "UiState.hpp"
 #include "game/Plot.hpp"
 
@@ -9,7 +10,11 @@
 class UISCommon : public UiState
 {
     bool bIsMenuHidden{ true };
+    bool bIsCentralPlotSelectionHidden{ true };
+    bool bExtendUpwards{ false };
     std::vector<sfg::Widget::Ptr> mMenuWidgets;
+    sfg::Window::Ptr mCentralPlotSelectionWindow;
+    sfg::Window::Ptr mSidePlotSelectionWindow;
 protected:
     void HandleEventCommon(const sf::Event&);
 
@@ -23,8 +28,8 @@ public:
 
     void Update(const float secondsSinceLastUpdate) override;
 
-    bool DrawSelectPlotWindow(Plot::PlotType, bool push_front,
-                              const sf::Vector2f position);
+    bool DrawCentralPlotSelectionWindow(Plot::PlotType, bool push_front);
+
 };
 
 inline UISCommon::~UISCommon() noexcept {};

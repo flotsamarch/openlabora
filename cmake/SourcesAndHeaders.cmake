@@ -5,6 +5,7 @@ set(sources
     src/game/Playfield.cpp
     src/game/Location.cpp
     src/state/State.cpp
+    src/GUI/IngameButton.cpp
     src/state/gs/GameState.cpp
     src/state/ui/UiState.cpp
     src/state/ui/UISCommon.cpp
@@ -36,6 +37,7 @@ set(headers
     include/IRenderer.hpp
     include/Renderer.hpp
     include/state/State.hpp
+    include/GUI/IngameButton.hpp
     include/state/AppStateDefs.hpp
     include/state/gs/IGameState.hpp
     include/state/gs/GameState.hpp
