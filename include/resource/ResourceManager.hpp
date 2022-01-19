@@ -7,6 +7,9 @@
 #include <iostream>
 #include "IResourceManager.hpp"
 
+namespace OpenLabora
+{
+
 class ResourceManager final : public IResourceManager
 {
     std::unordered_map<std::string, sf::Texture> mTextures;
@@ -43,5 +46,7 @@ public:
         }
     }
 };
+
+} // namespace OpenLabora
 
 #endif // RESOURCEMANAGER_HPP_

@@ -1,13 +1,11 @@
 #include <iostream>
 #include "Application.hpp"
 #include "Renderer.hpp"
-#include "state/AppStateDefs.hpp"
-#include "state/gs/GSMainMenu.hpp"
-#include "state/UI/UISMainMenu.hpp"
-#include "resource/ResourceManager.hpp"
+#include "AppState/AppStateDefs.hpp"
 
 int main()
 {
+    using namespace OpenLabora;
     auto renderer = std::make_unique<Renderer>();
     Application app{ AppStateDefs::MainMenuState{},
         std::move(renderer)

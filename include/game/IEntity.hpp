@@ -4,12 +4,17 @@
 #include "SFML/System/Vector2.hpp"
 #include "SFML/Graphics/Drawable.hpp"
 
+namespace OpenLabora
+{
+
 class IEntity
 {
 public:
-    virtual ~IEntity() noexcept = 0;
+    virtual ~IEntity() = 0;
 };
 
-inline IEntity::~IEntity() noexcept {};
+inline IEntity::~IEntity() {};
+
+} // namespace OpenLabora
 
 #endif // IENTITY_HPP_

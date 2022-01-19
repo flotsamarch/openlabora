@@ -3,21 +3,28 @@
 
 #include <memory>
 #include <SFGUI/Button.hpp>
-#include "state/State.hpp"
+#include "GameState/Views/IGameView.hpp"
 
-// Button for use in classes derived from GSCommon
-// It tells gamestate when mouse entered and left its bounds by switching flag
+namespace OpenLabora
+{
+
+// Button that is compatible with clickable entities
+// It sets a corresponding flag when mouse enters or leaves it
+// Should be owned only by classes derived from GameView
 class IngameButton final : public sfg::Button
 {
-    std::weak_ptr<::State> mState;
+    IGameView& mGameView;
+
 private:
-    IngameButton() = default;
-    void SetGameState(std::shared_ptr<::State>);
+    IngameButton(IGameView&);
+    void SetGameState(IGameView&);
+
 public:
     using Ptr = std::shared_ptr<IngameButton>;
 
-    static Ptr Create(std::shared_ptr<::State>, const sf::String& label = L"" );
+    static Ptr Create(IGameView&, const sf::String& label = L"" );
 };
 
+} // namespace OpenLabora
 
 #endif // INGAMEBUTTON_HPP_

@@ -1,19 +1,21 @@
 set(sources
+    # Gameplay classes
+    src/Game/Plot.cpp
+    src/Game/ExpansionMarker.cpp
+    src/Game/Playfield.cpp
+    src/Game/Location.cpp
+    src/GUI/InGameButton.cpp
+    # Game states
+    src/GameState/Views/GameView.cpp
+    src/GameState/Views/GVMainMenu.cpp
+    src/GameState/Views/GVDuel.cpp
+    src/GameState/Controllers/GameController.cpp
+    src/GameState/Controllers/GCMainMenu.cpp
+    src/GameState/Controllers/GCDuel.cpp
+    # Game systems
     src/Renderer.cpp
-    src/game/Plot.cpp
-    src/game/LandPurchaseMarker.cpp
-    src/game/Playfield.cpp
-    src/game/Location.cpp
-    src/state/State.cpp
-    src/GUI/IngameButton.cpp
-    src/state/gs/GameState.cpp
-    src/state/ui/UiState.cpp
-    src/state/ui/UISCommon.cpp
-    src/state/gs/GSMainMenu.cpp
-    src/state/ui/UISMainMenu.cpp
-    src/state/gs/GSCommon.cpp
-    src/state/gs/GSDuel.cpp
-    src/state/ui/UISDuel.cpp
+    src/AppState/AppStateManager.cpp
+    src/GUI/InGameButton.cpp
     src/Application.cpp
 )
 
@@ -23,34 +25,36 @@ set(exe_sources
 )
 
 set(headers
-    include/game/ISelectable.hpp
-    include/game/IEntity.hpp
-    include/game/Entity.hpp
-    include/game/Plot.hpp
-    include/game/Tile.hpp
-    include/game/SelectableEntity.hpp
-    include/game/LandPurchaseMarker.hpp
-    include/game/Playfield.hpp
-    include/game/Location.hpp
+    # Gameplay classes
+    include/Game/ISelectable.hpp
+    include/Game/IEntity.hpp
+    include/Game/Entity.hpp
+    include/Game/Plot.hpp
+    include/Game/Tile.hpp
+    include/Game/SelectableEntity.hpp
+    include/Game/ExpansionMarker.hpp
+    include/Game/Playfield.hpp
+    include/Game/Location.hpp
+    include/GUI/InGameButton.hpp
+    # Game states
+    include/GameState/Model.hpp
+    include/GameState/Views/IGameView.hpp
+    include/GameState/Views/GameView.hpp
+    include/GameState/Views/GVFinal.hpp
+    include/GameState/Views/GVMainMenu.hpp
+    include/GameState/Views/GVDuel.hpp
+    include/GameState/Controllers/IGameController.hpp
+    include/GameState/Controllers/GameController.hpp
+    include/GameState/Controllers/GCFinal.hpp
+    include/GameState/Controllers/GCMainMenu.hpp
+    include/GameState/Controllers/GCDuel.hpp
+    # Game systems
     include/resource/ResourceManager.hpp
     include/resource/IResourceManager.hpp
     include/IRenderer.hpp
     include/Renderer.hpp
-    include/state/State.hpp
-    include/GUI/IngameButton.hpp
-    include/state/AppStateDefs.hpp
-    include/state/gs/IGameState.hpp
-    include/state/gs/GameState.hpp
-    include/state/gs/GSMainMenu.hpp
-    include/state/gs/GSFinal.hpp
-    include/state/gs/GSCommon.hpp
-    include/state/gs/GSDuel.hpp
-    include/state/ui/IUiState.hpp
-    include/state/ui/UiState.hpp
-    include/state/ui/UISCommon.hpp
-    include/state/ui/UISMainMenu.hpp
-    include/state/ui/UISFinal.hpp
-    include/state/ui/UISDuel.hpp
+    include/AppState/AppStateManager.hpp
+    include/AppState/AppStateDefs.hpp
     include/IApplication.hpp
     include/Application.hpp
 )

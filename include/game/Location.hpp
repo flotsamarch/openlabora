@@ -8,7 +8,10 @@
 #include "Playfield.hpp"
 #include "Tile.hpp"
 
-class Location final : public Entity
+namespace OpenLabora
+{
+
+class Location final : public Entity<sf::Sprite>
 {
 public:
     enum class LocationType {
@@ -16,19 +19,18 @@ public:
         HouseBoat, FishingVillage, ClayMound, End
     };
 
-    Location(const IResourceManager&, LocationType);
+    Location(LocationType);
 
     static bool IsPlaceableOn(LocationType, Tile::TileType);
     static std::string_view GetLocationName(LocationType type)
         { return kLocationNames.find(type)->second; }
 
     LocationType GetType() const noexcept { return mType; }
-    void SetType(LocationType);
+
 private:
     using LocationStrMap = std::unordered_map<LocationType, std::string_view>;
     using PlaceableMap = std::unordered_map<LocationType, Tile::TileType>;
     LocationType mType;
-    const IResourceManager& mResMgr;
 
     inline static const LocationStrMap kTextureNames
     {
@@ -67,4 +69,7 @@ inline Location::LocationType operator++ (Location::LocationType& type) {
     type = static_cast<Location::LocationType>(static_cast<int>(type) + 1);
     return type;
 }
+
+} // namespace OpenLabora
+
 #endif // LOCATION_HPP_

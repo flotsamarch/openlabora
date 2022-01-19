@@ -1,18 +1,15 @@
-#include "state/ui/UISDuel.hpp"
+#include "GameState/Views/GVDuel.hpp"
 
-#include <cassert>
-#include <SFGUI/Box.hpp>
-#include "GUI/IngameButton.hpp"
-#include "state/State.hpp"
-#include "state/AppStateDefs.hpp"
-#include "state/gs/GSDuel.hpp"
-#include "IRenderer.hpp"
-#include "game/Location.hpp"
-
-UISDuel::UISDuel(std::shared_ptr<State> state,
-                 const sf::VideoMode& vm)
-    : UISCommon{ state, vm }
+namespace OpenLabora
 {
+
+GVDuel::GVDuel(std::shared_ptr<AppStateManager> state,
+                   std::shared_ptr<IGameController> controller,
+                   std::shared_ptr<const Model> model)
+    : GameView(state, controller, model)
+{
+    // TODO fix GUI. Move this to GameView
+#if 0
     auto btn_height = 40.f;
     auto btn_width = 240.f;
     auto margin = 5.f;
@@ -50,4 +47,8 @@ UISDuel::UISDuel(std::shared_ptr<State> state,
                                      btn_height));
 
     mDesktop.Add(box);
+
+#endif // duel ui
 }
+
+} //namespace OpenLabora

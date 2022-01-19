@@ -1,10 +1,14 @@
 #include <iostream>
 #include "SFML/System/Clock.hpp"
 #include "Application.hpp"
-#include "state/State.hpp"
-#include "state/gs/GSFinal.hpp"
-#include "state/ui/UISFinal.hpp"
-#include "state/AppStateDefs.hpp"
+#include "AppState/AppStateManager.hpp"
+#include "AppState/AppStateDefs.hpp"
+#include "GameState/Model.hpp"
+#include "GameState/Views/GVFinal.hpp"
+#include "GameState/Controllers/GCFinal.hpp"
+
+namespace OpenLabora
+{
 
 int Application::run()
 {
@@ -13,18 +17,20 @@ int Application::run()
         if (mState->DoesRequireStateChange()) {
             mState->ChangeState();
         }
-        float secondsSinceLastCall = clock.restart().asSeconds();
+        float delta_seconds = clock.restart().asSeconds();
         HandleEvents();
-        mState->Update(secondsSinceLastCall, *mRenderer.get());
-        auto&& game_state = mState->GetGameState();
+        mState->Update(delta_seconds);
+        mRenderer->Update(mState->GetModel().mMainView);
 
         mRenderer->Clear();
-        for(auto&& item : game_state.GetDrawableObjectsSpan()) {
-            if (auto entity = item.lock(); entity != nullptr) {
-                mRenderer->Draw(entity->GetDrawableObject());
-            }
-        }
-        mRenderer->Update(secondsSinceLastCall);
+        // TODO get and draw objects from model
+
+        // for(auto&& item : game_state.GetDrawableObjectsSpan()) {
+        //     if (auto entity = item.lock(); entity != nullptr) {
+        //         mRenderer->Draw(entity->GetDrawableObject());
+        //     }
+        // }
+        mRenderer->Display();
 
         if (mState->IsSameState<AppStateDefs::FinalState>()) {
             break;
@@ -38,9 +44,9 @@ void Application::HandleEvents()
 {
     sf::Event evt;
     while (mRenderer->PollEvent(evt)) {
-        if (evt.type == sf::Event::Closed) {
-            mRenderer->RequestCloseWindow();
-        }
-        mState->HandleEvent(evt, *mRenderer.get());
+        mRenderer->HandleEvent(evt);
+        mState->HandleEvent(evt);
     }
 }
+
+} // namespace OpenLabora

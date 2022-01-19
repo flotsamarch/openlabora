@@ -1,6 +1,7 @@
 #ifndef TILE_HPP_
 #define TILE_HPP_
 
+#include <cassert>
 #include <cmath>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -8,7 +9,10 @@
 #include "resource/IResourceManager.hpp"
 #include "Entity.hpp"
 
-class Tile final : public Entity
+namespace OpenLabora
+{
+
+class Tile final : public Entity<sf::Sprite>
 {
 public:
     enum class TileType
@@ -26,13 +30,15 @@ public:
     {
         sf::Vector2f coord{ 0.f, 0.f };
         TileType type{ TileType::None };
+        bool valid{ true };
     };
 
     // TODO make constexpr with latest SFML ver.
     inline static const TileInfo kBadTile
     {
         sf::Vector2f{ 0.f, 0.f },
-        TileType{ TileType::None }
+        TileType{ TileType::None },
+        false
     };
 
     static constexpr unsigned int kTileHeight{ 150u };
@@ -41,7 +47,8 @@ public:
     using TileToTextureNameMap =
         const std::unordered_map<TileType, std::string_view>;
 
-    inline static const TileToTextureNameMap kTileToTextureMap {
+    inline static const TileToTextureNameMap kTileToTextureMap
+    {
         { TileType::Forest, "forest" },
         { TileType::Coast, "coast" },
         { TileType::Water, "water" },
@@ -54,15 +61,15 @@ public:
         mType{ type }
     {
         if (type != TileType::None) {
-            mObject.setTexture(res_mgr.GetTextureByName(kTileToTextureMap
-                                                    .find(type)->second), true);
+            auto iter = kTileToTextureMap.find(type);
+            assert(iter != kTileToTextureMap.end());
+            auto texture_name = iter->second;
+            mObject.setTexture(res_mgr.GetTextureByName(texture_name), true);
         }
     };
 
     TileInfo GetTileInfo() const
-    {
-        return TileInfo{ mObject.getPosition(), mType };
-    }
+    { return TileInfo{ mObject.getPosition(), mType }; }
 
     bool IsValid() const noexcept { return mType != TileType::None; }
 };
@@ -76,12 +83,15 @@ inline Tile::TileType operator++ (Tile::TileType& type) {
     return type;
 }
 
+// I dont know why i have to do this
 inline bool operator==(const Tile::TileInfo& lhs,
                        const Tile::TileInfo& rhs)
 {
     return !std::islessgreater(lhs.coord.x, rhs.coord.x) &&
         !std::islessgreater(lhs.coord.y, rhs.coord.y) &&
-        lhs.type == rhs.type;
+        lhs.type == rhs.type && lhs.valid == rhs.valid;
 }
+
+} // namespace OpenLabora
 
 #endif // TILE_HPP_

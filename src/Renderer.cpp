@@ -1,5 +1,8 @@
 #include "Renderer.hpp"
 
+namespace OpenLabora
+{
+
 Renderer::Renderer()
 {
     mWindow.create(mVideoMode,
@@ -7,10 +10,6 @@ Renderer::Renderer()
                    sf::Style::Fullscreen);
     mWindow.setFramerateLimit(kFramerateLimit);
     mWindow.setVerticalSyncEnabled(true);
-    mView.reset(sf::FloatRect(0.f, 0.f,
-                              static_cast<float>(mVideoMode.width),
-                              static_cast<float>(mVideoMode.height)));
-    mWindow.setView(mView);
 
     mWindow.resetGLStates();
 }
@@ -23,7 +22,6 @@ Renderer::~Renderer() noexcept
 void Renderer::Clear()
 {
     mWindow.clear();
-    mWindow.setView(mView);
 }
 
 void Renderer::Draw(const sf::Drawable& drawable)
@@ -31,8 +29,17 @@ void Renderer::Draw(const sf::Drawable& drawable)
     mWindow.draw(drawable);
 }
 
-void Renderer::Update(float secondsSinceLastUpdate)
+void Renderer::Display()
 {
     mSfgui.Display(mWindow);
     mWindow.display();
 }
+
+void Renderer::HandleEvent(const sf::Event& evt)
+{
+    if (evt.type == sf::Event::Closed) {
+        mWindow.close();
+    }
+}
+
+} // namespace OpenLabora

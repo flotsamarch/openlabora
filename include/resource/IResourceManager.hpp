@@ -4,12 +4,17 @@
 #include <string_view>
 #include <SFML/Graphics/Texture.hpp>
 
+namespace OpenLabora
+{
+
 class IResourceManager
 {
 public:
     virtual const sf::Texture& GetTextureByName(std::string_view) const = 0;
 
-    virtual ~IResourceManager() noexcept {};
+    virtual ~IResourceManager() {};
 };
+
+} // namespace OpenLabora
 
 #endif // IRESOURCEMANAGER_HPP_

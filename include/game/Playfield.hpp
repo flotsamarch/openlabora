@@ -13,11 +13,18 @@
 #include "Entity.hpp"
 #include "Tile.hpp"
 
-class Playfield final : public Entity
+namespace OpenLabora
+{
+
+class Playfield final : public Entity<sf::Sprite>
 {
 public:
-    static constexpr unsigned int kFieldHeight{ 8 };
-    static constexpr unsigned int kFieldWidth{ 9 };
+    static constexpr unsigned int kMaxFieldHeight{ 8 };
+    static constexpr unsigned int kMaxFieldWidth{ 9 };
+    inline static const std::tuple<sf::Vector2f, sf::Vector2f> kBadMarkers
+    {
+        {0.f, 0.f}, {0.f, 0.f}
+    };
 
     Playfield(const IResourceManager&);
 
@@ -35,8 +42,10 @@ public:
         DrawPlotsAsSprite();
     }
 
-    // Returns y coordinates of top and bottom edges of owned lands by plot type
-    std::tuple<float, float> GetLandTopAndBottomEdges(Plot::PlotType) const;
+    // Returns positions for top and bottom expansion markers respectively for a
+    // given plot type
+    std::tuple<sf::Vector2f, sf::Vector2f>
+    GetExpansionMarkerPositions(Plot::PlotType) const;
 private:
     const IResourceManager& mResMgr;
     sf::RenderTexture mGroundTexture;
@@ -46,9 +55,8 @@ private:
 
     std::optional<sf::Vector2u>
     GetTileIndicesUnderPoint(const sf::Vector2f&) const noexcept;
-
-    using Entity::Move;
-    using Entity::SetPosition;
 };
+
+} // namespace OpenLabora
 
 #endif // PLAYFIELD_HPP_

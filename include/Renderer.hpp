@@ -8,15 +8,16 @@
 #include <memory>
 #include "IRenderer.hpp"
 
+namespace OpenLabora
+{
+
 class Renderer final : public IRenderer
 {
     static constexpr int kFramerateLimit{ 144 };
     static constexpr std::string_view kWindowName{ "OpenLabora" };
     sf::RenderWindow mWindow;
     sfg::SFGUI mSfgui;
-    sf::View mView;
     sf::VideoMode mVideoMode{ *sf::VideoMode::getFullscreenModes().begin() };
-    bool bWindowClosureRequested { false };
 
 public:
     Renderer();
@@ -30,33 +31,24 @@ public:
     bool IsWindowOpen() const override { return mWindow.isOpen(); };
 
     bool PollEvent(sf::Event& evt) override
-    { return !bWindowClosureRequested && mWindow.pollEvent(evt); };
+    { return IsWindowOpen() && mWindow.pollEvent(evt); };
 
-    void RequestCloseWindow() noexcept override
-    { bWindowClosureRequested = true; };
+    void Update(const sf::View& view)
+    { mWindow.setView(view); }
 
     // Must be called before Draw()
     void Clear() override;
 
-    void Draw(const sf::Drawable&) override;
+    void Draw(const sf::Drawable&) override; // TODO provide model
+
+    void HandleEvent(const sf::Event&) override;
 
     // Must be called after Draw()
-    void Update(float secondsSinceLastUpdate) override;
+    void Display() override;
 
-    const sf::VideoMode& GetVideoMode() override { return mVideoMode; }
-
-    void MoveView(float offset_x, float offset_y) override
-        { mView.move(-offset_x, -offset_y); }
-
-    void MoveView(const sf::Vector2f& offset) override { mView.move(-offset); }
-
-    // Adjust point on screen to global space coordinate
-    sf::Vector2f mapPixelToCoords(const sf::Vector2i& point) override
-        { return mWindow.mapPixelToCoords(point); }
-
-    // Adjust global space coordinate to a point on screen
-    sf::Vector2i mapCoordsToPixel(const sf::Vector2f& point) override
-        { return mWindow.mapCoordsToPixel(point); }
+    sf::Vector2u GetWindowSize() const override { return mWindow.getSize(); }
 };
+
+} // namespace OpenLabora
 
 #endif // RENDERER_HPP_

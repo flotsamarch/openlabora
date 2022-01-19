@@ -1,29 +1,35 @@
 #include <cassert>
 #include "GUI/IngameButton.hpp"
-#include "state/gs/GSCommon.hpp"
 
-IngameButton::Ptr IngameButton::Create(std::shared_ptr<::State> state,
-                                      const sf::String& label)
+namespace OpenLabora
 {
-    auto btn = Ptr(new IngameButton);
+
+IngameButton::IngameButton(IGameView& view)
+    : mGameView{ view } {}
+
+IngameButton::Ptr IngameButton::Create(IGameView& view,
+                                       const sf::String& label)
+{
+    auto btn = Ptr(new IngameButton{ view });
     btn->SetLabel(label);
-    btn->mState = state;
 
     btn->GetSignal(sfg::Widget::OnMouseEnter).Connect(
-    [state_ptr = btn->mState]
+    [&view]
     {
-        assert(!state_ptr.expired());
-        auto&& state = static_cast<GSCommon&>(state_ptr.lock()->GetGameState());
-        state.SetMouseCapturedFlag(true);
+        // TODO set flag in model
+        // auto&& state = static_cast<GSCommon&>(state_ptr.lock()->GetGameState());
+        // state.SetMouseCapturedFlag(true);
     });
 
     btn->GetSignal(sfg::Widget::OnMouseLeave).Connect(
-    [state_ptr = btn->mState]
+    [&view]
     {
-        assert(!state_ptr.expired());
-        auto&& state = static_cast<GSCommon&>(state_ptr.lock()->GetGameState());
-        state.SetMouseCapturedFlag(false);
+        // TODO unset flag in model
+        // auto&& state = static_cast<GSCommon&>(state_ptr.lock()->GetGameState());
+        // state.SetMouseCapturedFlag(false);
     });
 
     return btn;
 }
+
+} // namespace OpenLabora

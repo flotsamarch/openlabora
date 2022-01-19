@@ -5,6 +5,9 @@
 #include <vector>
 #include <SFML/Graphics/Drawable.hpp>
 
+namespace OpenLabora
+{
+
 class IDrawable
 {
 public:
@@ -15,7 +18,9 @@ public:
 
     virtual bool IsUnderPoint(const sf::Vector2f& point) const = 0;
 
-    virtual ~IDrawable() noexcept {};
+    virtual ~IDrawable() {};
 };
+
+} // namespace OpenLabora
 
 #endif // IDRAWABLE_HPP_

@@ -10,43 +10,38 @@
 #include "resource/IResourceManager.hpp"
 #include "Entity.hpp"
 
-class Plot : public Entity
+namespace OpenLabora
+{
+
+class Plot : public Entity<sf::Sprite>
 {
 public:
     enum class PlotType
-    {
-        Coastal, Begin = Coastal, Central, Mountain, End
-    };
+    { Coastal, Begin = Coastal, Central, Mountain, End };
 
-    using TileSpanT = std::span<const Tile::TileType>;
+    using TileSpan = std::span<const Tile::TileType>;
 
     struct PlotTilesAndType
     {
-        const TileSpanT tiles;
+        const TileSpan tiles;
         const PlotType type;
     };
 
 protected:
     static constexpr std::size_t kPlotTypeCount{ 3 };
-    using PlotSizeArrayT = std::array<unsigned int, kPlotTypeCount>;
-    static constexpr PlotSizeArrayT kPlotSizes{ 2, 5, 2 };
+    using PlotSizeArray = std::array<unsigned int, kPlotTypeCount>;
+
+    static constexpr PlotSizeArray kPlotSizes{ 2, 5, 2 };
 
     template<PlotType type>
     struct PlotWidth
-    {
-        static constexpr auto w = kPlotSizes[static_cast<unsigned int>(type)];
-    };
-
-    using CentralPlotArrayT =
-        std::array<Tile::TileType, PlotWidth<PlotType::Central>::w>;
-    using CoastalPlotArrayT =
-        std::array<Tile::TileType, PlotWidth<PlotType::Coastal>::w>;
-    using MountainPlotArrayT =
-        std::array<Tile::TileType, PlotWidth<PlotType::Mountain>::w>;
+    { static constexpr auto w = kPlotSizes[static_cast<unsigned int>(type)]; };
 
     std::vector<Tile> mTiles;
     std::shared_ptr<sf::RenderTexture> mPlotTexture;
     PlotType mType;
+
+    void DrawTilesAsSprite();
 
 public:
     Plot(const PlotTilesAndType&,
@@ -63,41 +58,47 @@ public:
 
     Tile::TileInfo GetTileInfoUnderPoint(const sf::Vector2f& point) const;
 
-    void DrawTilesAsSprite();
-
     PlotType GetType() const noexcept { return mType; }
 
 protected:
-    static constexpr CoastalPlotArrayT kCoastalPlotTiles {
-        Tile::TileType::Water, Tile::TileType::Coast
-    };
+    using CentralPlotArray =
+        std::array<Tile::TileType, PlotWidth<PlotType::Central>::w>;
+    using CoastalPlotArray =
+        std::array<Tile::TileType, PlotWidth<PlotType::Coastal>::w>;
+    using MountainPlotArray =
+        std::array<Tile::TileType, PlotWidth<PlotType::Mountain>::w>;
 
-    static constexpr CentralPlotArrayT kCentralPlotTopTiles {
+    static constexpr CoastalPlotArray kCoastalPlotTiles
+    { Tile::TileType::Water, Tile::TileType::Coast };
+
+    static constexpr CentralPlotArray kCentralPlotTopTiles
+    {
         Tile::TileType::Peat,
         Tile::TileType::Forest, Tile::TileType::Forest, Tile::TileType::Forest,
         Tile::TileType::Hill
     };
 
-    static constexpr CentralPlotArrayT kCentralPlotBottomTiles {
+    static constexpr CentralPlotArray kCentralPlotBottomTiles
+    {
         Tile::TileType::Peat,
         Tile::TileType::Forest, Tile::TileType::Forest, Tile::TileType::Forest,
         Tile::TileType::Forest
     };
 
-    static constexpr MountainPlotArrayT kMountainPlotTopTiles {
-        Tile::TileType::Hill, Tile::TileType::Mountain
-    };
+    static constexpr MountainPlotArray kMountainPlotTopTiles
+    { Tile::TileType::Hill, Tile::TileType::Mountain };
 
-    static constexpr MountainPlotArrayT kMountainPlotBottomTiles {
-        Tile::TileType::Hill, Tile::TileType::None
-    };
+    static constexpr MountainPlotArray kMountainPlotBottomTiles
+    { Tile::TileType::Hill, Tile::TileType::None };
 
-    static constexpr TileSpanT kCoastalPlotSpan{ kCoastalPlotTiles };
-    static constexpr TileSpanT kCentralPlotTopSpan{ kCentralPlotTopTiles };
-    static constexpr TileSpanT kCentralPlotBottomSpan{ kCentralPlotBottomTiles };
-    static constexpr TileSpanT kMountainPlotTopSpan{ kMountainPlotTopTiles };
-    static constexpr TileSpanT kMountainPlotBottomSpan{kMountainPlotBottomTiles};
+    static constexpr TileSpan kCoastalPlotSpan{ kCoastalPlotTiles };
+    static constexpr TileSpan kCentralPlotTopSpan{ kCentralPlotTopTiles };
+    static constexpr TileSpan kCentralPlotBottomSpan{ kCentralPlotBottomTiles };
+    static constexpr TileSpan kMountainPlotTopSpan{ kMountainPlotTopTiles };
+    static constexpr TileSpan kMountainPlotBottomSpan{kMountainPlotBottomTiles};
+
 public:
+    // Defs for neat Plot object creation - constructor params packed in a struct
     static constexpr PlotTilesAndType kCostalPlot
         { kCoastalPlotSpan, PlotType::Coastal };
     static constexpr PlotTilesAndType kCentralPlotTop
@@ -117,5 +118,7 @@ inline Plot::PlotType operator++ (Plot::PlotType& type) {
     type = static_cast<Plot::PlotType>(static_cast<int>(type) + 1);
     return type;
 }
+
+} // namespace OpenLabora
 
 #endif // PLOT_HPP_

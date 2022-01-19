@@ -8,18 +8,20 @@
 #include "IApplication.hpp"
 #include "resource/ResourceManager.hpp"
 #include "IRenderer.hpp"
-#include "state/State.hpp"
+#include "AppState/AppStateManager.hpp"
 
-/* RAII class for game application */
+namespace OpenLabora
+{
+
 class Application final : public IApplication
 {
 protected:
     std::unique_ptr<IRenderer> mRenderer;
-    std::shared_ptr<State> mState;
+    std::shared_ptr<AppStateManager> mState;
     void HandleEvents();
 public:
-    template<class TStatePair>
-    Application(TStatePair, std::unique_ptr<IRenderer>);
+    template<class TStateName>
+    Application(TStateName, std::unique_ptr<IRenderer>);
 
     Application(const Application&) = delete;
     Application(Application&&) = delete;
@@ -29,15 +31,18 @@ public:
     int run() override;
 };
 
-template<class TStatePair>
-Application::Application(TStatePair,
-            std::unique_ptr<IRenderer> renderer) :
-    mRenderer{ std::move(renderer) },
-    mState { std::make_shared<State>(std::make_unique<ResourceManager>(),
-                                     mRenderer->GetVideoMode()) }
+template<class TStateName>
+Application::Application(TStateName,
+                         std::unique_ptr<IRenderer> renderer)
+    : mRenderer{ std::move(renderer) },
+      mState{
+          std::make_shared<AppStateManager>(std::make_unique<ResourceManager>(),
+          mRenderer->GetWindowSize())
+      }
 {
-    mState->SetNextState<TStatePair>();
+    mState->SetNextState<TStateName>();
 }
 
+} // namespace OpenLabora
 
 #endif // APPLICATION_HPP_
