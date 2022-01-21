@@ -20,7 +20,7 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
             static_cast<float>(mModel->mWindowSize.x),
             static_cast<float>(mModel->mWindowSize.y) };
     view.reset(default_view);
-    view.setViewport(default_view);
+    // view.setViewport(default_view);
     // TODO fix GUI
     #if 0
     // Escape menu UI
@@ -141,7 +141,7 @@ void GameView::HandleEvent(const sf::Event& evt)
                 MapScreenToWorldCoords(mMouseCoords, mModel->mMainView);
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-                mController->GetMainView().move(mMouseDelta.x, mMouseDelta.y);
+                mController->GetMainView().move(-mMouseDelta.x, -mMouseDelta.y);
             }
 
             if (bMouseCapturedByGui) {
@@ -149,7 +149,7 @@ void GameView::HandleEvent(const sf::Event& evt)
             }
 
             // TODO take Z-coordinate into account
-            for (auto&& entity : mModel->mSelectableObjects) {
+            for (auto&& entity : mModel->mSelectableEntities) {
                 if (entity->IsPointInRegisteringArea(mouse_world_pos)) {
                     entity->OnHover();
                 } else {
@@ -163,7 +163,7 @@ void GameView::HandleEvent(const sf::Event& evt)
                 break;
             }
 
-            for (auto&& entity : mModel->mSelectableObjects) {
+            for (auto&& entity : mModel->mSelectableEntities) {
                 if (entity->WasEntered()) {
                     entity->Select(mState.lock());
                 }

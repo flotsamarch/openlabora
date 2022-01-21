@@ -33,7 +33,7 @@ public:
     bool PollEvent(sf::Event& evt) override
     { return IsWindowOpen() && mWindow.pollEvent(evt); };
 
-    void Update(const sf::View& view)
+    void Update(const sf::View& view) override
     { mWindow.setView(view); }
 
     // Must be called before Draw()

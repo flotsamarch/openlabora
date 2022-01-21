@@ -23,13 +23,10 @@ int Application::run()
         mRenderer->Update(mState->GetModel().mMainView);
 
         mRenderer->Clear();
-        // TODO get and draw objects from model
 
-        // for(auto&& item : game_state.GetDrawableObjectsSpan()) {
-        //     if (auto entity = item.lock(); entity != nullptr) {
-        //         mRenderer->Draw(entity->GetDrawableObject());
-        //     }
-        // }
+        for(auto&& entity: mState->GetModel().mDrawableEntities) {
+            mRenderer->Draw(entity->GetDrawableObject());
+        }
         mRenderer->Display();
 
         if (mState->IsSameState<AppStateDefs::FinalState>()) {

@@ -24,7 +24,8 @@ public:
     bool bPaused{ false };
 
     std::vector<std::shared_ptr<IEntity>> mEntities;
-    std::vector<std::shared_ptr<ISelectable>> mSelectableObjects;
+    std::vector<std::shared_ptr<IDrawable>> mDrawableEntities;
+    std::vector<std::shared_ptr<ISelectable>> mSelectableEntities;
 
     std::array<std::shared_ptr<Playfield>, kMaxPlayers> mPlayfields;
     std::shared_ptr<Location> mBuildGhost;

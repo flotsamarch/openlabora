@@ -13,21 +13,21 @@ GameController::GameController(std::shared_ptr<AppStateManager> state,
     using PT = Plot::PlotType;
     auto&& res_mgr = state->GetResourceManager();
     mModel->mEntities.clear();
-    mModel->mSelectableObjects.clear();
+    mModel->mSelectableEntities.clear();
 
     for (unsigned int player{0}; auto&& pf : mModel->mPlayfields) {
         pf.reset();
         if (player < player_count) {
-            pf = std::make_shared<Playfield>(res_mgr);
+            pf = CreateEntity<Playfield>(res_mgr);
         }
     }
 
     auto [top_marker_pos, btm_marker_pos] =
         GetActivePlayerPlayfield()->GetExpansionMarkerPositions(PT::Central);
 
-    auto marker_central_top = std::make_shared<ExpansionMarker>(
+    auto marker_central_top = CreateEntity<ExpansionMarker>(
         Plot{Plot::kCentralPlotTop, res_mgr}, true);
-    auto marker_central_bottom = std::make_shared<ExpansionMarker>(
+    auto marker_central_bottom = CreateEntity<ExpansionMarker>(
         Plot{Plot::kCentralPlotBottom, res_mgr}, false);
 
     marker_central_top->SetPosition(top_marker_pos);
@@ -49,6 +49,6 @@ void GameController::EnableBuildMode([[maybe_unused]]Location::LocationType type
     // TODO fix build mode
     // mBuildGhost->SetType(type);
     // bBuildModeEnabled = true;
-};
+}
 
 } // namespace OpenLabora
