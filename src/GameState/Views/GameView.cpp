@@ -20,9 +20,7 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
             static_cast<float>(mModel->mWindowSize.x),
             static_cast<float>(mModel->mWindowSize.y) };
     view.reset(default_view);
-    // view.setViewport(default_view);
-    // TODO fix GUI
-    #if 0
+
     // Escape menu UI
     auto win_x = static_cast<float>(mModel->mWindowSize.x);
     auto win_y = static_cast<float>(mModel->mWindowSize.y);
@@ -51,6 +49,7 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     mDesktop.Add(box);
     mMenuWidgets.push_back(box);
 
+    #if 0
     // Plot selection UI
     auto style = sfg::Window::Style::BACKGROUND | sfg::Window::Style::CLOSE
         | sfg::Window::Style::RESIZE;
@@ -127,6 +126,16 @@ void GameView::HandleEvent(const sf::Event& evt)
     mDesktop.HandleEvent(evt);
 
     switch (evt.type) {
+        case sf::Event::KeyPressed:
+        {
+            if (evt.key.code == sf::Keyboard::Escape) {
+                for (auto& item : mMenuWidgets) {
+                    item->Show(bEscMenuHidden);
+                    bEscMenuHidden = !bEscMenuHidden;
+                }
+            }
+            break;
+        }
         case sf::Event::Resized:
         {
             HandleWindowResize({ evt.size.width, evt.size.height });
@@ -140,11 +149,11 @@ void GameView::HandleEvent(const sf::Event& evt)
             auto mouse_world_pos =
                 MapScreenToWorldCoords(mMouseCoords, mModel->mMainView);
 
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && bEscMenuHidden) {
                 mController->GetMainView().move(-mMouseDelta.x, -mMouseDelta.y);
             }
 
-            if (bMouseCapturedByGui) {
+            if (bMouseCapturedByGui || !bEscMenuHidden) {
                 break;
             }
 
@@ -156,6 +165,7 @@ void GameView::HandleEvent(const sf::Event& evt)
                     entity->OnOut();
                 }
             }
+            break;
         }
         case sf::Event::MouseButtonPressed:
         {
@@ -185,25 +195,15 @@ void GameView::HandleEvent(const sf::Event& evt)
         }
         default: { break; }
     }
-    // TODO fix escape menu
-    #if 0
-    mDesktop.HandleEvent(evt);
-    if ((evt.type == sf::Event::KeyPressed)
-        && (evt.key.code == sf::Keyboard::Escape)) {
-        for (auto& item : mMenuWidgets) {
-            item->Show(bIsMenuHidden);
-            assert(!mState.expired());
-            auto& state = static_cast<GSCommon&>(mState.lock()->GetGameState());
-            state.SetPaused(bIsMenuHidden);
-            bIsMenuHidden = !bIsMenuHidden;
-        }
-    }
-    #endif
 };
 
 void GameView::Update(const float update_delta_seconds)
 {
     mDesktop.Update(update_delta_seconds);
+
+    // Disjunction on all flags that may cause pause in gui
+    bool gui_paused = !bEscMenuHidden;
+    mController->SetPaused(gui_paused);
 
     if (mModel->bPaused) {
         return;

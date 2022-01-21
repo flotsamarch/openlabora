@@ -28,6 +28,7 @@ protected:
     sf::Vector2f mMouseDelta{ 0.f, 0.f };
 
     bool bMouseCapturedByGui{ false };
+    bool bEscMenuHidden{ true };
     std::vector<sfg::Widget::Ptr> mMenuWidgets;
     float mEscMenuColWidth;
     sf::Vector2f mScreenCenter;
@@ -54,6 +55,9 @@ public:
     void Update(const float update_delta_seconds) override;
 
     void HandleWindowResize(const sf::Vector2u& window_size) override;
+
+    void SetMouseCapturedFlag(bool value) noexcept
+    { bMouseCapturedByGui = value; }
 };
 
 } // namespace OpenLabora
