@@ -7,11 +7,14 @@
 namespace OpenLabora
 {
 
+using PlotType = Plot::PlotType;
+using MarkerType = ExpansionMarker::MarkerType;
+
 GameView::GameView(std::shared_ptr<AppStateManager> state,
-                   std::shared_ptr<IGameController> controller,
+                   std::shared_ptr<GameController> controller,
                    std::shared_ptr<const Model> model)
     : mState{ state },
-      mController{ static_pointer_cast<GameController>(controller) },
+      mController{ controller },
       mModel{ model },
       mMouseCoords{ sf::Mouse::getPosition() }
 {
@@ -49,10 +52,10 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     mDesktop.Add(box);
     mMenuWidgets.push_back(box);
 
-    #if 0
     // Plot selection UI
-    auto style = sfg::Window::Style::BACKGROUND | sfg::Window::Style::CLOSE
-        | sfg::Window::Style::RESIZE;
+    auto style = static_cast<char>(sfg::Window::Style::BACKGROUND |
+                                   sfg::Window::Style::CLOSE |
+                                   sfg::Window::Style::RESIZE);
     mCentralPlotSelectionWindow = sfg::Window::Create(style);
 
     auto central_sel_box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);

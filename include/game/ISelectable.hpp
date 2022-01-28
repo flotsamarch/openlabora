@@ -18,8 +18,7 @@ public:
 
     virtual void OnOut() = 0;
 
-    // REVIEW maybe unnecessary pointer argument or TODO change for controller
-    virtual void Select(std::shared_ptr<AppStateManager>) = 0;
+    virtual void Select() = 0;
 
     virtual void Deselect() = 0;
 

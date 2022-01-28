@@ -28,16 +28,10 @@ protected:
     const std::weak_ptr<AppStateManager> mState;
     const std::shared_ptr<Model> mModel;
 
-    template<CEntity TEntity, class... Args>
-    std::shared_ptr<TEntity> CreateEntity(Args&&... args);
-
-    template<CEntity TEntity>
-    void RemoveEntity(std::shared_ptr<TEntity> entity);
-
 public:
     GameController(std::shared_ptr<AppStateManager>,
                    std::shared_ptr<Model>,
-                   unsigned int player_count);
+                   size_t player_count);
 
     virtual ~GameController() = 0;
 
@@ -48,6 +42,12 @@ public:
     void SetPaused(bool value) noexcept { mModel->bPaused = value; };
 
     void EnableBuildMode(Location::LocationType);
+
+    template<CEntity TEntity, class... Args>
+    std::shared_ptr<TEntity> CreateEntity(Args&&... args);
+
+    template<CEntity TEntity>
+    void RemoveEntity(std::shared_ptr<TEntity> entity);
 
     // TODO multiplayer support
     std::shared_ptr<Playfield> GetActivePlayerPlayfield() const noexcept

@@ -51,16 +51,20 @@ void AppStateManager::SetNextState()
     static_assert(std::is_base_of<IGameController, ctlr_t>::value,
                   "controller_type must inherit from GameController");
 
-    mNextState.gv = std::make_unique<view_t>(shared_from_this(),
-                                             mState.gc, // This ptr might be a
-                                             mModel);   // problem in the future
-    mNextState.gc = std::make_unique<ctlr_t>(shared_from_this(), mModel);
+    mNextState.gc = std::make_shared<ctlr_t>(shared_from_this(), mModel);
+    auto ctrl_ptr =
+        std::static_pointer_cast<ctlr_t>(mNextState.gc->shared_from_this());
+    mNextState.gv = std::make_shared<view_t>(shared_from_this(),
+                                             ctrl_ptr,
+                                             mModel);
 }
 
 void AppStateManager::ChangeState()
 {
-    mState.gv = std::move(mNextState.gv);
-    mState.gc = std::move(mNextState.gc);
+    mState.gv = mNextState.gv;
+    mState.gc = mNextState.gc;
+    mNextState.gv.reset();
+    mNextState.gc.reset();
 }
 
 template void AppStateManager::SetNextState<AppStateDefs::FinalState>();

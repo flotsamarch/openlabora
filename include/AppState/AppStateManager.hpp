@@ -20,7 +20,7 @@ class AppStateManager final
 {
     struct ViewControllerPair
     {
-        std::unique_ptr<IGameView> gv;
+        std::shared_ptr<IGameView> gv;
         std::shared_ptr<IGameController> gc;
     };
     ViewControllerPair mState;

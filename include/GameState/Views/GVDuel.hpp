@@ -14,7 +14,7 @@ class GVDuel final : public GameView
 {
 public:
     GVDuel(std::shared_ptr<AppStateManager>,
-           std::shared_ptr<IGameController>,
+           std::shared_ptr<GameController>,
            std::shared_ptr<const Model>);
 };
 

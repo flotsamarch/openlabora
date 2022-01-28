@@ -7,7 +7,7 @@
 namespace OpenLabora
 {
 
-class IGameController
+class IGameController : public std::enable_shared_from_this<IGameController>
 {
 public:
     virtual ~IGameController() {};
@@ -15,6 +15,8 @@ public:
     virtual void HandleEvent(const sf::Event&) = 0;
 
     virtual void Update(const float update_delta_seconds) = 0;
+
+    using std::enable_shared_from_this<IGameController>::shared_from_this;
 };
 
 } // namespace OpenLabora

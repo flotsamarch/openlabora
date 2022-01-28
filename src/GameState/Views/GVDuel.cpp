@@ -4,8 +4,8 @@ namespace OpenLabora
 {
 
 GVDuel::GVDuel(std::shared_ptr<AppStateManager> state,
-                   std::shared_ptr<IGameController> controller,
-                   std::shared_ptr<const Model> model)
+               std::shared_ptr<GameController> controller,
+               std::shared_ptr<const Model> model)
     : GameView(state, controller, model)
 {
     // TODO fix GUI. Move this to GameView

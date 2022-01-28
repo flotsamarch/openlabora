@@ -45,7 +45,7 @@ protected:
 
 public:
     GameView(std::shared_ptr<AppStateManager>,
-             std::shared_ptr<IGameController>,
+             std::shared_ptr<GameController>,
              std::shared_ptr<const Model>);
 
     virtual ~GameView() noexcept;

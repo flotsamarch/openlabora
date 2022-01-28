@@ -21,10 +21,6 @@ class Playfield final : public Entity<sf::Sprite>
 public:
     static constexpr unsigned int kMaxFieldHeight{ 8 };
     static constexpr unsigned int kMaxFieldWidth{ 9 };
-    inline static const std::tuple<sf::Vector2f, sf::Vector2f> kBadMarkers
-    {
-        {0.f, 0.f}, {0.f, 0.f}
-    };
 
     Playfield(const IResourceManager&);
 

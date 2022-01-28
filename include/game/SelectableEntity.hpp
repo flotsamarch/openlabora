@@ -12,21 +12,21 @@ requires std::is_base_of<sf::Shape, TShape>::value
 class SelectableEntity : public Entity<U>, public ISelectable
 {
 protected:
-    bool bIsSelected;
-    bool bWasEntered;
+    bool bSelected;
+    bool bEntered;
     TShape mClickableArea;
 
 public:
     virtual ~SelectableEntity() noexcept {};
 
-    void Select(std::shared_ptr<AppStateManager>) override
-    { bIsSelected = true; }
+    void Select() override
+    { bSelected = true; }
 
-    void Deselect() override { bIsSelected = false; }
+    void Deselect() override { bSelected = false; }
 
-    bool IsSelected() const noexcept override final { return bIsSelected; }
+    bool IsSelected() const noexcept override final { return bSelected; }
 
-    bool WasEntered() const noexcept override final { return bWasEntered; }
+    bool WasEntered() const noexcept override final { return bEntered; }
 };
 
 } // namespace OpenLabora
