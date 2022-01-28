@@ -19,8 +19,9 @@ namespace OpenLabora
 class Playfield final : public Entity<sf::Sprite>
 {
 public:
-    static constexpr unsigned int kMaxFieldHeight{ 8 };
-    static constexpr unsigned int kMaxFieldWidth{ 9 };
+    static constexpr uint32_t kMaxFieldHeight{ 8 };
+    static constexpr uint32_t kMaxFieldWidth{ 9 };
+    static constexpr uint32_t kInitialPlotOffset{ 3 * Tile::kTileHeight };
 
     Playfield(const IResourceManager&);
 

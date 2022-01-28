@@ -21,8 +21,10 @@ Playfield::Playfield(const IResourceManager& res_mgr)
     auto plot_bottom = Plot{ Plot::kCentralPlotBottom, res_mgr };
     auto offset_x = Tile::kTileWidth *
         Plot::GetPlotWidthTileCount(PlotType::Coastal);
-    plot_top.SetPosition(static_cast<float>(offset_x), 0);
-    plot_bottom.SetPosition(static_cast<float>(offset_x), Tile::kTileHeight);
+    auto init_pos =
+        sf::Vector2f{ static_cast<float>(offset_x), kInitialPlotOffset };
+    plot_top.SetPosition(init_pos);
+    plot_bottom.SetPosition(init_pos.x, init_pos.y + Tile::kTileHeight);
     PushPlotBack(plot_top);
     PushPlotBack(plot_bottom);
 
