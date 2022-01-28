@@ -41,8 +41,8 @@ public:
         false
     };
 
-    static constexpr unsigned int kTileHeight{ 150u };
-    static constexpr unsigned int kTileWidth{ 100u };
+    static constexpr uint32_t kTileHeight{ 150u };
+    static constexpr uint32_t kTileWidth{ 100u };
 
     using TileToTextureNameMap =
         const std::unordered_map<TileType, std::string_view>;

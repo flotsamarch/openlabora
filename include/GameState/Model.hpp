@@ -15,7 +15,7 @@ class Model
 {
 public:
     enum PlayerAffiliation { Player1, Player2, Player3, Player4 };
-    static constexpr unsigned int kMaxPlayers = 4;
+    static constexpr size_t kMaxPlayers = 4;
 
     sf::View mMainView;
     sf::Vector2u mWindowSize;

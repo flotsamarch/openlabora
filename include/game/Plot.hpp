@@ -17,7 +17,7 @@ class Plot : public Entity<sf::Sprite>
 {
 public:
     enum class PlotType
-    { Coastal, Begin = Coastal, Central, Mountain, End };
+    { Begin, Coastal = Begin, Central, Mountain, End };
 
     using TileSpan = std::span<const Tile::TileType>;
 
@@ -28,14 +28,14 @@ public:
     };
 
 protected:
-    static constexpr std::size_t kPlotTypeCount{ 3 };
-    using PlotSizeArray = std::array<unsigned int, kPlotTypeCount>;
+    static constexpr size_t kPlotTypeCount{ 3 };
+    using PlotSizeArray = std::array<uint32_t, kPlotTypeCount>;
 
-    static constexpr PlotSizeArray kPlotSizes{ 2, 5, 2 };
+    static constexpr PlotSizeArray kPlotSizes{ 2u, 5u, 2u };
 
     template<PlotType type>
     struct PlotWidth
-    { static constexpr auto w = kPlotSizes[static_cast<unsigned int>(type)]; };
+    { static constexpr auto w = kPlotSizes[static_cast<size_t>(type)]; };
 
     std::vector<Tile> mTiles;
     std::shared_ptr<sf::RenderTexture> mPlotTexture;
@@ -48,13 +48,9 @@ public:
          const IResourceManager&);
     virtual ~Plot() {};
 
-    static unsigned int GetPlotWidthTileCount(PlotType type)
-    {
-        if (type == PlotType::End) {
-            return 0;
-        }
-        return kPlotSizes[static_cast<int>(type)];
-    }
+    static uint32_t GetPlotWidthTileCount(PlotType);
+
+    static uint32_t GetOffsetXForPlotType(PlotType);
 
     Tile::TileInfo GetTileInfoUnderPoint(const sf::Vector2f& point) const;
 

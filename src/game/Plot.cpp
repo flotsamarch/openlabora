@@ -20,6 +20,22 @@ Plot::Plot(const PlotTilesAndType& ptat,
     DrawTilesAsSprite();
 }
 
+uint32_t Plot::GetPlotWidthTileCount(PlotType type)
+{
+    assert(type != PlotType::End);
+    return kPlotSizes[static_cast<size_t>(type)];
+}
+
+uint32_t Plot::GetOffsetXForPlotType(PlotType type)
+{
+    assert(type != PlotType::End);
+    auto offset{ 0u };
+    for (auto i = PlotType::Begin; i < PlotType::End; ++i) {
+        offset += Tile::kTileWidth * static_cast<uint32_t>(GetPlotWidthTileCount(i));
+    }
+    return offset;
+}
+
 Tile::TileInfo Plot::GetTileInfoUnderPoint(const sf::Vector2f& point) const
 {
     if (!IsUnderPoint(point)) {
@@ -27,12 +43,12 @@ Tile::TileInfo Plot::GetTileInfoUnderPoint(const sf::Vector2f& point) const
     }
 
     auto index = (point.y - GetPosition().y) / Tile::kTileWidth;
-    return mTiles[static_cast<unsigned int>(index)].GetTileInfo();
+    return mTiles[static_cast<size_t>(index)].GetTileInfo();
 }
 
 void Plot::DrawTilesAsSprite()
 {
-    auto width = Tile::kTileWidth * static_cast<unsigned int>(mTiles.size());
+    auto width = Tile::kTileWidth * static_cast<uint32_t>(mTiles.size());
     mPlotTexture->create(width, Tile::kTileHeight);
     for (float offset_x = 0.f; auto&& tile : mTiles) {
         if (tile.IsValid()) {
