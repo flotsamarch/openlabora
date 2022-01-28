@@ -5,12 +5,12 @@
 #include <memory>
 #include <SFML/Window/Event.hpp>
 #include "GameState/Controllers/IGameController.hpp"
+#include "GameState/Model.hpp"
 #include "Game/Playfield.hpp"
 #include "Game/IDrawable.hpp"
 #include "Game/ISelectable.hpp"
 #include "Game/IEntity.hpp"
 #include "Game/Location.hpp"
-#include "GameState/Model.hpp"
 
 namespace OpenLabora
 {
@@ -31,7 +31,7 @@ protected:
 public:
     GameController(std::shared_ptr<AppStateManager>,
                    std::shared_ptr<Model>,
-                   size_t player_count);
+                   uint32_t player_count);
 
     virtual ~GameController() = 0;
 

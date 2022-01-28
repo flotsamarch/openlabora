@@ -56,11 +56,11 @@ private:
     std::optional<sf::Vector2u>
     GetTileIndicesUnderPoint(const sf::Vector2f&) const noexcept;
 
-    inline static const std::map<Plot::PlotType, size_t> kMaxPlotCount =
+    inline static const std::map<Plot::PlotType, uint32_t> kMaxPlotCount =
     {
-        { Plot::PlotType::Coastal, 9 },
-        { Plot::PlotType::Central, 11 },
-        { Plot::PlotType::Mountain, 9 }
+        { Plot::PlotType::Coastal, 9u },
+        { Plot::PlotType::Central, 11u },
+        { Plot::PlotType::Mountain, 9u }
     };
 };
 

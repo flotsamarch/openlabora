@@ -7,6 +7,7 @@
 #include "Game/IDrawable.hpp"
 #include "Game/ISelectable.hpp"
 #include "Game/Location.hpp"
+#include "Game/ExpansionMarker.hpp"
 
 namespace OpenLabora
 {
@@ -15,7 +16,7 @@ class Model
 {
 public:
     enum PlayerAffiliation { Player1, Player2, Player3, Player4 };
-    static constexpr size_t kMaxPlayers = 4;
+    static constexpr uint32_t kMaxPlayers = 4;
 
     sf::View mMainView;
     sf::Vector2u mWindowSize;

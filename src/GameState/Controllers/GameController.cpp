@@ -1,20 +1,19 @@
 #include "GameState/Controllers/GameController.hpp"
 #include "AppState/AppStateManager.hpp"
-#include "Game/ExpansionMarker.hpp"
 
 namespace OpenLabora
 {
 
 GameController::GameController(std::shared_ptr<AppStateManager> state,
                                std::shared_ptr<Model> model,
-                               size_t player_count)
+                               uint32_t player_count)
     : mState{ state }, mModel{ model }
 {
     auto&& res_mgr = state->GetResourceManager();
     mModel->mEntities.clear();
     mModel->mSelectableEntities.clear();
 
-    for (size_t player{0}; auto&& pf : mModel->mPlayfields) {
+    for (uint32_t player{0}; auto&& pf : mModel->mPlayfields) {
         pf.reset();
         if (player < player_count) {
             pf = CreateEntity<Playfield>(res_mgr);
