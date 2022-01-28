@@ -12,6 +12,7 @@ namespace
 {
 using TileInfo = Tile::TileInfo;
 using PlotType = Plot::PlotType;
+using MarkerType = ExpansionMarker::MarkerType;
 }
 
 Playfield::Playfield(const IResourceManager& res_mgr)
@@ -23,6 +24,7 @@ Playfield::Playfield(const IResourceManager& res_mgr)
         Plot::GetPlotWidthTileCount(PlotType::Coastal);
     auto init_pos =
         sf::Vector2f{ static_cast<float>(offset_x), kInitialPlotOffset };
+    init_pos += mObject.getPosition();
     plot_top.SetPosition(init_pos);
     plot_bottom.SetPosition(init_pos.x, init_pos.y + Tile::kTileHeight);
     PushPlotBack(plot_top);
@@ -78,22 +80,45 @@ TileInfo Playfield::GetTileInfoUnderPoint(const sf::Vector2f& point) const
 }
 
 std::tuple<sf::Vector2f, sf::Vector2f>
-Playfield::GetExpansionMarkerPositions(Plot::PlotType type) const
+Playfield::GetExpansionMarkerPositions(PlotType type) const
 {
-    if (mPlots.empty()) {
-        return kBadMarkers;
-    }
+    assert(type != PlotType::End);
     auto&& plot_deq = mPlots.find(type);
-    if (plot_deq == mPlots.end() || plot_deq->second.empty()) {
-        return kBadMarkers;
+
+    if (plot_deq == mPlots.end()) {
+        auto offset_x = static_cast<float>(Plot::GetOffsetXForPlotType(type));
+        auto init_pos = sf::Vector2f{ offset_x, kInitialPlotOffset};
+
+        return { init_pos, init_pos };
     }
 
-    auto top_left_pos = plot_deq->second.front().GetPosition(); //.y,
-    auto btm_left_pos = plot_deq->second.back().GetPosition(); //.y,
+    auto top_left_pos = plot_deq->second.front().GetPosition();
+    auto btm_left_pos = plot_deq->second.back().GetPosition();
 
-    // TODO should be 2 tiles for side plots
-    return {{top_left_pos.x, top_left_pos.y - Tile::kTileHeight},
-            {btm_left_pos.x, btm_left_pos.y + Tile::kTileHeight}};
+    auto offset_tile_number =
+        Tile::kTileHeight * (type == PlotType::Central ? 1 : 2);
+
+    return {{top_left_pos.x, top_left_pos.y - offset_tile_number},
+            {btm_left_pos.x, btm_left_pos.y + offset_tile_number}};
+}
+
+bool Playfield::IsPlotsLimitReached(PlotType plot_type, MarkerType marker_type)
+{
+    assert(plot_type != PlotType::End);
+    assert(marker_type != MarkerType::End);
+
+    auto&& plot_deq = mPlots.find(plot_type);
+    if (plot_deq == mPlots.end()) {
+        return false;
+    }
+
+    if (marker_type == MarkerType::Disposable && plot_deq->second.size() > 0) {
+        return true;
+    }
+
+    auto&& count = kMaxPlotCount.find(plot_type);
+    assert(count != kMaxPlotCount.end());
+    return count->second <= plot_deq->second.size();
 }
 
 } // namespace OpenLabora

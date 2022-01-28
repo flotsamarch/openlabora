@@ -12,6 +12,7 @@
 #include "IDrawable.hpp"
 #include "Entity.hpp"
 #include "Tile.hpp"
+#include "ExpansionMarker.hpp"
 
 namespace OpenLabora
 {
@@ -19,9 +20,9 @@ namespace OpenLabora
 class Playfield final : public Entity<sf::Sprite>
 {
 public:
-    static constexpr uint32_t kMaxFieldHeight{ 8 };
+    static constexpr uint32_t kMaxFieldHeight{ 36 };
     static constexpr uint32_t kMaxFieldWidth{ 9 };
-    static constexpr uint32_t kInitialPlotOffset{ 3 * Tile::kTileHeight };
+    static constexpr uint32_t kInitialPlotOffset{ 17 * Tile::kTileHeight };
 
     Playfield(const IResourceManager&);
 
@@ -43,6 +44,8 @@ public:
     // given plot type
     std::tuple<sf::Vector2f, sf::Vector2f>
     GetExpansionMarkerPositions(Plot::PlotType) const;
+
+    bool IsPlotsLimitReached(Plot::PlotType, ExpansionMarker::MarkerType);
 private:
     const IResourceManager& mResMgr;
     sf::RenderTexture mGroundTexture;
@@ -52,6 +55,13 @@ private:
 
     std::optional<sf::Vector2u>
     GetTileIndicesUnderPoint(const sf::Vector2f&) const noexcept;
+
+    inline static const std::map<Plot::PlotType, size_t> kMaxPlotCount =
+    {
+        { Plot::PlotType::Coastal, 9 },
+        { Plot::PlotType::Central, 11 },
+        { Plot::PlotType::Mountain, 9 }
+    };
 };
 
 } // namespace OpenLabora

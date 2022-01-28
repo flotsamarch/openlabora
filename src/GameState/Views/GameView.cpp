@@ -1,5 +1,6 @@
 #include <SFGUI/Button.hpp>
 #include <SFGUI/Box.hpp>
+#include <SFGUI/Label.hpp>
 #include "AppState/AppStateManager.hpp"
 #include "GameState/Views/GameView.hpp"
 #include "GameState/Model.hpp"
@@ -52,70 +53,70 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     mDesktop.Add(box);
     mMenuWidgets.push_back(box);
 
-    // Plot selection UI
+    // Plot purchase confirmation window
     auto style = static_cast<char>(sfg::Window::Style::BACKGROUND |
                                    sfg::Window::Style::CLOSE |
                                    sfg::Window::Style::RESIZE);
-    mCentralPlotSelectionWindow = sfg::Window::Create(style);
+    mPlotConfirmationWindow = sfg::Window::Create(style);
 
-    auto central_sel_box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
+    auto confirm_btn_box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
+    auto confirm_btn_yes = sfg::Button::Create("Yes");
+    auto confirm_btn_no = sfg::Button::Create("No");
+    confirm_btn_box->Pack(confirm_btn_yes);
+    confirm_btn_box->Pack(confirm_btn_no);
 
-    auto central_plot_btn1 = sfg::Button::Create("Plot 1");
-    auto central_plot_btn2 = sfg::Button::Create("Plot 2");
+    auto confirm_text = sfg::Label::Create("Buy plot?");
+    auto confirm_vbox = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
+    confirm_vbox->Pack(confirm_btn_box);
+    confirm_vbox->Pack(confirm_text);
 
-    using PT = Plot::PlotType;
+    mPlotConfirmationWindow->Add(confirm_vbox);
+    mPlotConfirmationWindow->Show(false);
+    mDesktop.Add(mPlotConfirmationWindow);
 
-    // This lambda creates a lamda that could be passed into button.connect()
-    // method. We need this to avoid code duplication for multiple buttons
-    // which behavior differs in only one line that creates different kind of
-    // plot and because we cannot pass lambda with arguments into
-    // button.connect() method
-    auto create_plot = [state_ptr = this->mState,
-                        &push_front = bExtendUpwards,
-                        window = mCentralPlotSelectionWindow,
-                        &hidden = this->bIsCentralPlotSelectionHidden]
-        (const Plot::PlotTilesAndType& ptat)
+    confirm_btn_no->GetSignal(sfg::Widget::OnMouseLeftRelease).Connect(
+    [window = std::weak_ptr<sfg::Window>(mPlotConfirmationWindow)]
     {
-        return [state_ptr, &push_front, window, &hidden, &ptat]
-            {
-                assert(!state_ptr.expired());
-                auto&& state =
-                    static_cast<GSCommon&>(state_ptr.lock()->GetGameState());
-                auto&& res_mgr = state_ptr.lock()->GetResourceManager();
+        assert(!window.expired());
+        window.lock()->Show(false);
+    });
 
-                auto playfield = state.GetActivePlayerPlayfield();
-                auto[top, bottom] =
-                    playfield->GetLandTopAndBottomEdges(PT::Central);
-                auto plot = Plot{ ptat, res_mgr };
-                auto position = playfield->GetPosition();
-                position.x +=
-                    Plot::GetPlotWidthTileCount(PT::Coastal) * Tile::kTileWidth;
+    using PlotType = Plot::PlotType;
 
-                if (push_front) {
-                    position.y = top - Tile::kTileHeight;
-                    plot.SetPosition(position);
-                    playfield->PushPlotFront(plot);
-                } else {
-                    position.y = bottom;
-                    plot.SetPosition(position);
-                    playfield->PushPlotBack(plot);
-                }
-                hidden = true;
-        };
-    };
+    auto&& playfield = mController->GetActivePlayerPlayfield();
+    auto&& res_mgr = state->GetResourceManager();
 
-    central_plot_btn1->GetSignal(sfg::Widget::OnLeftClick)
-        .Connect(create_plot(Plot::kCentralPlotTop));
-    central_plot_btn2->GetSignal(sfg::Widget::OnLeftClick)
-        .Connect(create_plot(Plot::kCentralPlotBottom));
+    // Markers
+    auto [top_marker_pos, btm_marker_pos] =
+        playfield->GetExpansionMarkerPositions(PlotType::Central);
 
-    central_sel_box->Pack(central_plot_btn1);
-    central_sel_box->Pack(central_plot_btn2);
+    auto central_plot_top = Plot{Plot::kCentralPlotTop, res_mgr};
+    auto central_plot_bottom = Plot{Plot::kCentralPlotBottom, res_mgr};
 
-    mCentralPlotSelectionWindow->Add(central_sel_box);
-    mCentralPlotSelectionWindow->Show(bIsCentralPlotSelectionHidden);
-    mDesktop.Add(mCentralPlotSelectionWindow);
-    #endif // plot selection ui
+    auto marker_central_top =
+        mController->CreateEntity<ExpansionMarker>(central_plot_top,
+                                                   MarkerType::Upper,
+                                                   playfield,
+                                                   mPlotConfirmationWindow,
+                                                   confirm_btn_yes);
+    auto marker_central_bottom =
+        mController->CreateEntity<ExpansionMarker>(central_plot_bottom,
+                                                   MarkerType::Lower,
+                                                   playfield,
+                                                   mPlotConfirmationWindow,
+                                                   confirm_btn_yes);
+
+    RegisterExpansionMarker(marker_central_top);
+    RegisterExpansionMarker(marker_central_bottom);
+    UpdateMarkers();
+
+    // The deletion of pointers should happen after marker's job is done
+    confirm_btn_yes->GetSignal(sfg::Widget::OnMouseLeftRelease).Connect(
+    [this]
+    {
+        this->UpdateMarkers();
+    });
+    // TODO initialize mModel->mBuildGhost something...something...
 };
 
 GameView::~GameView() noexcept
@@ -170,15 +171,19 @@ void GameView::HandleEvent(const sf::Event& evt)
             }
             break;
         }
-        case sf::Event::MouseButtonPressed:
+        case sf::Event::MouseButtonReleased:
         {
             if (bMouseCapturedByGui) {
                 break;
             }
 
-            for (auto&& entity : mModel->mSelectableEntities) {
-                if (entity->WasEntered()) {
-                    entity->Select(mState.lock());
+            if (evt.mouseButton.button == sf::Mouse::Left) {
+                for (auto&& entity : mModel->mSelectableEntities) {
+                    if (entity->WasEntered()) {
+                        entity->Select();
+                    } else {
+                        entity->Deselect();
+                    }
                 }
             }
             // TODO fix build mode
@@ -211,7 +216,6 @@ void GameView::Update(const float update_delta_seconds)
     if (mModel->bPaused) {
         return;
     }
-
     // TODO fix build mode. Move this to GameView
     #if 0
     assert(!mState.expired());
@@ -276,6 +280,48 @@ sf::Vector2i GameView::MapWorldToScreenCoords(const sf::Vector2f& coords,
 
     return { static_cast<int>(offset_x * viewport.width  + viewport.left),
              static_cast<int>(offset_y * viewport.height + viewport.top)};
+}
+
+void GameView::UpdateMarkers()
+{
+    auto playfield = mController->GetActivePlayerPlayfield();
+
+    for (auto&& arr : mMarkers) {
+        std::for_each(arr.second.begin(), arr.second.end(),
+        [playfield, ctlr = mController] (auto&& marker)
+        {
+            if (marker != nullptr) {
+                auto limit_reached =
+                    playfield->IsPlotsLimitReached(marker->GetPlotType(),
+                                                   marker->GetType());
+
+                if (limit_reached) {
+                    auto mp = std::shared_ptr<ExpansionMarker>(marker);
+                    ctlr->RemoveEntity(mp);
+                    marker.reset();
+                }
+            }
+        });
+
+        auto&& upper = arr.second[static_cast<size_t>(MarkerType::Upper)];
+        auto&& lower = arr.second[static_cast<size_t>(MarkerType::Lower)];
+
+        if (upper != nullptr && lower != nullptr) {
+            auto [top_marker_pos, btm_marker_pos] =
+                playfield->GetExpansionMarkerPositions(arr.first);
+            upper->SetPosition(top_marker_pos);
+            lower->SetPosition(btm_marker_pos);
+        }
+    }
+}
+
+void GameView::RegisterExpansionMarker(std::shared_ptr<ExpansionMarker> marker)
+{
+    auto plot_type = marker->GetPlotType();
+    auto marker_type = marker->GetType();
+    assert(plot_type != Plot::PlotType::End);
+    assert(marker_type != ExpansionMarker::MarkerType::End);
+    mMarkers[plot_type][static_cast<std::size_t>(marker_type)] = marker;
 }
 
 } // namespace OpenLabora
