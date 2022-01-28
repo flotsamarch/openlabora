@@ -12,8 +12,8 @@ requires std::is_base_of<sf::Shape, TShape>::value
 class SelectableEntity : public Entity<U>, public ISelectable
 {
 protected:
-    bool bSelected;
-    bool bEntered;
+    bool bSelected{ false };
+    bool bEntered{ false };
     TShape mClickableArea;
 
 public:
