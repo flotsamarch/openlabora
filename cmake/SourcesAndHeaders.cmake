@@ -4,7 +4,6 @@ set(sources
     src/Game/ExpansionMarker.cpp
     src/Game/Playfield.cpp
     src/Game/Location.cpp
-    src/GUI/InGameButton.cpp
     # Game states
     src/GameState/Views/GameView.cpp
     src/GameState/Views/GVMainMenu.cpp
@@ -15,7 +14,6 @@ set(sources
     # Game systems
     src/Renderer.cpp
     src/AppState/AppStateManager.cpp
-    src/GUI/InGameButton.cpp
     src/Application.cpp
 )
 
@@ -35,7 +33,6 @@ set(headers
     include/Game/ExpansionMarker.hpp
     include/Game/Playfield.hpp
     include/Game/Location.hpp
-    include/GUI/InGameButton.hpp
     # Game states
     include/GameState/Model.hpp
     include/GameState/Views/IGameView.hpp
@@ -49,6 +46,7 @@ set(headers
     include/GameState/Controllers/GCMainMenu.hpp
     include/GameState/Controllers/GCDuel.hpp
     # Game systems
+    include/GUI/Utility.hpp
     include/resource/ResourceManager.hpp
     include/resource/IResourceManager.hpp
     include/IRenderer.hpp
