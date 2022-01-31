@@ -86,12 +86,12 @@ Playfield::GetExpansionMarkerPositions(PlotType type) const
     auto&& plot_deq = mPlots.find(type);
 
     if (plot_deq == mPlots.end()) {
-        auto offset_x = static_cast<float>(Plot::GetOffsetXForPlotType(type));
-        auto init_pos = sf::Vector2f{ offset_x, kInitialPlotOffset};
-
-        return { init_pos, init_pos };
+        auto position = GetPosition();
+        position.y += kInitialPlotOffset;
+        position.x += Plot::GetOffsetXForPlotType(type);
+        return {{position.x, position.y - Tile::kTileHeight},
+                {position.x, position.y + Tile::kTileHeight}};
     }
-
     auto top_left_pos = plot_deq->second.front().GetPosition();
     auto btm_left_pos = plot_deq->second.back().GetPosition();
 

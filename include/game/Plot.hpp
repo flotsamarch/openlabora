@@ -50,7 +50,7 @@ public:
 
     static uint32_t GetPlotWidthTileCount(PlotType);
 
-    static uint32_t GetOffsetXForPlotType(PlotType);
+    static float GetOffsetXForPlotType(PlotType);
 
     Tile::TileInfo GetTileInfoUnderPoint(const sf::Vector2f& point) const;
 

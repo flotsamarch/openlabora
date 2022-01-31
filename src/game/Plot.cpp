@@ -26,14 +26,14 @@ uint32_t Plot::GetPlotWidthTileCount(PlotType type)
     return kPlotSizes[static_cast<size_t>(type)];
 }
 
-uint32_t Plot::GetOffsetXForPlotType(PlotType type)
+float Plot::GetOffsetXForPlotType(PlotType type)
 {
     assert(type != PlotType::End);
     auto offset{ 0u };
-    for (auto i = PlotType::Begin; i < PlotType::End; ++i) {
+    for (auto i = PlotType::Begin; i < type && i <PlotType::End; ++i) {
         offset += Tile::kTileWidth * static_cast<uint32_t>(GetPlotWidthTileCount(i));
     }
-    return offset;
+    return static_cast<float>(offset);
 }
 
 Tile::TileInfo Plot::GetTileInfoUnderPoint(const sf::Vector2f& point) const
