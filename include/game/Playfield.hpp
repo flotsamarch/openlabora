@@ -28,15 +28,17 @@ public:
 
     Tile::TileInfo GetTileInfoUnderPoint(const sf::Vector2f&) const;
 
-    void PushPlotBack(const Plot& plot)
-    {
-        mPlots[plot.GetType()].push_back(plot);
-        DrawPlotsAsSprite();
-    }
-
+    // Pushes plot to the top of existing plots
     void PushPlotFront(const Plot& plot)
     {
         mPlots[plot.GetType()].push_front(plot);
+        DrawPlotsAsSprite();
+    }
+
+    // Pushes plot to the bottom under existing plots
+    void PushPlotBack(const Plot& plot)
+    {
+        mPlots[plot.GetType()].push_back(plot);
         DrawPlotsAsSprite();
     }
 
