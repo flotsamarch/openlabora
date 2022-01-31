@@ -2,6 +2,7 @@
 #include "AppState/AppStateManager.hpp"
 #include "resource/IResourceManager.hpp"
 #include "Game/Playfield.hpp"
+#include "GUI/Utility.hpp"
 
 namespace OpenLabora
 {
@@ -11,7 +12,7 @@ ExpansionMarker::ExpansionMarker(const Plot& plot,
                                  std::shared_ptr<Playfield> playfield,
                                  std::shared_ptr<sfg::Window> window,
                                  std::shared_ptr<sfg::Button> button)
-    : mPlot{ plot }, mType{ type }, mWindow{ window }
+    : mPlot{ plot }, mType{ type }, mWindow{ window }, mButton{ button }
 {
     mObject = static_cast<const sf::Sprite&>(mPlot.GetDrawableObject());
     mObject.setColor(sf::Color::Transparent);
@@ -19,30 +20,35 @@ ExpansionMarker::ExpansionMarker(const Plot& plot,
     using PlotType = Plot::PlotType;
     using Widget = sfg::Widget;
 
-    auto create_plot = [&plot = mPlot,
-                        marker_type = mType,
-                        &marker_obj = mObject,
-                        playfield = std::weak_ptr<Playfield>(playfield),
-                        button = std::weak_ptr<sfg::Button>(button),
-                        window = mWindow,
-                        &selected = bSelected]
+    auto create_plot =
+    [&plot = mPlot,
+     marker = this,
+     playfield = std::weak_ptr<Playfield>(playfield),
+     button = std::weak_ptr<sfg::Button>(button),
+     &selected = bSelected]
     {
         if (selected) {
-            assert(!window.expired());
             assert(!playfield.expired());
             auto pf = playfield.lock();
-            plot.SetPosition(marker_obj.getPosition());
-            if (marker_type == MarkerType::Upper) {
+            plot.SetPosition(marker->mObject.getPosition());
+            if (marker->GetType() == MarkerType::Upper) {
                 pf->PushPlotFront(plot);
             } else {
                 pf->PushPlotBack(plot);
             }
-            window.lock()->Show(false);
+            marker->OnOut();
         }
         return;
     };
 
-    button->GetSignal(Widget::OnMouseLeftRelease).Connect(create_plot);
+    mSignalSerial = connect(button, Widget::OnMouseLeftRelease, create_plot);
+}
+
+ExpansionMarker::~ExpansionMarker()
+{
+    assert(!mButton.expired());
+    auto&& button = mButton.lock();
+    button->GetSignal(sfg::Widget::OnMouseLeftRelease).Disconnect(mSignalSerial);
 }
 
 void ExpansionMarker::OnHover()

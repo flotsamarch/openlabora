@@ -9,6 +9,7 @@
 #include "GameState/Views/IGameView.hpp"
 #include "GameState/Controllers/GameController.hpp"
 #include "Game/ExpansionMarker.hpp"
+#include "GUI/Utility.hpp"
 
 namespace OpenLabora
 {
@@ -35,7 +36,7 @@ protected:
     sf::Vector2i mMouseCoords;
     sf::Vector2f mMouseDelta{ 0.f, 0.f };
 
-    bool bMouseCapturedByGui{ false };
+    bool bMouseLeftReleaseHandled{ false };
     bool bEscMenuHidden{ true };
     std::vector<sfg::Widget::Ptr> mMenuWidgets;
     float mEscMenuColWidth;
@@ -46,7 +47,7 @@ protected:
     std::map<Plot::PlotType, MarkerArray> mMarkers;
 
     sfg::Window::Ptr mCentralPlotSelectionWindow;
-    sfg::Window::Ptr mPlotConfirmationWindow;
+    sfg::Window::Ptr mPlotConfirmWindow;
 
     // These are SFML screenspace<->world coordinate transformation methods
     // They are copied since i cannot pass window around easily
@@ -60,6 +61,10 @@ protected:
 
     void UpdateMarkers();
 
+    template<class TWidget, typename... Args>
+    requires std::derived_from<TWidget, sfg::Widget>
+    typename TWidget::Ptr CreateEventConsumingWidget(Args&&... args);
+
 public:
     GameView(std::shared_ptr<AppStateManager>,
              std::shared_ptr<GameController>,
@@ -72,9 +77,31 @@ public:
     void Update(const float update_delta_seconds) override;
 
     void HandleWindowResize(const sf::Vector2u& window_size) override;
+};
 
-    void SetMouseCapturedFlag(bool value) noexcept
-    { bMouseCapturedByGui = value; }
+template<class TWidget, typename... Args>
+requires std::derived_from<TWidget, sfg::Widget>
+typename TWidget::Ptr GameView::CreateEventConsumingWidget(Args&&... args)
+{
+    auto widget = TWidget::Create(std::forward<Args>(args)...);
+
+    auto mouse_left_release_handled =
+    [&flag = bMouseLeftReleaseHandled]
+    {
+        flag = true;
+    };
+
+    connect(widget,
+            sfg::Widget::OnMouseLeftRelease,
+            mouse_left_release_handled);
+
+    if constexpr (std::derived_from<TWidget, sfg::Window>) {
+        connect(widget,
+                sfg::Window::OnCloseButton,
+                mouse_left_release_handled);
+    }
+
+    return widget;
 };
 
 } // namespace OpenLabora

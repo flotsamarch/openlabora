@@ -1,15 +1,20 @@
 #include <SFGUI/Button.hpp>
 #include <SFGUI/Box.hpp>
 #include <SFGUI/Label.hpp>
+#include <SFGUI/Alignment.hpp>
 #include "AppState/AppStateManager.hpp"
 #include "GameState/Views/GameView.hpp"
 #include "GameState/Model.hpp"
+#include "GUI/Utility.hpp"
 
 namespace OpenLabora
 {
 
+namespace
+{
 using PlotType = Plot::PlotType;
 using MarkerType = ExpansionMarker::MarkerType;
+}
 
 GameView::GameView(std::shared_ptr<AppStateManager> state,
                    std::shared_ptr<GameController> controller,
@@ -19,11 +24,41 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
       mModel{ model },
       mMouseCoords{ sf::Mouse::getPosition() }
 {
+    using Widget = sfg::Widget;
+    using Window = sfg::Window;
+
     auto&& view = mController->GetMainView();
     auto default_view = sf::FloatRect{ 0.f, 0.f,
             static_cast<float>(mModel->mWindowSize.x),
             static_cast<float>(mModel->mWindowSize.y) };
     view.reset(default_view);
+
+    // UI helper lambdas
+
+    // Generate delegate for SFGUI that closes specific window
+    auto close_window =
+    [] (Window::Ptr window)
+    {
+        return [window = std::weak_ptr<Window>(window)]
+        {
+                assert(!window.expired());
+                window.lock()->Show(false);
+        };
+    };
+
+    auto center_window =
+    [&screen_size = mModel->mWindowSize]
+    (Window::Ptr window, sf::Vector2f window_size)
+    {
+        auto half_width = window_size.x / 2;
+        auto half_height = window_size.y / 2;
+
+        auto center_x = static_cast<float>(screen_size.x) / 2;
+        auto center_y = static_cast<float>(screen_size.y) / 2;
+
+        window->SetAllocation({center_x - half_width, center_y - half_height,
+                              window_size.x, window_size.y});
+    };
 
     // Escape menu UI
     auto win_x = static_cast<float>(mModel->mWindowSize.x);
@@ -33,8 +68,8 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
 
     auto quit_btn = sfg::Button::Create("Quit");
 
-    quit_btn->GetSignal(sfg::Widget::OnLeftClick).Connect(
-    [state = this->mState]
+    connect(quit_btn, Widget::OnLeftClick,
+    [state = mState]
     {
         assert(!state.expired());
         state.lock()->SetNextState<AppStateDefs::FinalState>();
@@ -54,41 +89,59 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     mMenuWidgets.push_back(box);
 
     // Plot purchase confirmation window
-    auto style = static_cast<char>(sfg::Window::Style::BACKGROUND |
-                                   sfg::Window::Style::CLOSE |
-                                   sfg::Window::Style::RESIZE);
-    mPlotConfirmationWindow = sfg::Window::Create(style);
+    auto style = static_cast<char>(Window::Style::BACKGROUND |
+                                   Window::Style::TITLEBAR |
+                                   Window::Style::SHADOW |
+                                   Window::Style::CLOSE);
+    mPlotConfirmWindow = CreateEventConsumingWidget<Window>(style);
 
+    auto confirm_btn_yes = CreateEventConsumingWidget<sfg::Button>("Yes");
+    auto confirm_btn_no = CreateEventConsumingWidget<sfg::Button>("No");
     auto confirm_btn_box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
-    auto confirm_btn_yes = sfg::Button::Create("Yes");
-    auto confirm_btn_no = sfg::Button::Create("No");
     confirm_btn_box->Pack(confirm_btn_yes);
     confirm_btn_box->Pack(confirm_btn_no);
 
     auto confirm_text = sfg::Label::Create("Buy plot?");
-    auto confirm_vbox = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
-    confirm_vbox->Pack(confirm_btn_box);
+    auto confirm_vbox = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, 10.f);
     confirm_vbox->Pack(confirm_text);
+    confirm_vbox->Pack(confirm_btn_box);
 
-    mPlotConfirmationWindow->Add(confirm_vbox);
-    mPlotConfirmationWindow->Show(false);
-    mDesktop.Add(mPlotConfirmationWindow);
+    mPlotConfirmWindow->Add(confirm_vbox);
+    mPlotConfirmWindow->Show(false);
 
-    confirm_btn_no->GetSignal(sfg::Widget::OnMouseLeftRelease).Connect(
-    [window = std::weak_ptr<sfg::Window>(mPlotConfirmationWindow)]
-    {
-        assert(!window.expired());
-        window.lock()->Show(false);
-    });
+    auto close_confirm_window = close_window(mPlotConfirmWindow);
+    connect(mPlotConfirmWindow, Window::OnCloseButton, close_confirm_window);
+    connect(confirm_btn_no, Widget::OnMouseLeftRelease, close_confirm_window);
+    connect(confirm_btn_yes, Widget::OnMouseLeftRelease, close_confirm_window);
+
+    center_window(mPlotConfirmWindow, {350.f, 90.f});
+    mDesktop.Add(mPlotConfirmWindow);
 
     using PlotType = Plot::PlotType;
-
     auto&& playfield = mController->GetActivePlayerPlayfield();
     auto&& res_mgr = state->GetResourceManager();
 
     // Markers
-    auto [top_marker_pos, btm_marker_pos] =
-        playfield->GetExpansionMarkerPositions(PlotType::Central);
+    auto coastal_plot = Plot{Plot::kCostalPlot, res_mgr};
+
+    auto marker_coastal_top =
+        mController->CreateEntity<ExpansionMarker>(coastal_plot,
+                                                   MarkerType::Upper,
+                                                   playfield,
+                                                   mPlotConfirmWindow,
+                                                   confirm_btn_yes);
+    auto marker_coastal_middle =
+        mController->CreateEntity<ExpansionMarker>(coastal_plot,
+                                                   MarkerType::Disposable,
+                                                   playfield,
+                                                   mPlotConfirmWindow,
+                                                   confirm_btn_yes);
+    auto marker_coastal_bottom =
+        mController->CreateEntity<ExpansionMarker>(coastal_plot,
+                                                   MarkerType::Lower,
+                                                   playfield,
+                                                   mPlotConfirmWindow,
+                                                   confirm_btn_yes);
 
     auto central_plot_top = Plot{Plot::kCentralPlotTop, res_mgr};
     auto central_plot_bottom = Plot{Plot::kCentralPlotBottom, res_mgr};
@@ -97,21 +150,55 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
         mController->CreateEntity<ExpansionMarker>(central_plot_top,
                                                    MarkerType::Upper,
                                                    playfield,
-                                                   mPlotConfirmationWindow,
+                                                   mPlotConfirmWindow,
                                                    confirm_btn_yes);
     auto marker_central_bottom =
         mController->CreateEntity<ExpansionMarker>(central_plot_bottom,
                                                    MarkerType::Lower,
                                                    playfield,
-                                                   mPlotConfirmationWindow,
+                                                   mPlotConfirmWindow,
                                                    confirm_btn_yes);
 
+    auto mountain_plot_top = Plot{Plot::kMountainPlotTop, res_mgr};
+    auto mountain_plot_bottom = Plot{Plot::kMountainPlotBottom, res_mgr};
+
+    auto marker_mountain_top =
+        mController->CreateEntity<ExpansionMarker>(mountain_plot_top,
+                                                   MarkerType::Upper,
+                                                   playfield,
+                                                   mPlotConfirmWindow,
+                                                   confirm_btn_yes);
+    auto marker_mountain_middle =
+        mController->CreateEntity<ExpansionMarker>(mountain_plot_top,
+                                                   MarkerType::Disposable,
+                                                   playfield,
+                                                   mPlotConfirmWindow,
+                                                   confirm_btn_yes);
+    auto marker_mountain_bottom =
+        mController->CreateEntity<ExpansionMarker>(mountain_plot_top,
+                                                   MarkerType::Lower,
+                                                   playfield,
+                                                   mPlotConfirmWindow,
+                                                   confirm_btn_yes);
+
+    auto position = playfield->GetPosition();
+    position.y += Playfield::kInitialPlotOffset;
+    marker_coastal_middle->SetPosition(position);
+    position.x += Plot::GetOffsetXForPlotType(PlotType::Mountain);
+    marker_mountain_middle->SetPosition(position);
+
+    RegisterExpansionMarker(marker_coastal_top);
+    RegisterExpansionMarker(marker_coastal_middle);
+    RegisterExpansionMarker(marker_coastal_bottom);
     RegisterExpansionMarker(marker_central_top);
     RegisterExpansionMarker(marker_central_bottom);
-    UpdateMarkers();
+    RegisterExpansionMarker(marker_mountain_top);
+    RegisterExpansionMarker(marker_mountain_middle);
+    RegisterExpansionMarker(marker_mountain_bottom);
 
+    UpdateMarkers();
     // The deletion of pointers should happen after marker's job is done
-    confirm_btn_yes->GetSignal(sfg::Widget::OnMouseLeftRelease).Connect(
+    connect(confirm_btn_yes, Widget::OnMouseLeftRelease,
     [this]
     {
         this->UpdateMarkers();
@@ -128,6 +215,8 @@ GameView::~GameView() noexcept
 void GameView::HandleEvent(const sf::Event& evt)
 {
     mDesktop.HandleEvent(evt);
+
+    mPlotConfirmWindow->IsLocallyVisible();
 
     switch (evt.type) {
         case sf::Event::KeyPressed:
@@ -150,30 +239,16 @@ void GameView::HandleEvent(const sf::Event& evt)
             mMouseDelta.x = static_cast<float>(evt.mouseMove.x - mMouseCoords.x);
             mMouseDelta.y = static_cast<float>(evt.mouseMove.y - mMouseCoords.y);
             mMouseCoords = { evt.mouseMove.x, evt.mouseMove.y };
-            auto mouse_world_pos =
-                MapScreenToWorldCoords(mMouseCoords, mModel->mMainView);
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && bEscMenuHidden) {
                 mController->GetMainView().move(-mMouseDelta.x, -mMouseDelta.y);
-            }
-
-            if (bMouseCapturedByGui || !bEscMenuHidden) {
-                break;
-            }
-
-            // TODO take Z-coordinate into account
-            for (auto&& entity : mModel->mSelectableEntities) {
-                if (entity->IsPointInRegisteringArea(mouse_world_pos)) {
-                    entity->OnHover();
-                } else {
-                    entity->OnOut();
-                }
             }
             break;
         }
         case sf::Event::MouseButtonReleased:
         {
-            if (bMouseCapturedByGui) {
+            if (bMouseLeftReleaseHandled) {
+                bMouseLeftReleaseHandled = false;
                 break;
             }
 
@@ -201,7 +276,7 @@ void GameView::HandleEvent(const sf::Event& evt)
             #endif
             break;
         }
-        default: { break; }
+        default: {}
     }
 };
 
@@ -209,13 +284,21 @@ void GameView::Update(const float update_delta_seconds)
 {
     mDesktop.Update(update_delta_seconds);
 
-    // Disjunction on all flags that may cause pause in gui
-    bool gui_paused = !bEscMenuHidden;
-    mController->SetPaused(gui_paused);
+    if (bEscMenuHidden && !mPlotConfirmWindow->IsGloballyVisible())
+    {
+        auto mouse_world_pos =
+            MapScreenToWorldCoords(mMouseCoords, mModel->mMainView);
 
-    if (mModel->bPaused) {
-        return;
+        // Todo Take Z-coordinate into account
+        for (auto&& entity : mModel->mSelectableEntities) {
+            if (entity->IsPointInRegisteringArea(mouse_world_pos)) {
+                entity->OnHover();
+            } else {
+                entity->OnOut();
+            }
+        }
     }
+
     // TODO fix build mode. Move this to GameView
     #if 0
     assert(!mState.expired());

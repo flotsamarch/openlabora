@@ -24,6 +24,8 @@ private:
     Plot mPlot;
     MarkerType mType;
     std::weak_ptr<sfg::Window> mWindow;
+    std::weak_ptr<sfg::Button> mButton;
+    uint32_t mSignalSerial{ 0u };
 
 public:
     ExpansionMarker(const Plot&,
@@ -31,6 +33,7 @@ public:
                     std::shared_ptr<Playfield>,
                     std::shared_ptr<sfg::Window>, // Window that appears on click
                     std::shared_ptr<sfg::Button>); // Creation confirm button
+    ~ExpansionMarker();
 
     void OnHover() override;
 
