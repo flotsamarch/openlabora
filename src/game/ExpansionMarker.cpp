@@ -7,6 +7,11 @@
 namespace OpenLabora
 {
 
+namespace
+{
+    using Widget = sfg::Widget;
+}
+
 ExpansionMarker::ExpansionMarker(const Plot& plot,
                                  MarkerType type,
                                  std::shared_ptr<Playfield> playfield,
@@ -18,7 +23,6 @@ ExpansionMarker::ExpansionMarker(const Plot& plot,
     mObject.setColor(sf::Color::Transparent);
 
     using PlotType = Plot::PlotType;
-    using Widget = sfg::Widget;
 
     auto create_plot =
     [&plot = mPlot,
@@ -46,9 +50,11 @@ ExpansionMarker::ExpansionMarker(const Plot& plot,
 
 ExpansionMarker::~ExpansionMarker()
 {
-    assert(!mButton.expired());
-    auto&& button = mButton.lock();
-    button->GetSignal(sfg::Widget::OnMouseLeftRelease).Disconnect(mSignalSerial);
+    // If button is expired there is no need to disconnect signal
+    if (!mButton.expired()) {
+        auto&& button = mButton.lock();
+        button->GetSignal(Widget::OnMouseLeftRelease).Disconnect(mSignalSerial);
+    }
 }
 
 void ExpansionMarker::OnHover()
