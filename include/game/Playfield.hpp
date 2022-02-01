@@ -28,6 +28,10 @@ public:
 
     Tile::TileInfo GetTileInfoUnderPoint(const sf::Vector2f&) const;
 
+    void SetPosition(const sf::Vector2f&) override;
+
+    void SetPosition(float offset_x, float offset_y) override;
+
     // Pushes plot to the top of existing plots
     void PushPlotFront(const Plot& plot)
     {

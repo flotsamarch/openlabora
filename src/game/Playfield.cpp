@@ -32,18 +32,18 @@ Playfield::Playfield(const IResourceManager& res_mgr)
 
     mGroundTexture.create(Tile::kTileWidth * kMaxFieldWidth,
                           Tile::kTileHeight * kMaxFieldHeight);
+    mObject.setTexture(mGroundTexture.getTexture(), true);
     DrawPlotsAsSprite();
 }
 
 void Playfield::DrawPlotsAsSprite()
 {
+    mGroundTexture.clear();
     for (auto&& sub_plots : mPlots) {
-            for (auto&& item : sub_plots.second) {
-                auto&& plot_sprite = item.GetDrawableObject();
-                mGroundTexture.draw(plot_sprite);
+        for (auto&& item : sub_plots.second) {
+            mGroundTexture.draw(item.GetDrawableObject());
         }
     }
-
     mGroundTexture.display();
     mObject.setTexture(mGroundTexture.getTexture(), true);
 }
@@ -119,6 +119,28 @@ bool Playfield::IsPlotsLimitReached(PlotType plot_type, MarkerType marker_type)
     auto&& count = kMaxPlotCount.find(plot_type);
     assert(count != kMaxPlotCount.end());
     return count->second <= plot_deq->second.size();
+}
+
+void Playfield::SetPosition(const sf::Vector2f& position)
+{
+    auto delta_pos = position - GetPosition();
+    mObject.setPosition(position);
+    auto width = static_cast<float>(mGroundTexture.getSize().x);
+    auto height = static_cast<float>(mGroundTexture.getSize().y);
+    auto view = sf::View({position.x, position.y,
+                          width, height});
+    mGroundTexture.setView(view);
+    for (auto&& plot_deq : mPlots) {
+        for (auto&& plot : plot_deq.second) {
+            plot.Move(delta_pos);
+        }
+    }
+    DrawPlotsAsSprite();
+}
+
+void Playfield::SetPosition(float offset_x, float offset_y)
+{
+    SetPosition({offset_x, offset_y});
 }
 
 } // namespace OpenLabora

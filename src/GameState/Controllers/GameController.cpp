@@ -13,10 +13,21 @@ GameController::GameController(std::shared_ptr<AppStateManager> state,
     mModel->mEntities.clear();
     mModel->mSelectableEntities.clear();
 
+    auto pf_width = static_cast<float>(Playfield::kMaxFieldWidth);
+    auto pf_height = static_cast<float>(Playfield::kMaxFieldHeight);
+    auto pf_margin = pf_width * Tile::kTileWidth + 3 * Tile::kTileWidth;
     for (uint32_t player{0}; auto&& pf : mModel->mPlayfields) {
         pf.reset();
         if (player < player_count) {
             pf = CreateEntity<Playfield>(res_mgr);
+            auto position =
+                sf::Vector2f{ static_cast<float>(mModel->mWindowSize.x) / 2,
+                              static_cast<float>(mModel->mWindowSize.y) / 2 };
+            position.x -= (pf_width / 2) * Tile::kTileWidth;
+            position.x += static_cast<float>(pf_margin * player);
+            position.y -= (pf_height / 2) * Tile::kTileHeight;
+            pf->SetPosition(position);
+            player++;
         }
     }
 }

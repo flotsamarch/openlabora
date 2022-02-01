@@ -17,6 +17,9 @@ Plot::Plot(const PlotTilesAndType& ptat,
                               mTiles.emplace_back(type, res_mgr);
                           });
 
+    auto width = Tile::kTileWidth * static_cast<uint32_t>(mTiles.size());
+    mPlotTexture->create(width, Tile::kTileHeight);
+    mObject.setTexture(mPlotTexture->getTexture(), true);
     DrawTilesAsSprite();
 }
 
@@ -48,17 +51,20 @@ Tile::TileInfo Plot::GetTileInfoUnderPoint(const sf::Vector2f& point) const
 
 void Plot::DrawTilesAsSprite()
 {
+    mPlotTexture->clear();
     auto width = Tile::kTileWidth * static_cast<uint32_t>(mTiles.size());
-    mPlotTexture->create(width, Tile::kTileHeight);
+    auto position = mObject.getPosition();
+    auto view = sf::View({position.x, position.y,
+            static_cast<float>(width), Tile::kTileHeight});
+    mPlotTexture->setView(view);
     for (float offset_x = 0.f; auto&& tile : mTiles) {
         if (tile.IsValid()) {
-            tile.SetPosition(offset_x, 0.f);
+            tile.SetPosition(position.x + offset_x, position.y);
             mPlotTexture->draw(tile.GetDrawableObject());
         }
         offset_x += Tile::kTileWidth;
     }
     mPlotTexture->display();
-    mObject.setTexture(mPlotTexture->getTexture(), true);
 }
 
 } // namespace OpenLabora
