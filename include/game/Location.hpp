@@ -1,7 +1,7 @@
 #ifndef LOCATION_HPP_
 #define LOCATION_HPP_
 
-#include <unordered_map>
+#include <map>
 #include "resource/IResourceManager.hpp"
 #include "Entity.hpp"
 #include "ISelectable.hpp"
@@ -30,8 +30,8 @@ public:
     LocationType GetType() const noexcept { return mType; }
 
 private:
-    using LocationStrMap = std::unordered_map<LocationType, std::string_view>;
-    using PlaceableMap = std::unordered_map<LocationType, Tile::TileType>;
+    using LocationStrMap = std::map<LocationType, std::string_view>;
+    using PlaceableMap = std::map<LocationType, Tile::TileType>;
     LocationType mType;
 
     inline static const LocationStrMap kTextureNames

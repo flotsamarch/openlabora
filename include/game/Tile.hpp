@@ -5,7 +5,7 @@
 #include <cmath>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Sprite.hpp>
-#include <unordered_map>
+#include <map>
 #include "resource/IResourceManager.hpp"
 #include "Entity.hpp"
 
@@ -44,8 +44,7 @@ public:
     static constexpr uint32_t kTileHeight{ 150u };
     static constexpr uint32_t kTileWidth{ 100u };
 
-    using TileToTextureNameMap =
-        const std::unordered_map<TileType, std::string_view>;
+    using TileToTextureNameMap = const std::map<TileType, std::string_view>;
 
     inline static const TileToTextureNameMap kTileToTextureMap
     {
