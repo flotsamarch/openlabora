@@ -1,6 +1,7 @@
 #ifndef ITRANSFORMABLE_HPP_
 #define ITRANSFORMABLE_HPP_
 
+#include <memory>
 #include "SFML/System/Vector2.hpp"
 
 namespace OpenLabora
@@ -9,6 +10,8 @@ namespace OpenLabora
 class ITransformable
 {
 public:
+    using Ptr = std::shared_ptr<ITransformable>;
+
     virtual ~ITransformable() {};
 
     virtual void Move(float offset_x, float offset_y) = 0;

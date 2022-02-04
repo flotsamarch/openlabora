@@ -19,6 +19,8 @@ public:
     enum class MarkerType
     { Begin, Upper = Begin, Lower, Disposable, End, Max = End };
 
+    using Ptr = std::shared_ptr<ExpansionMarker>;
+
 private:
     inline static const sf::Color kHalfTransparent{ 255, 255, 255, 200 };
     Plot mPlot;

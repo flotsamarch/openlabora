@@ -12,6 +12,9 @@ class AppStateManager;
 class ISelectable
 {
 public:
+    using Ptr = std::shared_ptr<ISelectable>;
+    using CPtr = std::shared_ptr<const ISelectable>;
+
     virtual ~ISelectable() noexcept {};
 
     virtual void OnHover() = 0;

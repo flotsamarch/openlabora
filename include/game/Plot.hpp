@@ -20,6 +20,7 @@ public:
     { Begin, Coastal = Begin, Central, Mountain, End };
 
     using TileSpan = std::span<const Tile::TileType>;
+    using Ptr = std::shared_ptr<Plot>;
 
     struct PlotTilesAndType
     {

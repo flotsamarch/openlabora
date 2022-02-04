@@ -27,6 +27,8 @@ protected:
     T mObject; // Can be sf::Sprite, sf::Shape derivative, sf::Text, etc.
 public:
     inline static const sf::Vector2f kOutOfBounds{ -999999.f, -999999.f };
+    using Ptr = std::shared_ptr<Entity<T>>;
+
     virtual ~Entity() noexcept = 0;
 
     void Move(float offset_x, float offset_y) override

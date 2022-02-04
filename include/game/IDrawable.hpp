@@ -11,8 +11,8 @@ namespace OpenLabora
 class IDrawable
 {
 public:
-    using Ptr = std::weak_ptr<IDrawable>;
-    using Iter = std::vector<Ptr>::iterator;
+    using Ptr = std::shared_ptr<IDrawable>;
+    using CPtr = std::shared_ptr<const IDrawable>;
 
     virtual const sf::Drawable& GetDrawableObject() const noexcept = 0;
 

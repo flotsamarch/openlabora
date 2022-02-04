@@ -23,6 +23,7 @@ public:
     static constexpr uint32_t kMaxFieldHeight{ 36 };
     static constexpr uint32_t kMaxFieldWidth{ 9 };
     static constexpr uint32_t kInitialPlotOffset{ 17 * Tile::kTileHeight };
+    using Ptr = std::shared_ptr<Playfield>;
 
     Playfield(const IResourceManager&);
 

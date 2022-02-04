@@ -19,6 +19,8 @@ public:
         HouseBoat, FishingVillage, ClayMound, End
     };
 
+    using Ptr = std::shared_ptr<Location>;
+
     Location(LocationType);
 
     static bool IsPlaceableOn(LocationType, Tile::TileType);
