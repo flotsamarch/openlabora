@@ -43,7 +43,7 @@ public:
 
     void Select() override;
 
-    bool IsPointInRegisteringArea(const sf::Vector2f& point) override
+    bool IsPointInRegisteringArea(const sf::Vector2f& point) const override
     { return mObject.getGlobalBounds().contains(point); }
 
     Plot::PlotType GetPlotType() const noexcept

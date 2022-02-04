@@ -31,7 +31,7 @@ public:
 
     // Test whether point is in area where a click should be registered
     // This takes global world coordinates
-    virtual bool IsPointInRegisteringArea(const sf::Vector2f& point) = 0;
+    virtual bool IsPointInRegisteringArea(const sf::Vector2f& point) const = 0;
 };
 
 } // namespace OpenLabora

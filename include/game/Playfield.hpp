@@ -52,7 +52,8 @@ public:
     std::tuple<sf::Vector2f, sf::Vector2f>
     GetExpansionMarkerPositions(Plot::PlotType) const;
 
-    bool IsPlotsLimitReached(Plot::PlotType, ExpansionMarker::MarkerType);
+    bool IsPlotsLimitReached(Plot::PlotType, ExpansionMarker::MarkerType) const;
+
 private:
     const IResourceManager& mResMgr;
     sf::RenderTexture mGroundTexture;

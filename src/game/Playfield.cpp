@@ -102,7 +102,8 @@ Playfield::GetExpansionMarkerPositions(PlotType type) const
             {btm_left_pos.x, btm_left_pos.y + offset_tile_number}};
 }
 
-bool Playfield::IsPlotsLimitReached(PlotType plot_type, MarkerType marker_type)
+bool Playfield::IsPlotsLimitReached(PlotType plot_type,
+                                    MarkerType marker_type) const
 {
     assert(plot_type != PlotType::End);
     assert(marker_type != MarkerType::End);
