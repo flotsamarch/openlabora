@@ -13,11 +13,12 @@ GVMainMenu::GVMainMenu(std::shared_ptr<AppStateManager> state,
                        std::shared_ptr<const Model> model)
     : mState{ state }, mController{ controller }, mModel{ model }
 {
-    float col_width = mModel->mWindowSize.x / 3.f;
-    float screen_center_y = mModel->mWindowSize.y / 2.f;
-    float box_padding = 8.f;
-    float btn_height = 40.f;
-    float total_height = 2 * btn_height + box_padding;
+    auto win_size = static_cast<sf::Vector2f>(mModel->GetWindowSize());
+    auto col_width = win_size.x / 3;
+    auto screen_center_y = win_size.y / 2;
+    auto box_padding = 8.f;
+    auto btn_height = 40.f;
+    auto total_height = 2 * btn_height + box_padding;
 
     auto duel_btn = sfg::Button::Create("Duel");
     auto quit_btn = sfg::Button::Create("Quit");
