@@ -27,11 +27,8 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     using Widget = sfg::Widget;
     using Window = sfg::Window;
 
-    auto&& view = mController->GetMainView();
-    auto default_view = sf::FloatRect{ 0.f, 0.f,
-            static_cast<float>(mModel->mWindowSize.x),
-            static_cast<float>(mModel->mWindowSize.y) };
-    view.reset(default_view);
+    auto win_size = static_cast<sf::Vector2f>(mModel->GetWindowSize());
+    mController->ResetMainView(sf::FloatRect{0.f, 0.f, win_size.x, win_size.y});
 
     // UI helper lambdas
 
@@ -47,24 +44,23 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     };
 
     auto center_window =
-    [&screen_size = mModel->mWindowSize]
+    [&screen_size = mModel->GetWindowSize()]
     (Window::Ptr window, sf::Vector2f window_size)
     {
         auto half_width = window_size.x / 2;
         auto half_height = window_size.y / 2;
+        auto center_x = screen_size.x / 2;
+        auto center_y = screen_size.y / 2;
 
-        auto center_x = static_cast<float>(screen_size.x) / 2;
-        auto center_y = static_cast<float>(screen_size.y) / 2;
-
-        window->SetAllocation({center_x - half_width, center_y - half_height,
-                              window_size.x, window_size.y});
+        window->SetAllocation({center_x - half_width,
+                               center_y - half_height,
+                               window_size.x,
+                               window_size.y});
     };
 
     // Escape menu UI
-    auto win_x = static_cast<float>(mModel->mWindowSize.x);
-    auto win_y = static_cast<float>(mModel->mWindowSize.y);
-    mEscMenuColWidth =  win_x / 3.f;
-    mScreenCenter = { win_x / 2.f, win_y / 2.f };
+    mEscMenuColWidth =  win_size.x / 3.f;
+    mScreenCenter = { win_size.x / 2.f, win_size.y / 2.f };
 
     auto quit_btn = sfg::Button::Create("Quit");
 
@@ -117,71 +113,55 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     center_window(mPlotConfirmWindow, {350.f, 90.f});
     mDesktop.Add(mPlotConfirmWindow);
 
+    #if 0
     using PlotType = Plot::PlotType;
-    auto&& playfield = mController->GetActivePlayerPlayfield();
     auto&& res_mgr = state->GetResourceManager();
 
     // Markers
     auto coastal_plot = Plot{Plot::kCostalPlot, res_mgr};
 
-    auto marker_coastal_top =
-        mController->CreateEntity<ExpansionMarker>(coastal_plot,
-                                                   MarkerType::Upper,
-                                                   playfield,
-                                                   mPlotConfirmWindow,
-                                                   confirm_btn_yes);
-    auto marker_coastal_middle =
-        mController->CreateEntity<ExpansionMarker>(coastal_plot,
-                                                   MarkerType::Disposable,
-                                                   playfield,
-                                                   mPlotConfirmWindow,
-                                                   confirm_btn_yes);
-    auto marker_coastal_bottom =
-        mController->CreateEntity<ExpansionMarker>(coastal_plot,
-                                                   MarkerType::Lower,
-                                                   playfield,
-                                                   mPlotConfirmWindow,
-                                                   confirm_btn_yes);
+    auto marker_coastal_top = mController->CreateMarker(coastal_plot,
+                                                        MarkerType::Upper,
+                                                        mPlotConfirmWindow,
+                                                        confirm_btn_yes);
+    auto marker_coastal_middle = mController->CreateMarker(coastal_plot,
+                                                           MarkerType::Disposable,
+                                                           mPlotConfirmWindow,
+                                                           confirm_btn_yes);
+    auto marker_coastal_bottom = mController->CreateMarker(coastal_plot,
+                                                           MarkerType::Lower,
+                                                           mPlotConfirmWindow,
+                                                           confirm_btn_yes);
 
     auto central_plot_top = Plot{Plot::kCentralPlotTop, res_mgr};
     auto central_plot_bottom = Plot{Plot::kCentralPlotBottom, res_mgr};
 
-    auto marker_central_top =
-        mController->CreateEntity<ExpansionMarker>(central_plot_top,
-                                                   MarkerType::Upper,
-                                                   playfield,
-                                                   mPlotConfirmWindow,
-                                                   confirm_btn_yes);
-    auto marker_central_bottom =
-        mController->CreateEntity<ExpansionMarker>(central_plot_bottom,
-                                                   MarkerType::Lower,
-                                                   playfield,
-                                                   mPlotConfirmWindow,
-                                                   confirm_btn_yes);
+    auto marker_central_top = mController->CreateMarker(central_plot_top,
+                                                        MarkerType::Upper,
+                                                        mPlotConfirmWindow,
+                                                        confirm_btn_yes);
+    auto marker_central_bottom = mController->CreateMarker(central_plot_bottom,
+                                                           MarkerType::Lower,
+                                                           mPlotConfirmWindow,
+                                                           confirm_btn_yes);
 
     auto mountain_plot_top = Plot{Plot::kMountainPlotTop, res_mgr};
     auto mountain_plot_bottom = Plot{Plot::kMountainPlotBottom, res_mgr};
 
-    auto marker_mountain_top =
-        mController->CreateEntity<ExpansionMarker>(mountain_plot_top,
-                                                   MarkerType::Upper,
-                                                   playfield,
-                                                   mPlotConfirmWindow,
-                                                   confirm_btn_yes);
-    auto marker_mountain_middle =
-        mController->CreateEntity<ExpansionMarker>(mountain_plot_top,
-                                                   MarkerType::Disposable,
-                                                   playfield,
-                                                   mPlotConfirmWindow,
-                                                   confirm_btn_yes);
-    auto marker_mountain_bottom =
-        mController->CreateEntity<ExpansionMarker>(mountain_plot_top,
-                                                   MarkerType::Lower,
-                                                   playfield,
-                                                   mPlotConfirmWindow,
-                                                   confirm_btn_yes);
+    auto marker_mountain_top = mController->CreateMarker(mountain_plot_top,
+                                                         MarkerType::Upper,
+                                                         mPlotConfirmWindow,
+                                                         confirm_btn_yes);
+    auto marker_mountain_middle = mController->CreateMarker(mountain_plot_top,
+                                                            MarkerType::Disposable,
+                                                            mPlotConfirmWindow,
+                                                            confirm_btn_yes);
+    auto marker_mountain_bottom = mController->CreateMarker(mountain_plot_top,
+                                                            MarkerType::Lower,
+                                                            mPlotConfirmWindow,
+                                                            confirm_btn_yes);
 
-    auto position = playfield->GetPosition();
+    auto position = mController->GetActivePlayerPlayfield()->GetPosition();
     position.y += Playfield::kInitialPlotOffset;
     marker_coastal_middle->SetPosition(position);
     position.x += Plot::GetOffsetXForPlotType(PlotType::Mountain);
@@ -203,6 +183,7 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     {
         this->UpdateMarkers();
     });
+    #endif
     // TODO initialize mModel->mBuildGhost something...something...
 };
 
@@ -241,26 +222,28 @@ void GameView::HandleEvent(const sf::Event& evt)
             mMouseCoords = { evt.mouseMove.x, evt.mouseMove.y };
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && bEscMenuHidden) {
-                mController->GetMainView().move(-mMouseDelta.x, -mMouseDelta.y);
+                mController->MoveMainView({-mMouseDelta.x, -mMouseDelta.y});
             }
             break;
         }
         case sf::Event::MouseButtonReleased:
         {
-            if (bMouseLeftReleaseHandled) {
-                bMouseLeftReleaseHandled = false;
+            if (mModel->IsEventIgnored(evt.type)) {
                 break;
             }
 
             if (evt.mouseButton.button == sf::Mouse::Left) {
-                for (auto&& entity : mModel->mSelectableEntities) {
-                    if (entity->WasEntered()) {
-                        entity->Select();
+                auto begin = mModel->GetSelectableEntities().begin();
+                auto end = mModel->GetSelectableEntities().end();
+                for (auto entity = begin; entity != end; ++entity) {
+                    if ((*entity)->WasEntered()) {
+                        mController->SelectEntity(entity);
                     } else {
-                        entity->Deselect();
+                        mController->DeselectEntity(entity);
                     }
                 }
             }
+
             // TODO fix build mode
             #if 0
             if (evt.mouseButton.button == sf::Mouse::Left && bBuildModeEnabled) {
@@ -287,14 +270,16 @@ void GameView::Update(const float update_delta_seconds)
     if (bEscMenuHidden && !mPlotConfirmWindow->IsGloballyVisible())
     {
         auto mouse_world_pos =
-            MapScreenToWorldCoords(mMouseCoords, mModel->mMainView);
+            MapScreenToWorldCoords(mMouseCoords, mModel->GetMainView());
 
         // Todo Take Z-coordinate into account
-        for (auto&& entity : mModel->mSelectableEntities) {
-            if (entity->IsPointInRegisteringArea(mouse_world_pos)) {
-                entity->OnHover();
+        auto begin = mModel->GetSelectableEntities().begin();
+        auto end = mModel->GetSelectableEntities().end();
+        for (auto entity = begin; entity != end; ++entity) {
+            if ((*entity)->IsPointInRegisteringArea(mouse_world_pos)) {
+                mController->EntityOnHover(entity);
             } else {
-                entity->OnOut();
+                mController->EntityOnOut(entity);
             }
         }
     }
@@ -325,14 +310,13 @@ void GameView::HandleWindowResize(const sf::Vector2u& window_size)
 
 sf::IntRect GameView::TransformViewToWindowCoords(const sf::View& view)
 {
-    auto width  = static_cast<float>(mModel->mWindowSize.x);
-    auto height = static_cast<float>(mModel->mWindowSize.y);
+    auto win_size  = static_cast<sf::Vector2f>(mModel->GetWindowSize());
     auto&& viewport = view.getViewport();
 
-    return sf::IntRect({static_cast<int>(0.5f + width  * viewport.left),
-                        static_cast<int>(0.5f + height * viewport.top)},
-                       {static_cast<int>(0.5f + width  * viewport.width),
-                        static_cast<int>(0.5f + height * viewport.height)});
+    return sf::IntRect({static_cast<int>(0.5f + win_size.x * viewport.left),
+                        static_cast<int>(0.5f + win_size.y * viewport.top)},
+                       {static_cast<int>(0.5f + win_size.x * viewport.width),
+                        static_cast<int>(0.5f + win_size.y * viewport.height)});
 }
 
 sf::Vector2f GameView::MapScreenToWorldCoords(const sf::Vector2i& pixel,
@@ -374,13 +358,11 @@ void GameView::UpdateMarkers()
         [playfield, ctlr = mController] (auto&& marker)
         {
             if (marker != nullptr) {
-                auto limit_reached =
-                    playfield->IsPlotsLimitReached(marker->GetPlotType(),
-                                                   marker->GetType());
-
-                if (limit_reached) {
-                    auto mp = std::shared_ptr<ExpansionMarker>(marker);
-                    ctlr->RemoveEntity(mp);
+                auto plot_type = marker->GetPlotType();
+                auto marker_type = marker->GetType();
+                if (playfield->IsPlotsLimitReached(plot_type, marker_type))
+                {
+                    ctlr->RemoveMarker(marker);
                     marker.reset();
                 }
             }

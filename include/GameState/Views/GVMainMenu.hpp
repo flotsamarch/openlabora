@@ -31,7 +31,7 @@ public:
 
     ~GVMainMenu() noexcept;
 
-    void HandleEvent(const sf::Event& evt) override;
+    void HandleEvent(const sf::Event&) override;
 
     void Update(const float update_delta_seconds) override;
 

@@ -20,11 +20,11 @@ int Application::run()
         float delta_seconds = clock.restart().asSeconds();
         HandleEvents();
         mState->Update(delta_seconds);
-        mRenderer->Update(mState->GetModel().mMainView);
+        mRenderer->Update(mState->GetModel().GetMainView());
 
         mRenderer->Clear();
 
-        for(auto&& entity: mState->GetModel().mDrawableEntities) {
+        for(auto entity : mState->GetModel().GetDrawableEntities()) {
             mRenderer->Draw(entity->GetDrawableObject());
         }
         mRenderer->Display();

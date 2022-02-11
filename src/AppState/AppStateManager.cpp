@@ -16,11 +16,9 @@ namespace OpenLabora
 {
 
 AppStateManager::AppStateManager(std::unique_ptr<IResourceManager> res_mgr,
-                sf::Vector2u window_size)
-    : mResourceManager{ std::move(res_mgr) }, mModel{ std::make_shared<Model>() }
-{
-    mModel->mWindowSize = window_size;
-};
+    const sf::Vector2u& window_size)
+    : mResourceManager{ std::move(res_mgr) },
+      mModel{ std::make_shared<Model>(window_size) } {}
 
 AppStateManager::~AppStateManager() = default;
 
@@ -34,10 +32,10 @@ void AppStateManager::Update(float update_delta_seconds)
 
 void AppStateManager::HandleEvent(const sf::Event& evt)
 {
-    assert(mState.gv != nullptr);
     assert(mState.gc != nullptr);
-    mState.gv->HandleEvent(evt);
+    assert(mState.gv != nullptr);
     mState.gc->HandleEvent(evt);
+    mState.gv->HandleEvent(evt);
 }
 
 template <class TStateName>

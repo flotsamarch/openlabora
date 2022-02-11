@@ -14,10 +14,11 @@ public:
     GCFinal(std::shared_ptr<AppStateManager>,
             std::shared_ptr<Model>) {};
 
-
     void HandleEvent(const sf::Event&) override {};
 
     void Update(const float) override {};
+
+    void HandleWindowResize(const sf::Vector2u&) override {};
 };
 
 } // namespace OpenLabora

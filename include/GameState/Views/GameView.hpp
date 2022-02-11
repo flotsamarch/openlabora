@@ -36,7 +36,6 @@ protected:
     sf::Vector2i mMouseCoords;
     sf::Vector2f mMouseDelta{ 0.f, 0.f };
 
-    bool bMouseLeftReleaseHandled{ false };
     bool bEscMenuHidden{ true };
     std::vector<sfg::Widget::Ptr> mMenuWidgets;
     float mEscMenuColWidth;
@@ -45,6 +44,7 @@ protected:
     float mEscMenuTotalHeight = mEscMenuButtonHeight;
 
     std::map<Plot::PlotType, MarkerArray> mMarkers;
+    std::shared_ptr<Location> mBuildGhost;
 
     sfg::Window::Ptr mCentralPlotSelectionWindow;
     sfg::Window::Ptr mPlotConfirmWindow;
@@ -72,7 +72,7 @@ public:
 
     virtual ~GameView() noexcept;
 
-    void HandleEvent(const sf::Event& evt) override;
+    void HandleEvent(const sf::Event&) override;
 
     void Update(const float update_delta_seconds) override;
 
@@ -86,9 +86,10 @@ typename TWidget::Ptr GameView::CreateEventConsumingWidget(Args&&... args)
     auto widget = TWidget::Create(std::forward<Args>(args)...);
 
     auto mouse_left_release_handled =
-    [&flag = bMouseLeftReleaseHandled]
+    [ctlr = std::weak_ptr<GameController>(mController)]
     {
-        flag = true;
+        assert(!ctlr.expired());
+        ctlr.lock()->IgnoreNextEvent(sf::Event::MouseButtonReleased);
     };
 
     connect(widget,

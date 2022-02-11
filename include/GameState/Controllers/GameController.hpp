@@ -15,9 +15,6 @@
 namespace OpenLabora
 {
 
-template<class TEntity>
-concept CEntity = std::derived_from<TEntity, IEntity>;
-
 // General game logic base class
 class GameController : public IGameController
 {
@@ -28,6 +25,15 @@ protected:
     const std::weak_ptr<AppStateManager> mState;
     const std::shared_ptr<Model> mModel;
 
+    using SelectableCIterator = Model::CSelectableSpan::iterator;
+
+    // TODO multiplayer support
+    std::shared_ptr<Playfield> GetActivePlayerPlayfieldInternal() noexcept
+    { return mModel->GetPlayfield(Model::Player1); }
+
+    // Find mutable entity ptr in O(1) by const random access iterator
+    ISelectable::Ptr FindSelectableEntity(SelectableCIterator entity);
+
 public:
     GameController(std::shared_ptr<AppStateManager>,
                    std::shared_ptr<Model>,
@@ -35,75 +41,62 @@ public:
 
     virtual ~GameController() = 0;
 
-    void HandleEvent(const sf::Event& evt) override;
+    void HandleEvent(const sf::Event&) override;
 
     void Update(const float update_delta_seconds) override;
 
-    void SetPaused(bool value) noexcept { mModel->bPaused = value; };
+    void SetPaused(bool value) noexcept
+    { mModel->SetPaused(value); };
 
     void EnableBuildMode(Location::LocationType);
 
-    template<CEntity TEntity, class... Args>
-    std::shared_ptr<TEntity> CreateEntity(Args&&... args);
+    std::shared_ptr<const Playfield> GetActivePlayerPlayfield() const noexcept
+    { return mModel->GetPlayfield(Model::Player1); }
 
-    template<CEntity TEntity>
-    void RemoveEntity(std::shared_ptr<TEntity> entity);
+    const sf::View& GetMainView() const noexcept
+    { return mModel->GetMainView(); }
 
-    // TODO multiplayer support
-    std::shared_ptr<Playfield> GetActivePlayerPlayfield() const noexcept
-    { return mModel->mPlayfields[Model::Player1]; }
+    void MoveMainView(const sf::Vector2f offset)
+    { mModel->MoveMainView(offset); }
 
-    void SetBuildGhostPosition(const sf::Vector2f& position)
-    { mModel->mBuildGhost->SetPosition(position); }
+    void ResetMainView(const sf::FloatRect& viewport)
+    { mModel->ResetMainView(viewport); }
 
-    void SetBuildGhostPosition(float position_x, float position_y)
-    { mModel->mBuildGhost->SetPosition(position_x, position_y); }
+    void HandleWindowResize(const sf::Vector2u& window_size) override;
 
-    sf::View& GetMainView() & noexcept { return mModel->mMainView; }
+    void IgnoreNextEvent(sf::Event::EventType type)
+    { mModel->IgnoreNextEvent(type); }
 
-    void HandleWindowResize(const sf::Vector2u& window_size);
+    void AddPlotToTop(const Plot& plot)
+    { GetActivePlayerPlayfieldInternal()->PushPlotFront(plot); }
+
+    void AddPlotToBottom(const Plot& plot)
+    { GetActivePlayerPlayfieldInternal()->PushPlotBack(plot); }
+
+    void SelectEntity(SelectableCIterator entity)
+    { FindSelectableEntity(entity)->Select(); }
+
+    void DeselectEntity(SelectableCIterator entity)
+    { FindSelectableEntity(entity)->Deselect(); }
+
+    void EntityOnHover(SelectableCIterator entity)
+    { FindSelectableEntity(entity)->OnHover(); }
+
+    void EntityOnOut(SelectableCIterator entity)
+    { FindSelectableEntity(entity)->OnOut(); }
+
+    template<typename... Args>
+    std::shared_ptr<ExpansionMarker> CreateMarker(Args&&... args);
+
+    void RemoveMarker(ExpansionMarker::Ptr marker);
 };
 
 inline GameController::~GameController() {}
 
-template<CEntity TEntity, class... Args>
-std::shared_ptr<TEntity> GameController::CreateEntity(Args&&... args)
+template<typename... Args>
+std::shared_ptr<ExpansionMarker> GameController::CreateMarker(Args&&... args)
 {
-    auto entity = std::make_shared<TEntity>(std::forward<Args>(args)...);
-    mModel->mEntities.push_back(entity);
-
-    if constexpr(std::derived_from<TEntity, IDrawable>) {
-        auto drwbl_entity = std::static_pointer_cast<IDrawable>(entity);
-        mModel->mDrawableEntities.push_back(drwbl_entity);
-    }
-
-    if constexpr(std::derived_from<TEntity, ISelectable>) {
-        auto sel_entity = std::static_pointer_cast<ISelectable>(entity);
-        mModel->mSelectableEntities.push_back(sel_entity);
-    }
-
-    return entity;
-}
-
-template<CEntity TEntity>
-void GameController::RemoveEntity(std::shared_ptr<TEntity> entity)
-{
-    {
-        auto to_remove = std::ranges::find(mModel->mEntities, entity);
-        mModel->mEntities.erase(to_remove);
-    }
-
-    if constexpr(std::derived_from<TEntity, IDrawable>) {
-        auto sel_entity = std::static_pointer_cast<IDrawable>(entity);
-        auto to_remove = std::ranges::find(mModel->mDrawableEntities, entity);
-        mModel->mDrawableEntities.erase(to_remove);
-    }
-
-    if constexpr(std::derived_from<TEntity, ISelectable>) {
-        auto sel_entity = std::static_pointer_cast<ISelectable>(entity);
-        auto to_remove = std::ranges::find(mModel->mSelectableEntities, entity);
-        mModel->mSelectableEntities.erase(to_remove);
-    }
+    return mModel->CreateEntity<ExpansionMarker>(std::forward<Args>(args)...);
 }
 
 } // namespace OpenLabora

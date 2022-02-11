@@ -34,12 +34,11 @@ public:
 template<class TStateName>
 Application::Application(TStateName,
                          std::unique_ptr<IRenderer> renderer)
-    : mRenderer{ std::move(renderer) },
-      mState{
-          std::make_shared<AppStateManager>(std::make_unique<ResourceManager>(),
-          mRenderer->GetWindowSize())
-      }
+    : mRenderer{ std::move(renderer) }
 {
+    auto res_mgr = std::make_unique<ResourceManager>();
+    mState = std::make_shared<AppStateManager>(std::move(res_mgr),
+                                               mRenderer->GetWindowSize());
     mState->SetNextState<TStateName>();
 }
 

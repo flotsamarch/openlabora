@@ -18,9 +18,11 @@ public:
     GCMainMenu(std::shared_ptr<AppStateManager>, std::shared_ptr<Model>);
     ~GCMainMenu();
 
-    void HandleEvent(const sf::Event& evt) override;
+    void HandleEvent(const sf::Event&) override;
 
     void Update(const float update_delta_seconds) override;
+
+    void HandleWindowResize(const sf::Vector2u&) override {};
 };
 
 } // namespace OpenLabora

@@ -30,7 +30,8 @@ class AppStateManager final
 
 public:
     AppStateManager(std::unique_ptr<IResourceManager> res_mgr,
-                    sf::Vector2u window_size);
+                    const sf::Vector2u& window_size);
+
     ~AppStateManager();
 
     bool DoesRequireStateChange() const noexcept
