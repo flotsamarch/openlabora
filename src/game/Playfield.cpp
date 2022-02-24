@@ -27,8 +27,8 @@ Playfield::Playfield(const IResourceManager& res_mgr)
     init_pos += mObject.getPosition();
     plot_top.SetPosition(init_pos);
     plot_bottom.SetPosition(init_pos.x, init_pos.y + Tile::kTileHeight);
-    PushPlotBack(plot_top);
-    PushPlotBack(plot_bottom);
+    AddPlotToBottom(plot_top);
+    AddPlotToBottom(plot_bottom);
 
     mGroundTexture.create(Tile::kTileWidth * kMaxFieldWidth,
                           Tile::kTileHeight * kMaxFieldHeight);
@@ -83,43 +83,58 @@ std::tuple<sf::Vector2f, sf::Vector2f>
 Playfield::GetExpansionMarkerPositions(PlotType type) const
 {
     assert(type != PlotType::End);
-    auto&& plot_deq = mPlots.find(type);
+    const auto&& plot_deq = mPlots.find(type);
+    bool plots_exist = plot_deq != mPlots.end();
 
-    if (plot_deq == mPlots.end()) {
-        auto position = GetPosition();
-        position.y += kInitialPlotOffset;
-        position.x += Plot::GetOffsetXForPlotType(type);
-        return {{position.x, position.y - Tile::kTileHeight},
-                {position.x, position.y + Tile::kTileHeight}};
+    // In the case where no plots of specified type exist the markers positions
+    // depend on how much central plots exist. There are always 2+ central plots
+    if (!plots_exist) {
+        const auto&& central_deq = mPlots.find(PlotType::Central);
+        assert(central_deq != mPlots.end());
+
+        const auto top_left_pos = central_deq->second.front().GetPosition();
+        const auto btm_left_pos = central_deq->second.back().GetPosition();
+
+        auto pf_position = GetPosition();
+        pf_position.x += Plot::GetOffsetXForPlotType(type);
+
+        return {{pf_position.x, top_left_pos.y - Tile::kTileHeight},
+                {pf_position.x, btm_left_pos.y}};
     }
-    auto top_left_pos = plot_deq->second.front().GetPosition();
-    auto btm_left_pos = plot_deq->second.back().GetPosition();
 
-    auto offset_tile_number =
-        Tile::kTileHeight * (type == PlotType::Central ? 1 : 2);
+    const auto top_left_pos = plot_deq->second.front().GetPosition();
+    const auto btm_left_pos = plot_deq->second.back().GetPosition();
 
-    return {{top_left_pos.x, top_left_pos.y - offset_tile_number},
-            {btm_left_pos.x, btm_left_pos.y + offset_tile_number}};
+    const auto offset_tile_number = type == PlotType::Central ? 1 : 2;
+    const auto offset_y  = Tile::kTileHeight * offset_tile_number;
+
+    return {{top_left_pos.x, top_left_pos.y - offset_y},
+            {btm_left_pos.x, btm_left_pos.y + Tile::kTileHeight}};
 }
 
-bool Playfield::IsPlotsLimitReached(PlotType plot_type,
-                                    MarkerType marker_type) const
+bool Playfield::IsPlotsLimitReached(PlotType plot_type) const
 {
     assert(plot_type != PlotType::End);
-    assert(marker_type != MarkerType::End);
-
-    auto&& plot_deq = mPlots.find(plot_type);
+    const auto&& plot_deq = mPlots.find(plot_type);
     if (plot_deq == mPlots.end()) {
         return false;
     }
 
-    if (marker_type == MarkerType::Disposable && plot_deq->second.size() > 0) {
-        return true;
-    }
-
-    auto&& count = kMaxPlotCount.find(plot_type);
+    const auto&& count = kMaxPlotCount.find(plot_type);
     assert(count != kMaxPlotCount.end());
     return count->second <= plot_deq->second.size();
+}
+
+uint32_t Playfield::GetDisposableMarkerCount(Plot::PlotType plot_type) const
+{
+    assert(plot_type != PlotType::End);
+    auto&& plot_deq = mPlots.find(plot_type);
+    if (plot_deq != mPlots.end()) {
+        return 0;
+    }
+    auto&& central_deq = mPlots.find(PlotType::Central);
+    assert(central_deq != mPlots.end());
+    return static_cast<uint32_t>(central_deq->second.size()) - 1;
 }
 
 void Playfield::SetPosition(const sf::Vector2f& position)
@@ -142,6 +157,18 @@ void Playfield::SetPosition(const sf::Vector2f& position)
 void Playfield::SetPosition(float offset_x, float offset_y)
 {
     SetPosition({offset_x, offset_y});
+}
+
+void Playfield::AddPlotToTop(const Plot& plot)
+{
+    mPlots[plot.GetType()].push_front(plot);
+    DrawPlotsAsSprite();
+}
+
+void Playfield::AddPlotToBottom(const Plot& plot)
+{
+    mPlots[plot.GetType()].push_back(plot);
+    DrawPlotsAsSprite();
 }
 
 } // namespace OpenLabora

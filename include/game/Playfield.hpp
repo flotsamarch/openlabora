@@ -33,26 +33,18 @@ public:
 
     void SetPosition(float offset_x, float offset_y) override;
 
-    // Pushes plot to the top of existing plots
-    void PushPlotFront(const Plot& plot)
-    {
-        mPlots[plot.GetType()].push_front(plot);
-        DrawPlotsAsSprite();
-    }
+    void AddPlotToTop(const Plot&);
 
-    // Pushes plot to the bottom under existing plots
-    void PushPlotBack(const Plot& plot)
-    {
-        mPlots[plot.GetType()].push_back(plot);
-        DrawPlotsAsSprite();
-    }
+    void AddPlotToBottom(const Plot&);
 
     // Returns positions for top and bottom expansion markers respectively for a
     // given plot type
     std::tuple<sf::Vector2f, sf::Vector2f>
     GetExpansionMarkerPositions(Plot::PlotType) const;
 
-    bool IsPlotsLimitReached(Plot::PlotType, ExpansionMarker::MarkerType) const;
+    bool IsPlotsLimitReached(Plot::PlotType) const;
+
+    uint32_t GetDisposableMarkerCount(Plot::PlotType) const;
 
 private:
     const IResourceManager& mResMgr;

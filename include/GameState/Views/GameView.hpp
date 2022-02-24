@@ -8,7 +8,7 @@
 #include <SFGUI/Window.hpp>
 #include "GameState/Views/IGameView.hpp"
 #include "GameState/Controllers/GameController.hpp"
-#include "Game/ExpansionMarker.hpp"
+#include "Game/MarkerManager.hpp"
 #include "GUI/Utility.hpp"
 
 namespace OpenLabora
@@ -21,13 +21,18 @@ class Model;
 // General UI logic base class
 class GameView : public IGameView
 {
-    using MarkerType = ExpansionMarker::MarkerType;
-    static constexpr auto kMaxMarkerType =
-        static_cast<std::size_t>(MarkerType::Max);
-    using MarkerArray =
-        std::array<std::shared_ptr<ExpansionMarker>, kMaxMarkerType>;
-
 protected:
+    using Window = sfg::Window;
+    using Widget = sfg::Widget;
+    using Button = sfg::Button;
+    static constexpr std::string kConfirmButtonLabelYes = "Yes";
+    static constexpr std::string kConfirmButtonLabelNo = "No";
+    static constexpr std::string kConfirmWindowText = "Buy plot?";
+
+    static constexpr char kConfirmWindowStyle = Window::Style::BACKGROUND |
+                                                Window::Style::TITLEBAR |
+                                                Window::Style::SHADOW |
+                                                Window::Style::CLOSE;
     std::weak_ptr<AppStateManager> mState;
     std::shared_ptr<GameController> mController;
     std::shared_ptr<const Model> mModel;
@@ -43,11 +48,14 @@ protected:
     float mEscMenuButtonHeight = 40.f;
     float mEscMenuTotalHeight = mEscMenuButtonHeight;
 
-    std::map<Plot::PlotType, MarkerArray> mMarkers;
     std::shared_ptr<Location> mBuildGhost;
 
-    sfg::Window::Ptr mCentralPlotSelectionWindow;
-    sfg::Window::Ptr mPlotConfirmWindow;
+    Window::Ptr mPlotConfirmWindow =
+        CreateEventConsumingWidget<Window>(kConfirmWindowStyle);
+    Button::Ptr mPlotConfirmButton =
+        CreateEventConsumingWidget<Button>(kConfirmButtonLabelYes);
+
+    MarkerManager mMarkerManager;
 
     // These are SFML screenspace<->world coordinate transformation methods
     // They are copied since i cannot pass window around easily
@@ -56,10 +64,6 @@ protected:
     sf::Vector2f MapScreenToWorldCoords(const sf::Vector2i&, const sf::View&);
 
     sf::Vector2i MapWorldToScreenCoords(const sf::Vector2f&, const sf::View&);
-
-    void RegisterExpansionMarker(std::shared_ptr<ExpansionMarker> marker);
-
-    void UpdateMarkers();
 
     template<class TWidget, typename... Args>
     requires std::derived_from<TWidget, sfg::Widget>

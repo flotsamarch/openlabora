@@ -62,7 +62,7 @@ ISelectable::Ptr GameController::FindSelectableEntity(SelectableCIterator entity
 {
     auto entities =
         std::const_pointer_cast<const Model>(mModel)->GetSelectableEntities();
-    auto dist = std::distance(entity, entities.end());
+    auto dist = std::distance(entities.begin(), entity);
     return mModel->GetSelectableEntities()[dist];
 }
 

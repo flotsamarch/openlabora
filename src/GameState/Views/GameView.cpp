@@ -2,6 +2,7 @@
 #include <SFGUI/Box.hpp>
 #include <SFGUI/Label.hpp>
 #include <SFGUI/Alignment.hpp>
+#include <ranges>
 #include "AppState/AppStateManager.hpp"
 #include "GameState/Views/GameView.hpp"
 #include "GameState/Model.hpp"
@@ -22,7 +23,12 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     : mState{ state },
       mController{ controller },
       mModel{ model },
-      mMouseCoords{ sf::Mouse::getPosition() }
+      mMouseCoords{ sf::Mouse::getPosition() },
+      mMarkerManager{ controller, state->GetResourceManager(),
+                       mPlotConfirmWindow,
+                       mPlotConfirmButton,
+                       mPlotConfirmWindow,
+                       mPlotConfirmButton }
 {
     using Widget = sfg::Widget;
     using Window = sfg::Window;
@@ -85,19 +91,13 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     mMenuWidgets.push_back(box);
 
     // Plot purchase confirmation window
-    auto style = static_cast<char>(Window::Style::BACKGROUND |
-                                   Window::Style::TITLEBAR |
-                                   Window::Style::SHADOW |
-                                   Window::Style::CLOSE);
-    mPlotConfirmWindow = CreateEventConsumingWidget<Window>(style);
-
-    auto confirm_btn_yes = CreateEventConsumingWidget<sfg::Button>("Yes");
-    auto confirm_btn_no = CreateEventConsumingWidget<sfg::Button>("No");
+    auto confirm_btn_no =
+        CreateEventConsumingWidget<Button>(kConfirmButtonLabelNo);
     auto confirm_btn_box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
-    confirm_btn_box->Pack(confirm_btn_yes);
+    confirm_btn_box->Pack(mPlotConfirmButton);
     confirm_btn_box->Pack(confirm_btn_no);
 
-    auto confirm_text = sfg::Label::Create("Buy plot?");
+    auto confirm_text = sfg::Label::Create(kConfirmWindowText);
     auto confirm_vbox = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, 10.f);
     confirm_vbox->Pack(confirm_text);
     confirm_vbox->Pack(confirm_btn_box);
@@ -108,82 +108,10 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     auto close_confirm_window = close_window(mPlotConfirmWindow);
     connect(mPlotConfirmWindow, Window::OnCloseButton, close_confirm_window);
     connect(confirm_btn_no, Widget::OnMouseLeftRelease, close_confirm_window);
-    connect(confirm_btn_yes, Widget::OnMouseLeftRelease, close_confirm_window);
+    connect(mPlotConfirmButton, Widget::OnMouseLeftRelease, close_confirm_window);
 
     center_window(mPlotConfirmWindow, {350.f, 90.f});
     mDesktop.Add(mPlotConfirmWindow);
-
-    #if 0
-    using PlotType = Plot::PlotType;
-    auto&& res_mgr = state->GetResourceManager();
-
-    // Markers
-    auto coastal_plot = Plot{Plot::kCostalPlot, res_mgr};
-
-    auto marker_coastal_top = mController->CreateMarker(coastal_plot,
-                                                        MarkerType::Upper,
-                                                        mPlotConfirmWindow,
-                                                        confirm_btn_yes);
-    auto marker_coastal_middle = mController->CreateMarker(coastal_plot,
-                                                           MarkerType::Disposable,
-                                                           mPlotConfirmWindow,
-                                                           confirm_btn_yes);
-    auto marker_coastal_bottom = mController->CreateMarker(coastal_plot,
-                                                           MarkerType::Lower,
-                                                           mPlotConfirmWindow,
-                                                           confirm_btn_yes);
-
-    auto central_plot_top = Plot{Plot::kCentralPlotTop, res_mgr};
-    auto central_plot_bottom = Plot{Plot::kCentralPlotBottom, res_mgr};
-
-    auto marker_central_top = mController->CreateMarker(central_plot_top,
-                                                        MarkerType::Upper,
-                                                        mPlotConfirmWindow,
-                                                        confirm_btn_yes);
-    auto marker_central_bottom = mController->CreateMarker(central_plot_bottom,
-                                                           MarkerType::Lower,
-                                                           mPlotConfirmWindow,
-                                                           confirm_btn_yes);
-
-    auto mountain_plot_top = Plot{Plot::kMountainPlotTop, res_mgr};
-    auto mountain_plot_bottom = Plot{Plot::kMountainPlotBottom, res_mgr};
-
-    auto marker_mountain_top = mController->CreateMarker(mountain_plot_top,
-                                                         MarkerType::Upper,
-                                                         mPlotConfirmWindow,
-                                                         confirm_btn_yes);
-    auto marker_mountain_middle = mController->CreateMarker(mountain_plot_top,
-                                                            MarkerType::Disposable,
-                                                            mPlotConfirmWindow,
-                                                            confirm_btn_yes);
-    auto marker_mountain_bottom = mController->CreateMarker(mountain_plot_top,
-                                                            MarkerType::Lower,
-                                                            mPlotConfirmWindow,
-                                                            confirm_btn_yes);
-
-    auto position = mController->GetActivePlayerPlayfield()->GetPosition();
-    position.y += Playfield::kInitialPlotOffset;
-    marker_coastal_middle->SetPosition(position);
-    position.x += Plot::GetOffsetXForPlotType(PlotType::Mountain);
-    marker_mountain_middle->SetPosition(position);
-
-    RegisterExpansionMarker(marker_coastal_top);
-    RegisterExpansionMarker(marker_coastal_middle);
-    RegisterExpansionMarker(marker_coastal_bottom);
-    RegisterExpansionMarker(marker_central_top);
-    RegisterExpansionMarker(marker_central_bottom);
-    RegisterExpansionMarker(marker_mountain_top);
-    RegisterExpansionMarker(marker_mountain_middle);
-    RegisterExpansionMarker(marker_mountain_bottom);
-
-    UpdateMarkers();
-    // The deletion of pointers should happen after marker's job is done
-    connect(confirm_btn_yes, Widget::OnMouseLeftRelease,
-    [this]
-    {
-        this->UpdateMarkers();
-    });
-    #endif
     // TODO initialize mModel->mBuildGhost something...something...
 };
 
@@ -347,46 +275,6 @@ sf::Vector2i GameView::MapWorldToScreenCoords(const sf::Vector2f& coords,
 
     return { static_cast<int>(offset_x * viewport.width  + viewport.left),
              static_cast<int>(offset_y * viewport.height + viewport.top)};
-}
-
-void GameView::UpdateMarkers()
-{
-    auto playfield = mController->GetActivePlayerPlayfield();
-
-    for (auto&& arr : mMarkers) {
-        std::for_each(arr.second.begin(), arr.second.end(),
-        [playfield, ctlr = mController] (auto&& marker)
-        {
-            if (marker != nullptr) {
-                auto plot_type = marker->GetPlotType();
-                auto marker_type = marker->GetType();
-                if (playfield->IsPlotsLimitReached(plot_type, marker_type))
-                {
-                    ctlr->RemoveMarker(marker);
-                    marker.reset();
-                }
-            }
-        });
-
-        auto&& upper = arr.second[static_cast<size_t>(MarkerType::Upper)];
-        auto&& lower = arr.second[static_cast<size_t>(MarkerType::Lower)];
-
-        if (upper != nullptr && lower != nullptr) {
-            auto [top_marker_pos, btm_marker_pos] =
-                playfield->GetExpansionMarkerPositions(arr.first);
-            upper->SetPosition(top_marker_pos);
-            lower->SetPosition(btm_marker_pos);
-        }
-    }
-}
-
-void GameView::RegisterExpansionMarker(std::shared_ptr<ExpansionMarker> marker)
-{
-    auto plot_type = marker->GetPlotType();
-    auto marker_type = marker->GetType();
-    assert(plot_type != Plot::PlotType::End);
-    assert(marker_type != ExpansionMarker::MarkerType::End);
-    mMarkers[plot_type][static_cast<std::size_t>(marker_type)] = marker;
 }
 
 } // namespace OpenLabora

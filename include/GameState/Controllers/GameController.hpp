@@ -19,7 +19,8 @@ namespace OpenLabora
 class GameController : public IGameController
 {
 public:
-    using LocationPtr = std::shared_ptr<Location>;
+    using Ptr = std::shared_ptr<GameController>;
+    using CPtr = std::shared_ptr<const GameController>;
 
 protected:
     const std::weak_ptr<AppStateManager> mState;
@@ -32,6 +33,7 @@ protected:
     { return mModel->GetPlayfield(Model::Player1); }
 
     // Find mutable entity ptr in O(1) by const random access iterator
+    // @entity should be contained in mSelectableEntities
     ISelectable::Ptr FindSelectableEntity(SelectableCIterator entity);
 
 public:
@@ -68,20 +70,24 @@ public:
     { mModel->IgnoreNextEvent(type); }
 
     void AddPlotToTop(const Plot& plot)
-    { GetActivePlayerPlayfieldInternal()->PushPlotFront(plot); }
+    { GetActivePlayerPlayfieldInternal()->AddPlotToTop(plot); }
 
     void AddPlotToBottom(const Plot& plot)
-    { GetActivePlayerPlayfieldInternal()->PushPlotBack(plot); }
+    { GetActivePlayerPlayfieldInternal()->AddPlotToBottom(plot); }
 
+    // @entity should be contained in mSelectableEntities
     void SelectEntity(SelectableCIterator entity)
     { FindSelectableEntity(entity)->Select(); }
 
+    // @entity should be contained in mSelectableEntities
     void DeselectEntity(SelectableCIterator entity)
     { FindSelectableEntity(entity)->Deselect(); }
 
+    // @entity should be contained in mSelectableEntities
     void EntityOnHover(SelectableCIterator entity)
     { FindSelectableEntity(entity)->OnHover(); }
 
+    // @entity should be contained in mSelectableEntities
     void EntityOnOut(SelectableCIterator entity)
     { FindSelectableEntity(entity)->OnOut(); }
 

@@ -2,6 +2,7 @@ set(sources
     # Gameplay classes
     src/Game/Plot.cpp
     src/Game/ExpansionMarker.cpp
+    src/Game/MarkerManager.cpp
     src/Game/Playfield.cpp
     src/Game/Location.cpp
     # Game states
@@ -31,6 +32,7 @@ set(headers
     include/Game/Tile.hpp
     include/Game/SelectableEntity.hpp
     include/Game/ExpansionMarker.hpp
+    include/Game/MarkerManager.hpp
     include/Game/Playfield.hpp
     include/Game/Location.hpp
     # Game states
