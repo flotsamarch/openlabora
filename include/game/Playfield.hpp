@@ -20,9 +20,9 @@ namespace OpenLabora
 class Playfield final : public Entity<sf::Sprite>
 {
 public:
-    static constexpr uint32_t kMaxFieldHeight{ 36 };
-    static constexpr uint32_t kMaxFieldWidth{ 9 };
-    static constexpr uint32_t kInitialPlotOffset{ 17 * Tile::kTileHeight };
+    static constexpr uint32_t kMaxFieldHeight{ 54u };
+    static constexpr uint32_t kMaxFieldWidth{ 9u };
+    static constexpr uint32_t kInitialPlotOffset{ 26u * Tile::kTileHeight };
     using Ptr = std::shared_ptr<Playfield>;
 
     Playfield(const IResourceManager&);
@@ -58,9 +58,9 @@ private:
 
     inline static const std::map<Plot::PlotType, uint32_t> kMaxPlotCount =
     {
-        { Plot::PlotType::Coastal, 9u },
+        { Plot::PlotType::Coastal, 18u },
         { Plot::PlotType::Central, 11u },
-        { Plot::PlotType::Mountain, 9u }
+        { Plot::PlotType::Mountain, 18u }
     };
 };
 
