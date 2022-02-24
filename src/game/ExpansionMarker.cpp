@@ -17,20 +17,27 @@ ExpansionMarker::ExpansionMarker(GameController::Ptr ctlr,
                                  sfg::Button::Ptr button,
                                  MarkerType type,
                                  const Plot& plot_top,
-                                 const Plot& plot_bottom)
-    : ExpansionMarker{ ctlr, window, button, type, plot_top }
+                                 OptionalPlot plot_bottom)
+    : mWindow{ window }, mButton{ button }, mType{ type }, mPlotTop{ plot_top },
+      mPlotBottom{ plot_bottom }
 {
-    mPlotBottom = Plot{ plot_bottom };
-}
-
-ExpansionMarker::ExpansionMarker(GameController::Ptr ctlr,
-                                 sfg::Window::Ptr window,
-                                 sfg::Button::Ptr button,
-                                 MarkerType type,
-                                 const Plot& plot_top)
-    : mWindow{ window }, mButton{ button }, mType{ type }, mPlotTop{ plot_top }
-{
-    mObject = static_cast<const sf::Sprite&>(mPlotTop.GetDrawableObject());
+    if (mPlotBottom == std::nullopt) {
+        mObject = static_cast<const sf::Sprite&>(mPlotTop.GetDrawableObject());
+    } else {
+        sf::Sprite top =
+            static_cast<const sf::Sprite&>(mPlotTop.GetDrawableObject());
+        sf::Sprite bottom =
+            static_cast<const sf::Sprite&>(mPlotBottom->GetDrawableObject());
+        top.setPosition(0.f, 0.f);
+        bottom.setPosition(0.f, Tile::kTileHeight);
+        mTexture.create(2 * Tile::kTileWidth, 2 * Tile::kTileHeight);
+        mTexture.clear();
+        mTexture.draw(top);
+        mTexture.draw(bottom);
+        mTexture.display();
+        mObject.setTexture(mTexture.getTexture(), true);
+        SetPosition(mPlotTop.GetPosition());
+    }
     mObject.setColor(sf::Color::Transparent);
 
     using PlotType = Plot::PlotType;

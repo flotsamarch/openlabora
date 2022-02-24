@@ -21,7 +21,8 @@ public:
     { Begin, Upper = Begin, Lower, Disposable, End, Max = End };
 
     using Ptr = std::shared_ptr<ExpansionMarker>;
-    using PlotRef = std::reference_wrapper<Plot>;
+    using PlotRef = std::reference_wrapper<const Plot>;
+    using OptionalPlot = std::optional<PlotRef>;
 
 private:
     inline static const sf::Color kHalfTransparent{ 255, 255, 255, 200 };
@@ -31,20 +32,15 @@ private:
     std::weak_ptr<sfg::Window> mWindow;
     std::weak_ptr<sfg::Button> mButton;
     uint32_t mSignalSerial{ 0u };
+    sf::RenderTexture mTexture;
 
 public:
     ExpansionMarker(std::shared_ptr<GameController>,
                     sfg::Window::Ptr, // Window that appears on click
                     sfg::Button::Ptr, // Creation confirm button
                     MarkerType,
-                    const Plot& top);
-
-    ExpansionMarker(std::shared_ptr<GameController>,
-                    sfg::Window::Ptr, // Window that appears on click
-                    sfg::Button::Ptr, // Creation confirm button
-                    MarkerType,
                     const Plot& top,
-                    const Plot& bottom);
+                    OptionalPlot bottom = std::nullopt);
 
     ~ExpansionMarker();
 
