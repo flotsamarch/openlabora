@@ -3,6 +3,7 @@
 
 #include "ISelectable.hpp"
 #include "Entity.hpp"
+#include "GUI/ClickableArea.hpp"
 
 namespace OpenLabora
 {
@@ -14,7 +15,7 @@ class SelectableEntity : public Entity<U>, public ISelectable
 protected:
     bool bSelected{ false };
     bool bEntered{ false };
-    TShape mClickableArea;
+    ClickableArea<TShape> mClickableArea;
 
 public:
     virtual ~SelectableEntity() noexcept {};
@@ -27,6 +28,8 @@ public:
     bool IsSelected() const noexcept override final { return bSelected; }
 
     bool WasEntered() const noexcept override final { return bEntered; }
+
+    void SetClickableArea(const TShape& area) { mClickableArea = area; }
 };
 
 } // namespace OpenLabora

@@ -49,6 +49,7 @@ set(headers
     include/GameState/Controllers/GCDuel.hpp
     # Game systems
     include/GUI/Utility.hpp
+    include/GUI/ClickableArea.hpp
     include/resource/ResourceManager.hpp
     include/resource/IResourceManager.hpp
     include/IRenderer.hpp

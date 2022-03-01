@@ -2,7 +2,7 @@
 #define EXPANSIONMARKER_HPP_
 
 #include <optional>
-#include <SFML/Graphics/ConvexShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFGUI/Window.hpp>
 #include <SFGUI/Button.hpp>
 #include "SelectableEntity.hpp"
@@ -14,7 +14,7 @@ namespace OpenLabora
 class GameController;
 
 class ExpansionMarker final
-    : public SelectableEntity<sf::ConvexShape, sf::Sprite>
+    : public SelectableEntity<sf::RectangleShape, sf::Sprite>
 {
 public:
     enum class MarkerType
@@ -23,6 +23,9 @@ public:
     using Ptr = std::shared_ptr<ExpansionMarker>;
     using PlotRef = std::reference_wrapper<const Plot>;
     using OptionalPlot = std::optional<PlotRef>;
+    using RectangleArea = ClickableArea<sf::RectangleShape>;
+
+    static constexpr float kMarkerOverlapFactor = 1.f / 3.f;
 
 private:
     inline static const sf::Color kHalfTransparent{ 255, 255, 255, 200 };
@@ -51,13 +54,24 @@ public:
     void Select() override;
 
     bool IsPointInRegisteringArea(const sf::Vector2f& point) const override
-    { return mObject.getGlobalBounds().contains(point); }
+    { return mClickableArea.GetGlobalBounds().contains(point); }
 
-    Plot::PlotType GetPlotType() const noexcept
-    { return mPlotTop.GetType(); }
+    Plot::PlotType GetPlotType() const noexcept { return mPlotTop.GetType(); }
 
-    MarkerType GetType() const noexcept
-    { return mType; }
+    MarkerType GetType() const noexcept { return mType; }
+
+    void Move(float offset_x, float offset_y) override;
+
+    void Move(const sf::Vector2f& offset) override;
+
+    void SetPosition(float position_x, float position_y) override;
+
+    void SetPosition(const sf::Vector2f& position) override;
+
+    void SetClickableArea(const sf::Vector2f& offset,
+                          const sf::Vector2f& rect_size);
+
+    void ResetClickableArea();
 };
 
 } // namespace OpenLabora

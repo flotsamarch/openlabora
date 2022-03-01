@@ -57,6 +57,9 @@ public:
 
     PlotType GetType() const noexcept { return mType; }
 
+    uint32_t GetTileCount() const noexcept
+    { return static_cast<uint32_t>(mTiles.size()); }
+
 protected:
     using CentralPlotArray =
         std::array<Tile::TileType, PlotWidth<PlotType::Central>::w>;
