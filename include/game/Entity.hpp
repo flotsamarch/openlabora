@@ -49,8 +49,11 @@ public:
     const sf::Drawable& GetDrawableObject() const noexcept override
     { return mObject; }
 
-    bool IsUnderPoint(const sf::Vector2f& point) const override
-    { return mObject.getGlobalBounds().contains(point); }
+    sf::FloatRect GetLocalBounds() const override
+    { return mObject.getLocalBounds(); }
+
+    sf::FloatRect GetGlobalBounds() const override
+    { return mObject.getGlobalBounds(); }
 };
 
 template<SFCombined T>

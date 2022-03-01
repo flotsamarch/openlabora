@@ -41,7 +41,7 @@ float Plot::GetOffsetXForPlotType(PlotType type)
 
 Tile::TileInfo Plot::GetTileInfoUnderPoint(const sf::Vector2f& point) const
 {
-    if (!IsUnderPoint(point)) {
+    if (!GetGlobalBounds().contains(point)) {
         return Tile::kBadTile;
     }
 

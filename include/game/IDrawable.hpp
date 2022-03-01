@@ -16,7 +16,9 @@ public:
 
     virtual const sf::Drawable& GetDrawableObject() const noexcept = 0;
 
-    virtual bool IsUnderPoint(const sf::Vector2f& point) const = 0;
+    virtual sf::FloatRect GetLocalBounds() const = 0;
+
+    virtual sf::FloatRect GetGlobalBounds() const = 0;
 
     virtual ~IDrawable() {};
 };
