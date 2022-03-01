@@ -86,10 +86,10 @@ protected:
     };
 
     static constexpr MountainPlotArray kMountainPlotTopTiles
-    { Tile::TileType::Hill, Tile::TileType::Mountain };
+    { Tile::TileType::Hill, Tile::TileType::MountainUpper };
 
     static constexpr MountainPlotArray kMountainPlotBottomTiles
-    { Tile::TileType::Hill, Tile::TileType::None };
+    { Tile::TileType::Hill, Tile::TileType::MountainLower };
 
     static constexpr TileSpan kCoastalPlotSpan{ kCoastalPlotTiles };
     static constexpr TileSpan kCentralPlotTopSpan{ kCentralPlotTopTiles };

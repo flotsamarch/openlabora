@@ -18,7 +18,7 @@ public:
     enum class TileType
     {
         None, Begin = None, Forest,
-        Hill, Mountain, Water, Coast,
+        Hill, MountainUpper, MountainLower, Water, Coast,
         Peat, End
     };
 private:
@@ -53,7 +53,8 @@ public:
         { TileType::Water, "water" },
         { TileType::Peat, "peat_empty" },
         { TileType::Hill, "hill" },
-        { TileType::Mountain, "mountain" }
+        { TileType::MountainUpper, "mountain_upper" },
+        { TileType::MountainLower, "mountain_lower" }
     };
 
     Tile(TileType type, const IResourceManager& res_mgr) :

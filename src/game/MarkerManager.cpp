@@ -20,17 +20,16 @@ MarkerManager::MarkerManager(GameController::Ptr ctlr,
 {
     auto coastal_plot = Plot{ Plot::kCostalPlot, res_mgr };
     mPlotsForMarkerCreation.insert({PlotType::Coastal, coastal_plot});
-    mPlotsForMarkerCreation.insert({PlotType::Coastal, coastal_plot});
 
     auto central_plot_top = Plot{ Plot::kCentralPlotTop, res_mgr };
     auto central_plot_bottom = Plot{ Plot::kCentralPlotBottom, res_mgr };
     mPlotsForMarkerCreation.insert({PlotType::Central, central_plot_top});
     mPlotsForMarkerCreation.insert({PlotType::Central, central_plot_bottom});
 
-    auto mountain_plot_top = Plot{ Plot::kMountainPlotTop, res_mgr };
     auto mountain_plot_bottom = Plot{ Plot::kMountainPlotBottom, res_mgr };
-    mPlotsForMarkerCreation.insert({PlotType::Mountain, mountain_plot_top});
+    auto mountain_plot_top = Plot{ Plot::kMountainPlotTop, res_mgr };
     mPlotsForMarkerCreation.insert({PlotType::Mountain, mountain_plot_bottom});
+    mPlotsForMarkerCreation.insert({PlotType::Mountain, mountain_plot_top});
 
     for (auto type = PlotType::Begin, end = PlotType::End; type < end; ++type) {
         CreateMarker(type, MarkerType::Upper);
@@ -154,8 +153,7 @@ void MarkerManager::CreateMarker(PlotType plot_type, MarkerType marker_type)
     auto&& plot = mPlotsForMarkerCreation.find(plot_type);
     assert(plot != mPlotsForMarkerCreation.end());
 
-
-    if (is_central) {
+    if (plot_type != PlotType::Mountain) {
         auto marker = mController->CreateMarker(mController,
                                                 window,
                                                 button,
@@ -163,12 +161,14 @@ void MarkerManager::CreateMarker(PlotType plot_type, MarkerType marker_type)
                                                 plot->second);
         mMarkers[plot_type].push_back(marker);
     } else {
+        auto&& plot_alt = plot++;
+        assert(plot != mPlotsForMarkerCreation.end());
         auto marker = mController->CreateMarker(mController,
                                                 window,
                                                 button,
                                                 marker_type,
                                                 plot->second,
-                                                (++plot)->second);
+                                                plot_alt->second);
         mMarkers[plot_type].push_back(marker);
     }
     auto update_markers = [manager = this] { manager->UpdateMarkers(); };
