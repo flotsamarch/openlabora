@@ -25,9 +25,9 @@ protected:
     using Window = sfg::Window;
     using Widget = sfg::Widget;
     using Button = sfg::Button;
-    static constexpr std::string kConfirmButtonLabelYes = "Yes";
-    static constexpr std::string kConfirmButtonLabelNo = "No";
-    static constexpr std::string kConfirmWindowText = "Buy plot?";
+    static constexpr std::string_view kConfirmButtonLabelYes = "Yes";
+    static constexpr std::string_view kConfirmButtonLabelNo = "No";
+    static constexpr std::string_view kConfirmWindowText = "Buy plot?";
 
     static constexpr char kConfirmWindowStyle = Window::Style::BACKGROUND |
                                                 Window::Style::TITLEBAR |
@@ -53,7 +53,7 @@ protected:
     Window::Ptr mPlotConfirmWindow =
         CreateEventConsumingWidget<Window>(kConfirmWindowStyle);
     Button::Ptr mPlotConfirmButton =
-        CreateEventConsumingWidget<Button>(kConfirmButtonLabelYes);
+        CreateEventConsumingWidget<Button>(std::string{kConfirmButtonLabelYes});
 
     MarkerManager mMarkerManager;
 

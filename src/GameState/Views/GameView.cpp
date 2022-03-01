@@ -92,12 +92,12 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
 
     // Plot purchase confirmation window
     auto confirm_btn_no =
-        CreateEventConsumingWidget<Button>(kConfirmButtonLabelNo);
+        CreateEventConsumingWidget<Button>(std::string{kConfirmButtonLabelNo});
     auto confirm_btn_box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
     confirm_btn_box->Pack(mPlotConfirmButton);
     confirm_btn_box->Pack(confirm_btn_no);
 
-    auto confirm_text = sfg::Label::Create(kConfirmWindowText);
+    auto confirm_text = sfg::Label::Create(std::string{kConfirmWindowText});
     auto confirm_vbox = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, 10.f);
     confirm_vbox->Pack(confirm_text);
     confirm_vbox->Pack(confirm_btn_box);
