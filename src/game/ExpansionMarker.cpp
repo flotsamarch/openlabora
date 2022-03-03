@@ -22,12 +22,12 @@ ExpansionMarker::ExpansionMarker(GameController::Ptr ctlr,
     : mWindow{ window }, mButton{ button }, mType{ type }, mPlotTop{ plot_top },
       mPlotBottom{ plot_bottom }
 {
-    if (mPlotBottom == std::nullopt) {
-        mObject = static_cast<const sf::Sprite&>(mPlotTop.GetDrawableObject());
-    } else {
-        auto spritefy = [] (const sf::Drawable& item)
-        { return static_cast<const sf::Sprite&>(item); };
+    auto spritefy = [] (const sf::Drawable& item)
+    { return static_cast<const sf::Sprite&>(item); };
 
+    if (mPlotBottom == std::nullopt) {
+        mObject = spritefy(mPlotTop.GetDrawableObject());
+    } else {
         sf::Sprite top = spritefy(mPlotTop.GetDrawableObject());
         sf::Sprite bottom = spritefy(mPlotBottom->GetDrawableObject());
         top.setPosition(0.f, 0.f);
