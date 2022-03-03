@@ -65,9 +65,9 @@ protected:
 
     sf::Vector2i MapWorldToScreenCoords(const sf::Vector2f&, const sf::View&);
 
-    template<class TWidget, typename... Args>
-    requires std::derived_from<TWidget, sfg::Widget>
-    typename TWidget::Ptr CreateEventConsumingWidget(Args&&... args);
+    // Factory method for creating widgets that are visible during gameplay
+    template<CWidget TWidget>
+    typename TWidget::Ptr CreateWidget(const std::string_view& label);
 
 public:
     GameView(std::shared_ptr<AppStateManager>,
@@ -83,31 +83,11 @@ public:
     void HandleWindowResize(const sf::Vector2u& window_size) override;
 };
 
-template<class TWidget, typename... Args>
-requires std::derived_from<TWidget, sfg::Widget>
-typename TWidget::Ptr GameView::CreateEventConsumingWidget(Args&&... args)
+template<CWidget TWidget>
+typename TWidget::Ptr GameView::CreateWidget(const std::string_view& label)
 {
-    auto widget = TWidget::Create(std::forward<Args>(args)...);
-
-    auto mouse_left_release_handled =
-    [ctlr = std::weak_ptr<GameController>(mController)]
-    {
-        assert(!ctlr.expired());
-        ctlr.lock()->IgnoreNextEvent(sf::Event::MouseButtonReleased);
-    };
-
-    connect(widget,
-            sfg::Widget::OnMouseLeftRelease,
-            mouse_left_release_handled);
-
-    if constexpr (std::derived_from<TWidget, sfg::Window>) {
-        connect(widget,
-                sfg::Window::OnCloseButton,
-                mouse_left_release_handled);
-    }
-
-    return widget;
-};
+    return CreateEventConsumingWidget<TWidget>(mController, std::string{label});
+}
 
 } // namespace OpenLabora
 
