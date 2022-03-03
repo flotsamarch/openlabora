@@ -57,6 +57,7 @@ ExpansionMarker::ExpansionMarker(GameController::Ptr ctlr,
 
     auto create_plot =
     [&plot_top = mPlotTop,
+     &plot_bottom = mPlotBottom,
      marker = this,
      ctlr_ptr = std::weak_ptr<GameController>(ctlr),
      button = std::weak_ptr<sfg::Button>(button),
@@ -65,24 +66,25 @@ ExpansionMarker::ExpansionMarker(GameController::Ptr ctlr,
         if (selected) {
             assert(!ctlr_ptr.expired());
             auto ctlr = ctlr_ptr.lock();
-            plot_top.SetPosition(marker->GetPosition());
-            bool is_side_plot = plot_top.GetType() == PlotType::Coastal ||
-                plot_top.GetType() == PlotType::Mountain;
+            bool is_multiplot = plot_bottom != std::nullopt;
+            const auto marker_pos = marker->GetPosition();
+            plot_top.SetPosition(marker_pos);
+            if (is_multiplot) {
+                plot_bottom->SetPosition(marker_pos);
+                plot_bottom->Move(0.f, static_cast<float>(Tile::kTileHeight));
+            }
 
             if (marker->GetType() == MarkerType::Upper) {
-                plot_top.Move(0.f, static_cast<float>(Tile::kTileHeight));
-                if (is_side_plot)
+                if (is_multiplot)
                 {
-                    ctlr->AddPlotToTop(plot_top);
+                    ctlr->AddPlotToTop(plot_bottom.value());
                 }
-                plot_top.SetPosition(marker->GetPosition());
                 ctlr->AddPlotToTop(plot_top);
             } else {
                 ctlr->AddPlotToBottom(plot_top);
-                plot_top.Move(0.f, static_cast<float>(Tile::kTileHeight));
-                if (is_side_plot)
+                if (is_multiplot)
                 {
-                    ctlr->AddPlotToBottom(plot_top);
+                    ctlr->AddPlotToBottom(plot_bottom.value());
                 }
             }
             marker->OnOut();
