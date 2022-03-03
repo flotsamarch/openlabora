@@ -18,7 +18,10 @@ MarkerManager::MarkerManager(GameController::Ptr ctlr,
       mSideConfirmWindow{ side_confirm_window },
       mSideConfirmButton{ side_confirm_button }
 {
+    // In case plot_type != PT::Central number of items in this map tells
+    // if there are 2 or 1 plots in marker
     auto coastal_plot = Plot{ Plot::kCostalPlot, res_mgr };
+    mPlotsForMarkerCreation.insert({PlotType::Coastal, coastal_plot});
     mPlotsForMarkerCreation.insert({PlotType::Coastal, coastal_plot});
 
     auto central_plot_top = Plot{ Plot::kCentralPlotTop, res_mgr };
@@ -150,27 +153,29 @@ void MarkerManager::CreateMarker(PlotType plot_type, MarkerType marker_type)
     auto window = is_central ? mCentralConfirmWindow : mSideConfirmWindow;
     auto button = is_central ? mCentralConfirmButton : mSideConfirmButton;
 
-    auto&& plot = mPlotsForMarkerCreation.find(plot_type);
+    auto&& [plot, end] = mPlotsForMarkerCreation.equal_range(plot_type);
     assert(plot != mPlotsForMarkerCreation.end());
 
-    if (plot_type != PlotType::Mountain) {
-        auto marker = mController->CreateMarker(mController,
+    auto marker = ExpansionMarker::Ptr{};
+    if (plot_type == PlotType::Central || std::distance(plot, end) < 2) {
+        marker = mController->CreateMarker(mController,
                                                 window,
                                                 button,
                                                 marker_type,
                                                 plot->second);
-        mMarkers[plot_type].push_back(marker);
     } else {
         auto&& plot_alt = plot++;
         assert(plot != mPlotsForMarkerCreation.end());
-        auto marker = mController->CreateMarker(mController,
+        marker = mController->CreateMarker(mController,
                                                 window,
                                                 button,
                                                 marker_type,
                                                 plot->second,
                                                 plot_alt->second);
-        mMarkers[plot_type].push_back(marker);
     }
+    assert(marker != nullptr);
+    mMarkers[plot_type].push_back(marker);
+
     auto update_markers = [manager = this] { manager->UpdateMarkers(); };
     // Reconnect signal to ensure correct order of calls
     auto&& signal_id = is_central ? mCentralUpdateSignalId : mSideUpdateSignalId;
