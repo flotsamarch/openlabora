@@ -8,7 +8,7 @@
 #include <SFML/Window/Event.hpp>
 #include "Game/IEntity.hpp"
 #include "Game/IDrawable.hpp"
-#include "Game/ISelectable.hpp"
+#include "Game/Selectable.hpp"
 #include "Game/Location.hpp"
 #include "Game/ExpansionMarker.hpp"
 
@@ -26,15 +26,17 @@ public:
 
     using CDrawableSpan = std::span<const std::shared_ptr<const IDrawable>>;
     using CEntitySpan = std::span<const std::shared_ptr<const IEntity>>;
-    using CSelectableSpan = std::span<const std::shared_ptr<const ISelectable>>;
+    // Selectable is a GUI mixin, so pointer to non-const
+    using CSelectableSpan = std::span<const std::shared_ptr<Selectable>>;
+
 private:
     using DrawableSpan = std::span<std::shared_ptr<IDrawable>>;
     using EntitySpan = std::span<std::shared_ptr<IEntity>>;
-    using SelectableSpan = std::span<std::shared_ptr<ISelectable>>;
+    using SelectableSpan = std::span<std::shared_ptr<Selectable>>;
 
     std::vector<std::shared_ptr<IEntity>> mEntities;
     std::vector<std::shared_ptr<IDrawable>> mDrawableEntities;
-    std::vector<std::shared_ptr<ISelectable>> mSelectableEntities;
+    std::vector<std::shared_ptr<Selectable>> mSelectableEntities;
 
     sf::View mMainView;
     sf::Vector2u mWindowSize;
@@ -120,8 +122,8 @@ std::shared_ptr<TEntity> Model::CreateEntity(Args&&... args)
         mDrawableEntities.push_back(drwbl_entity);
     }
 
-    if constexpr(std::derived_from<TEntity, ISelectable>) {
-        auto sel_entity = std::static_pointer_cast<ISelectable>(entity);
+    if constexpr(std::derived_from<TEntity, Selectable>) {
+        auto sel_entity = std::static_pointer_cast<Selectable>(entity);
         mSelectableEntities.push_back(sel_entity);
     }
 
@@ -142,8 +144,8 @@ void Model::RemoveEntity(std::shared_ptr<TEntity> entity)
         mDrawableEntities.erase(to_remove);
     }
 
-    if constexpr(std::derived_from<TEntity, ISelectable>) {
-        auto sel_entity = std::static_pointer_cast<ISelectable>(entity);
+    if constexpr(std::derived_from<TEntity, Selectable>) {
+        auto sel_entity = std::static_pointer_cast<Selectable>(entity);
         auto to_remove = std::ranges::find(mSelectableEntities, entity);
         mSelectableEntities.erase(to_remove);
     }
@@ -173,15 +175,10 @@ inline Model::CEntitySpan Model::GetEntities() const noexcept
     return std::span(cdata, mEntities.size());
 }
 
+// Since selectable is mainly a GUI mixin, it should be non-const
 inline Model::CSelectableSpan Model::GetSelectableEntities() const noexcept
 {
-    // Enforce constness with cast to return read-only span
-    auto data = const_cast<ISelectable::Ptr*>(mSelectableEntities.data());
-    if (data == nullptr || *data == nullptr) {
-        return {};
-    }
-    auto cdata = reinterpret_cast<ISelectable::CPtr*>(data);
-    return std::span(cdata, mSelectableEntities.size());
+    return std::span{ mSelectableEntities };
 }
 
 } // namespace OpenLabora

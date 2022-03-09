@@ -6,6 +6,7 @@
 #include <SFGUI/Desktop.hpp>
 #include <SFGUI/Widget.hpp>
 #include <SFGUI/Window.hpp>
+#include <SFGUI/Button.hpp>
 #include "GameState/Views/IGameView.hpp"
 #include "GameState/Controllers/GameController.hpp"
 #include "Game/MarkerManager.hpp"
@@ -51,11 +52,12 @@ protected:
     std::shared_ptr<Location> mBuildGhost;
 
     Window::Ptr mPlotConfirmWindow =
-        CreateEventConsumingWidget<Window>(kConfirmWindowStyle);
+        CreateEventConsumingWidget<Window>(mController, kConfirmWindowStyle);
     Button::Ptr mPlotConfirmButton =
-        CreateEventConsumingWidget<Button>(std::string{kConfirmButtonLabelYes});
+        CreateWidget<Button>(kConfirmButtonLabelYes);
 
     MarkerManager mMarkerManager;
+    std::weak_ptr<ExpansionMarker> mSelectedMarker; // Owned by Model
 
     // These are SFML screenspace<->world coordinate transformation methods
     // They are copied since i cannot pass window around easily
@@ -65,7 +67,7 @@ protected:
 
     sf::Vector2i MapWorldToScreenCoords(const sf::Vector2f&, const sf::View&);
 
-    // Factory method for creating widgets that are visible during gameplay
+    // Create labelled widgets which are visible during gameplay
     template<CWidget TWidget>
     typename TWidget::Ptr CreateWidget(const std::string_view& label);
 

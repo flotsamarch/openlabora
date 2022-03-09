@@ -3,6 +3,10 @@
 
 #include <vector>
 #include <map>
+#include <functional>
+#include <SFGUI/Window.hpp>
+#include <SFGUI/Widget.hpp>
+#include <SFGUI/Button.hpp>
 #include "ExpansionMarker.hpp"
 #include "GameState/Controllers/GameController.hpp"
 
@@ -19,8 +23,9 @@ class MarkerManager final
     using Widget = sfg::Widget;
     using Window = sfg::Window;
     using Button = sfg::Button;
+    using SignalId = unsigned int;
 
-    std::shared_ptr<GameController> mController;
+    GameController::Ptr mController;
     std::map<PlotType, MarkerVector> mMarkers;
     std::multimap<PlotType, Plot> mPlotsForMarkerCreation;
 

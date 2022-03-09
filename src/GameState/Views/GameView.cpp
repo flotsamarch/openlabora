@@ -64,6 +64,49 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
                                window_size.y});
     };
 
+    auto add_new_plot =
+    [&wmarker = mSelectedMarker, wctlr = GameController::WPtr{ mController }]
+    {
+        assert(!wmarker.expired());
+        assert(!wctlr.expired());
+        auto marker = wmarker.lock();
+        auto ctlr = wctlr.lock();
+        assert(marker != nullptr);
+
+        auto [plot_top, plot_bottom] = marker->GetPlots();
+        const bool is_multiplot = plot_bottom != std::nullopt;
+
+        if (marker->GetType() == MarkerType::Upper) {
+            if (is_multiplot)
+            {
+                ctlr->AddPlotToTop(plot_bottom.value());
+            }
+            ctlr->AddPlotToTop(plot_top);
+        } else {
+            ctlr->AddPlotToBottom(plot_top);
+            if (is_multiplot)
+            {
+                ctlr->AddPlotToBottom(plot_bottom.value());
+            }
+        }
+    };
+
+    auto close_confirm_window =
+    [close = close_window(mPlotConfirmWindow), &wmarker = mSelectedMarker]
+    {
+        assert(!wmarker.expired());
+        auto marker = wmarker.lock();
+        if (marker != nullptr) {
+            marker->Deselect();
+            marker = nullptr;
+        }
+        close();
+    };
+
+    auto update_markers =
+    [&manager = mMarkerManager]
+    { manager.UpdateMarkers(); };
+
     // Escape menu UI
     mEscMenuColWidth =  win_size.x / 3.f;
     mScreenCenter = { win_size.x / 2.f, win_size.y / 2.f };
@@ -91,8 +134,7 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     mMenuWidgets.push_back(box);
 
     // Plot purchase confirmation window
-    auto confirm_btn_no =
-        CreateEventConsumingWidget<Button>(std::string{kConfirmButtonLabelNo});
+    auto confirm_btn_no = CreateWidget<Button>(kConfirmButtonLabelNo);
     auto confirm_btn_box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
     confirm_btn_box->Pack(mPlotConfirmButton);
     confirm_btn_box->Pack(confirm_btn_no);
@@ -105,10 +147,13 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     mPlotConfirmWindow->Add(confirm_vbox);
     mPlotConfirmWindow->Show(false);
 
-    auto close_confirm_window = close_window(mPlotConfirmWindow);
     connect(mPlotConfirmWindow, Window::OnCloseButton, close_confirm_window);
     connect(confirm_btn_no, Widget::OnMouseLeftRelease, close_confirm_window);
+
+    // Order is important
+    connect(mPlotConfirmButton, Widget::OnMouseLeftRelease, add_new_plot);
     connect(mPlotConfirmButton, Widget::OnMouseLeftRelease, close_confirm_window);
+    connect(mPlotConfirmButton, Widget::OnMouseLeftRelease, update_markers);
 
     center_window(mPlotConfirmWindow, {350.f, 90.f});
     mDesktop.Add(mPlotConfirmWindow);
@@ -163,11 +208,23 @@ void GameView::HandleEvent(const sf::Event& evt)
             if (evt.mouseButton.button == sf::Mouse::Left) {
                 auto begin = mModel->GetSelectableEntities().begin();
                 auto end = mModel->GetSelectableEntities().end();
-                for (auto entity = begin; entity != end; ++entity) {
-                    if ((*entity)->WasEntered()) {
-                        mController->SelectEntity(entity);
+                for (auto it_entity = begin; it_entity != end; ++it_entity) {
+                    auto entity = *it_entity;
+                    if (entity->WasEntered()) {
+                        entity->Select();
+
+                        // This is not too bad but perhaps there is a better way
+                        using Marker = ExpansionMarker;
+                        auto marker = std::dynamic_pointer_cast<Marker>(entity);
+                        if (marker != nullptr) {
+                            mSelectedMarker = marker;
+                        }
                     } else {
-                        mController->DeselectEntity(entity);
+                        entity->Deselect();
+                        auto selected_marker = mSelectedMarker.lock();
+                        if (entity == selected_marker) {
+                            selected_marker = nullptr;
+                        }
                     }
                 }
             }
@@ -200,14 +257,15 @@ void GameView::Update(const float update_delta_seconds)
         auto mouse_world_pos =
             MapScreenToWorldCoords(mMouseCoords, mModel->GetMainView());
 
-        // Todo Take Z-coordinate into account
+        // TODO Take Z-coordinate into account
         auto begin = mModel->GetSelectableEntities().begin();
         auto end = mModel->GetSelectableEntities().end();
-        for (auto entity = begin; entity != end; ++entity) {
-            if ((*entity)->IsPointInRegisteringArea(mouse_world_pos)) {
-                mController->EntityOnHover(entity);
+        for (auto it_entity = begin; it_entity != end; ++it_entity) {
+            auto entity = *it_entity;
+            if (entity->IsPointInRegisteringArea(mouse_world_pos)) {
+                entity->OnHover();
             } else {
-                mController->EntityOnOut(entity);
+                entity->OnOut();
             }
         }
     }

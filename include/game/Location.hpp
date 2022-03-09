@@ -4,7 +4,6 @@
 #include <map>
 #include "resource/IResourceManager.hpp"
 #include "Entity.hpp"
-#include "ISelectable.hpp"
 #include "Playfield.hpp"
 #include "Tile.hpp"
 

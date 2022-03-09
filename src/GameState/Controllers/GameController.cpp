@@ -58,14 +58,6 @@ void GameController::EnableBuildMode([[maybe_unused]]Location::LocationType type
     // bBuildModeEnabled = true;
 }
 
-ISelectable::Ptr GameController::FindSelectableEntity(SelectableCIterator entity)
-{
-    auto entities =
-        std::const_pointer_cast<const Model>(mModel)->GetSelectableEntities();
-    auto dist = std::distance(entities.begin(), entity);
-    return mModel->GetSelectableEntities()[dist];
-}
-
 void GameController::RemoveMarker(ExpansionMarker::Ptr marker)
 {
     mModel->RemoveEntity(marker);

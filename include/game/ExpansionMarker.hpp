@@ -3,8 +3,6 @@
 
 #include <optional>
 #include <SFML/Graphics/RectangleShape.hpp>
-#include <SFGUI/Window.hpp>
-#include <SFGUI/Button.hpp>
 #include "SelectableEntity.hpp"
 #include "Plot.hpp"
 
@@ -21,37 +19,26 @@ public:
     { Begin, Upper = Begin, Lower, Disposable, End, Max = End };
 
     using Ptr = std::shared_ptr<ExpansionMarker>;
-    using PlotRef = std::reference_wrapper<const Plot>;
-    using OptionalPlot = std::optional<PlotRef>;
-    using RectangleArea = ClickableArea<sf::RectangleShape>;
+    using WPtr = std::weak_ptr<ExpansionMarker>;
 
     static constexpr float kMarkerOverlapFactor = 1.f / 3.f;
 
 private:
+    using PlotRef = std::reference_wrapper<const Plot>;
+    using OptionalPlot = std::optional<PlotRef>;
+    using RectangleArea = ClickableArea<sf::RectangleShape>;
+    using GameControllerPtr = std::shared_ptr<GameController>;
+
     inline static const sf::Color kHalfTransparent{ 255, 255, 255, 200 };
     Plot mPlotTop;
     std::optional<Plot> mPlotBottom{ std::nullopt };
     MarkerType mType;
-    std::weak_ptr<sfg::Window> mWindow;
-    std::weak_ptr<sfg::Button> mButton;
-    uint32_t mSignalSerial{ 0u };
     sf::RenderTexture mTexture;
 
 public:
-    ExpansionMarker(std::shared_ptr<GameController>,
-                    sfg::Window::Ptr, // Window that appears on click
-                    sfg::Button::Ptr, // Creation confirm button
-                    MarkerType,
+    ExpansionMarker(MarkerType,
                     const Plot& top,
                     OptionalPlot bottom = std::nullopt);
-
-    ~ExpansionMarker();
-
-    void OnHover() override;
-
-    void OnOut() override;
-
-    void Select() override;
 
     bool IsPointInRegisteringArea(const sf::Vector2f& point) const override
     { return mClickableArea.GetGlobalBounds().contains(point); }
@@ -72,6 +59,9 @@ public:
                           const sf::Vector2f& rect_size);
 
     void ResetClickableArea();
+
+    std::pair<PlotRef, OptionalPlot> GetPlots() const
+    { return { mPlotTop, mPlotBottom }; };
 };
 
 } // namespace OpenLabora

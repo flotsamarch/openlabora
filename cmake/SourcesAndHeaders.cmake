@@ -25,7 +25,7 @@ set(exe_sources
 
 set(headers
     # Gameplay classes
-    include/Game/ISelectable.hpp
+    include/Game/Selectable.hpp
     include/Game/IEntity.hpp
     include/Game/Entity.hpp
     include/Game/Plot.hpp

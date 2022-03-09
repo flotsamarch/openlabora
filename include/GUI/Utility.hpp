@@ -2,6 +2,7 @@
 #define UTILITY_HPP_
 
 #include <SFGUI/Widget.hpp>
+#include <SFGUI/Window.hpp>
 #include <GameState/Controllers/GameController.hpp>
 
 namespace OpenLabora

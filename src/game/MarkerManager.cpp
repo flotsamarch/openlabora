@@ -1,4 +1,5 @@
 #include <ranges>
+#include <GameState/Controllers/GameController.hpp>
 #include "game/MarkerManager.hpp"
 #include "resource/IResourceManager.hpp"
 #include "GUI/Utility.hpp"
@@ -53,12 +54,6 @@ MarkerManager::~MarkerManager()
         }
         arr.clear();
     }
-    auto&& side_signal = mSideConfirmButton->GetSignal(Widget::OnMouseLeftRelease);
-    auto&& central_signal =
-        mCentralConfirmButton->GetSignal(Widget::OnMouseLeftRelease);
-
-    side_signal.Disconnect(mCentralUpdateSignalId);
-    central_signal.Disconnect(mCentralUpdateSignalId);
 }
 
 void MarkerManager::UpdateMarkers()
@@ -69,11 +64,11 @@ void MarkerManager::UpdateMarkers()
         const auto disp_count = playfield->GetDisposableMarkerCount(plot_type);
         if (disp_count == 0) {
             auto last = std::remove_if(arr.begin(), arr.end(),
-            [ctlr = mController] (auto&& marker)
+            [this] (auto&& marker)
             {
                 auto remove = marker->GetType() == MarkerType::Disposable;
                 if (remove) {
-                    ctlr->RemoveMarker(marker);
+                    mController->RemoveMarker(marker);
                 }
                 return remove;
             });
@@ -149,39 +144,34 @@ void MarkerManager::CreateMarker(PlotType plot_type, MarkerType marker_type)
         assert(mMarkers[plot_type].size() == type_index);
     }
 
-    bool is_central = plot_type == PlotType::Central;
+    const bool is_central = plot_type == PlotType::Central;
     auto window = is_central ? mCentralConfirmWindow : mSideConfirmWindow;
     auto button = is_central ? mCentralConfirmButton : mSideConfirmButton;
 
-    auto&& [plot, end] = mPlotsForMarkerCreation.equal_range(plot_type);
+    auto [plot, end] = mPlotsForMarkerCreation.equal_range(plot_type);
     assert(plot != mPlotsForMarkerCreation.end());
 
     auto marker = ExpansionMarker::Ptr{};
     if (plot_type == PlotType::Central || std::distance(plot, end) < 2) {
-        marker = mController->CreateMarker(mController,
-                                                window,
-                                                button,
-                                                marker_type,
-                                                plot->second);
+        marker = mController->CreateMarker(marker_type,
+                                           plot->second);
     } else {
-        auto&& plot_alt = plot++;
+        auto plot_alt = plot++;
         assert(plot != mPlotsForMarkerCreation.end());
-        marker = mController->CreateMarker(mController,
-                                                window,
-                                                button,
-                                                marker_type,
-                                                plot->second,
-                                                plot_alt->second);
+        marker = mController->CreateMarker(marker_type,
+                                           plot->second,
+                                           plot_alt->second);
     }
     assert(marker != nullptr);
     mMarkers[plot_type].push_back(marker);
 
-    auto update_markers = [manager = this] { manager->UpdateMarkers(); };
-    // Reconnect signal to ensure correct order of calls
-    auto&& signal_id = is_central ? mCentralUpdateSignalId : mSideUpdateSignalId;
-    button->GetSignal(Widget::OnMouseLeftRelease).Disconnect(signal_id);
-    signal_id = connect(button, Widget::OnMouseLeftRelease, update_markers);
-}
+    auto show_window = [window, marker = ExpansionMarker::WPtr{marker}]
+    {
+        window->Show(true);
+        marker.lock()->Deselect();
+    };
 
+    marker->SetSelectDelegate(show_window);
+}
 
 } // namespace OpenLabora

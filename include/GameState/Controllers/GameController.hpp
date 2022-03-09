@@ -8,7 +8,7 @@
 #include "GameState/Model.hpp"
 #include "Game/Playfield.hpp"
 #include "Game/IDrawable.hpp"
-#include "Game/ISelectable.hpp"
+#include "Game/Selectable.hpp"
 #include "Game/IEntity.hpp"
 #include "Game/Location.hpp"
 
@@ -20,6 +20,7 @@ class GameController : public IGameController
 {
 public:
     using Ptr = std::shared_ptr<GameController>;
+    using WPtr = std::weak_ptr<GameController>;
     using CPtr = std::shared_ptr<const GameController>;
 
 protected:
@@ -34,7 +35,7 @@ protected:
 
     // Find mutable entity ptr in O(1) by const random access iterator
     // @entity should be contained in mSelectableEntities
-    ISelectable::Ptr FindSelectableEntity(SelectableCIterator entity);
+    Selectable::Ptr FindSelectableEntity(SelectableCIterator entity);
 
 public:
     GameController(std::shared_ptr<AppStateManager>,
@@ -74,22 +75,6 @@ public:
 
     void AddPlotToBottom(const Plot& plot)
     { GetActivePlayerPlayfieldInternal()->AddPlotToBottom(plot); }
-
-    // @entity should be contained in mSelectableEntities
-    void SelectEntity(SelectableCIterator entity)
-    { FindSelectableEntity(entity)->Select(); }
-
-    // @entity should be contained in mSelectableEntities
-    void DeselectEntity(SelectableCIterator entity)
-    { FindSelectableEntity(entity)->Deselect(); }
-
-    // @entity should be contained in mSelectableEntities
-    void EntityOnHover(SelectableCIterator entity)
-    { FindSelectableEntity(entity)->OnHover(); }
-
-    // @entity should be contained in mSelectableEntities
-    void EntityOnOut(SelectableCIterator entity)
-    { FindSelectableEntity(entity)->OnOut(); }
 
     template<typename... Args>
     std::shared_ptr<ExpansionMarker> CreateMarker(Args&&... args);
