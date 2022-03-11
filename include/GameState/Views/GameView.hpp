@@ -11,6 +11,7 @@
 #include "GameState/Controllers/GameController.hpp"
 #include "Game/MarkerManager.hpp"
 #include "GUI/Utility.hpp"
+#include "GUI/ExpansionWindow.hpp"
 
 namespace OpenLabora
 {
@@ -26,14 +27,7 @@ protected:
     using Window = sfg::Window;
     using Widget = sfg::Widget;
     using Button = sfg::Button;
-    static constexpr std::string_view kConfirmButtonLabelYes = "Yes";
-    static constexpr std::string_view kConfirmButtonLabelNo = "No";
-    static constexpr std::string_view kConfirmWindowText = "Buy plot?";
 
-    static constexpr char kConfirmWindowStyle = Window::Style::BACKGROUND |
-                                                Window::Style::TITLEBAR |
-                                                Window::Style::SHADOW |
-                                                Window::Style::CLOSE;
     std::weak_ptr<AppStateManager> mState;
     std::shared_ptr<GameController> mController;
     std::shared_ptr<const Model> mModel;
@@ -51,12 +45,9 @@ protected:
 
     std::shared_ptr<Location> mBuildGhost;
 
-    Window::Ptr mPlotConfirmWindow =
-        CreateEventConsumingWidget<Window>(mController, kConfirmWindowStyle);
-    Button::Ptr mPlotConfirmButton =
-        CreateWidget<Button>(kConfirmButtonLabelYes);
-
     MarkerManager mMarkerManager;
+    ExpansionWindow mExpansionWindow;
+
     std::weak_ptr<ExpansionMarker> mSelectedMarker; // Owned by Model
 
     // These are SFML screenspace<->world coordinate transformation methods

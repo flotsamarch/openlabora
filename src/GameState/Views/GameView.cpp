@@ -11,12 +11,6 @@
 namespace OpenLabora
 {
 
-namespace
-{
-using PlotType = Plot::PlotType;
-using MarkerType = ExpansionMarker::MarkerType;
-}
-
 GameView::GameView(std::shared_ptr<AppStateManager> state,
                    std::shared_ptr<GameController> controller,
                    std::shared_ptr<const Model> model)
@@ -24,14 +18,12 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
       mController{ controller },
       mModel{ model },
       mMouseCoords{ sf::Mouse::getPosition() },
-      mMarkerManager{ controller, state->GetResourceManager(),
-                       mPlotConfirmWindow,
-                       mPlotConfirmButton,
-                       mPlotConfirmWindow,
-                       mPlotConfirmButton }
+      mExpansionWindow{ controller },
+      mMarkerManager{ controller, state->GetResourceManager() }
 {
     using Widget = sfg::Widget;
     using Window = sfg::Window;
+    using MarkerType = ExpansionMarker::MarkerType;
 
     auto win_size = static_cast<sf::Vector2f>(mModel->GetWindowSize());
     mController->ResetMainView(sf::FloatRect{0.f, 0.f, win_size.x, win_size.y});
@@ -91,8 +83,11 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
         }
     };
 
+    auto expansion_win = mExpansionWindow.GetWindow();
+
     auto close_confirm_window =
-    [close = close_window(mPlotConfirmWindow), &wmarker = mSelectedMarker]
+    [close = close_window(expansion_win),
+     &wmarker = mSelectedMarker]
     {
         assert(!wmarker.expired());
         auto marker = wmarker.lock();
@@ -103,9 +98,19 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
         close();
     };
 
+    auto show_window =
+    [&window = mExpansionWindow, &wmarker = mSelectedMarker]
+    {
+        assert(!wmarker.expired());
+        auto marker = wmarker.lock();
+        assert(marker != nullptr);
+        window.SetState(marker->GetPlotType());
+        window.Show(true);
+    };
+
     auto update_markers =
-    [&manager = mMarkerManager]
-    { manager.UpdateMarkers(); };
+    [&manager = mMarkerManager, show_window]
+    { manager.UpdateMarkers(show_window); };
 
     // Escape menu UI
     mEscMenuColWidth =  win_size.x / 3.f;
@@ -133,30 +138,22 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     mDesktop.Add(box);
     mMenuWidgets.push_back(box);
 
-    // Plot purchase confirmation window
-    auto confirm_btn_no = CreateWidget<Button>(kConfirmButtonLabelNo);
-    auto confirm_btn_box = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
-    confirm_btn_box->Pack(mPlotConfirmButton);
-    confirm_btn_box->Pack(confirm_btn_no);
+    center_window(expansion_win, {350.f, 90.f});
+    mDesktop.Add(expansion_win);
 
-    auto confirm_text = sfg::Label::Create(std::string{kConfirmWindowText});
-    auto confirm_vbox = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, 10.f);
-    confirm_vbox->Pack(confirm_text);
-    confirm_vbox->Pack(confirm_btn_box);
-
-    mPlotConfirmWindow->Add(confirm_vbox);
-    mPlotConfirmWindow->Show(false);
-
-    connect(mPlotConfirmWindow, Window::OnCloseButton, close_confirm_window);
-    connect(confirm_btn_no, Widget::OnMouseLeftRelease, close_confirm_window);
+    auto confirm_btn = mExpansionWindow.GetConfirmButton();
+    auto decline_btn = mExpansionWindow.GetDeclineButton();
 
     // Order is important
-    connect(mPlotConfirmButton, Widget::OnMouseLeftRelease, add_new_plot);
-    connect(mPlotConfirmButton, Widget::OnMouseLeftRelease, close_confirm_window);
-    connect(mPlotConfirmButton, Widget::OnMouseLeftRelease, update_markers);
+    connect(confirm_btn, Widget::OnMouseLeftRelease, add_new_plot);
+    connect(confirm_btn, Widget::OnMouseLeftRelease, close_confirm_window);
+    connect(confirm_btn, Widget::OnMouseLeftRelease, update_markers);
 
-    center_window(mPlotConfirmWindow, {350.f, 90.f});
-    mDesktop.Add(mPlotConfirmWindow);
+    connect(decline_btn, Widget::OnMouseLeftRelease, close_confirm_window);
+
+    connect(expansion_win, Window::OnCloseButton, close_confirm_window);
+
+    mMarkerManager.UpdateMarkers(show_window);
     // TODO initialize mModel->mBuildGhost something...something...
 };
 
@@ -169,8 +166,6 @@ GameView::~GameView() noexcept
 void GameView::HandleEvent(const sf::Event& evt)
 {
     mDesktop.HandleEvent(evt);
-
-    mPlotConfirmWindow->IsLocallyVisible();
 
     switch (evt.type) {
         case sf::Event::KeyPressed:
@@ -211,14 +206,13 @@ void GameView::HandleEvent(const sf::Event& evt)
                 for (auto it_entity = begin; it_entity != end; ++it_entity) {
                     auto entity = *it_entity;
                     if (entity->WasEntered()) {
-                        entity->Select();
-
                         // This is not too bad but perhaps there is a better way
                         using Marker = ExpansionMarker;
                         auto marker = std::dynamic_pointer_cast<Marker>(entity);
                         if (marker != nullptr) {
                             mSelectedMarker = marker;
                         }
+                        entity->Select();
                     } else {
                         entity->Deselect();
                         auto selected_marker = mSelectedMarker.lock();
@@ -252,7 +246,7 @@ void GameView::Update(const float update_delta_seconds)
 {
     mDesktop.Update(update_delta_seconds);
 
-    if (bEscMenuHidden && !mPlotConfirmWindow->IsGloballyVisible())
+    if (bEscMenuHidden && !mExpansionWindow.GetWindow()->IsGloballyVisible())
     {
         auto mouse_world_pos =
             MapScreenToWorldCoords(mMouseCoords, mModel->GetMainView());

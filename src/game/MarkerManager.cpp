@@ -9,15 +9,8 @@ namespace OpenLabora
 {
 
 MarkerManager::MarkerManager(GameController::Ptr ctlr,
-                             IResourceManager& res_mgr,
-                             sfg::Window::Ptr central_confirm_window,
-                             sfg::Button::Ptr central_confirm_button,
-                             sfg::Window::Ptr side_confirm_window,
-                             sfg::Button::Ptr side_confirm_button)
-    : mController{ ctlr }, mCentralConfirmWindow{ central_confirm_window },
-      mCentralConfirmButton{ central_confirm_button },
-      mSideConfirmWindow{ side_confirm_window },
-      mSideConfirmButton{ side_confirm_button }
+                             IResourceManager& res_mgr)
+    : mController{ ctlr }
 {
     // In case plot_type != PT::Central number of items in this map tells
     // if there are 2 or 1 plots in marker
@@ -34,16 +27,6 @@ MarkerManager::MarkerManager(GameController::Ptr ctlr,
     auto mountain_plot_top = Plot{ Plot::kMountainPlotTop, res_mgr };
     mPlotsForMarkerCreation.insert({PlotType::Mountain, mountain_plot_bottom});
     mPlotsForMarkerCreation.insert({PlotType::Mountain, mountain_plot_top});
-
-    for (auto type = PlotType::Begin, end = PlotType::End; type < end; ++type) {
-        CreateMarker(type, MarkerType::Upper);
-        CreateMarker(type, MarkerType::Lower);
-        if (type != PlotType::Central) {
-            CreateMarker(type, MarkerType::Disposable);
-        }
-    }
-
-    UpdateMarkers();
 }
 
 MarkerManager::~MarkerManager()
@@ -56,9 +39,19 @@ MarkerManager::~MarkerManager()
     }
 }
 
-void MarkerManager::UpdateMarkers()
+void MarkerManager::UpdateMarkers(Delegate on_select)
 {
     auto playfield = mController->GetActivePlayerPlayfield();
+
+    if (mMarkers.empty()) {
+        for (auto type = PlotType::Begin, end = PlotType::End; type < end; ++type) {
+            CreateMarker(type, MarkerType::Upper, on_select);
+            CreateMarker(type, MarkerType::Lower, on_select);
+            if (type != PlotType::Central) {
+                CreateMarker(type, MarkerType::Disposable, on_select);
+            }
+        }
+    }
 
     for (auto&& [plot_type, arr] : mMarkers) {
         const auto disp_count = playfield->GetDisposableMarkerCount(plot_type);
@@ -75,7 +68,7 @@ void MarkerManager::UpdateMarkers()
             arr.erase(last, arr.end());
         } else {
             while (disp_count > arr.size() - 2) {
-                CreateMarker(plot_type, MarkerType::Disposable);
+                CreateMarker(plot_type, MarkerType::Disposable, on_select);
             }
         }
 
@@ -134,7 +127,9 @@ void MarkerManager::UpdateMarkers()
     }
 }
 
-void MarkerManager::CreateMarker(PlotType plot_type, MarkerType marker_type)
+void MarkerManager::CreateMarker(PlotType plot_type,
+                                 MarkerType marker_type,
+                                 Delegate on_select)
 {
     assert(marker_type != MarkerType::End);
     assert(plot_type != PlotType::End);
@@ -145,8 +140,6 @@ void MarkerManager::CreateMarker(PlotType plot_type, MarkerType marker_type)
     }
 
     const bool is_central = plot_type == PlotType::Central;
-    auto window = is_central ? mCentralConfirmWindow : mSideConfirmWindow;
-    auto button = is_central ? mCentralConfirmButton : mSideConfirmButton;
 
     auto [plot, end] = mPlotsForMarkerCreation.equal_range(plot_type);
     assert(plot != mPlotsForMarkerCreation.end());
@@ -164,14 +157,7 @@ void MarkerManager::CreateMarker(PlotType plot_type, MarkerType marker_type)
     }
     assert(marker != nullptr);
     mMarkers[plot_type].push_back(marker);
-
-    auto show_window = [window, marker = ExpansionMarker::WPtr{marker}]
-    {
-        window->Show(true);
-        marker.lock()->Deselect();
-    };
-
-    marker->SetSelectDelegate(show_window);
+    marker->SetSelectDelegate(on_select);
 }
 
 } // namespace OpenLabora

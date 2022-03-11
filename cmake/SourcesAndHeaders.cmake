@@ -12,6 +12,8 @@ set(sources
     src/GameState/Controllers/GameController.cpp
     src/GameState/Controllers/GCMainMenu.cpp
     src/GameState/Controllers/GCDuel.cpp
+    # GUI
+    src/GUI/ExpansionWindow.cpp
     # Game systems
     src/Renderer.cpp
     src/AppState/AppStateManager.cpp
@@ -47,9 +49,11 @@ set(headers
     include/GameState/Controllers/GCFinal.hpp
     include/GameState/Controllers/GCMainMenu.hpp
     include/GameState/Controllers/GCDuel.hpp
-    # Game systems
+    # GUI
     include/GUI/Utility.hpp
     include/GUI/ClickableArea.hpp
+    include/GUI/ExpansionWindow.hpp
+    # Game systems
     include/resource/ResourceManager.hpp
     include/resource/IResourceManager.hpp
     include/IRenderer.hpp
