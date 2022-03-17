@@ -6,7 +6,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <map>
-#include "resource/IResourceManager.hpp"
+#include "Resource/IResourceManager.hpp"
 #include "Entity.hpp"
 
 namespace OpenLabora
@@ -57,14 +57,14 @@ public:
         { TileType::MountainLower, "mountain_lower" }
     };
 
-    Tile(TileType type, const IResourceManager& res_mgr) :
+    Tile(TileType type, IResourceManager::Ptr res_mgr) :
         mType{ type }
     {
         if (type != TileType::None) {
             auto iter = kTileToTextureMap.find(type);
             assert(iter != kTileToTextureMap.end());
             auto texture_name = iter->second;
-            mObject.setTexture(res_mgr.GetTextureByName(texture_name), true);
+            mObject.setTexture(res_mgr->GetTextureByName(texture_name), true);
         }
     };
 

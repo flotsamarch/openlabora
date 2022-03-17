@@ -1,5 +1,4 @@
 #include "Game/ExpansionMarker.hpp"
-#include "AppState/AppStateManager.hpp"
 #include "GameState/Controllers/GameController.hpp"
 #include "resource/IResourceManager.hpp"
 #include "GUI/Utility.hpp"

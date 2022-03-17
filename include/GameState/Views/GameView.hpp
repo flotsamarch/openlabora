@@ -3,12 +3,11 @@
 
 #include <memory>
 #include <vector>
-#include <SFGUI/Desktop.hpp>
-#include <SFGUI/Widget.hpp>
-#include <SFGUI/Window.hpp>
-#include <SFGUI/Button.hpp>
-#include "GameState/Views/IGameView.hpp"
+#include <TGUI/Core.hpp>
+#include <TGUI/Backends/SFML.hpp>
 #include "GameState/Controllers/GameController.hpp"
+#include "IApplication.hpp"
+#include "AppState/StateIds.hpp"
 #include "Game/MarkerManager.hpp"
 #include "GUI/Utility.hpp"
 #include "GUI/ExpansionWindow.hpp"
@@ -16,28 +15,23 @@
 namespace OpenLabora
 {
 
-class GameController;
-class AppStateManager;
 class Model;
 
-// General UI logic base class
-class GameView : public IGameView
+// General gameplay UI logic base class
+class GameView
 {
 protected:
-    using Window = sfg::Window;
-    using Widget = sfg::Widget;
-    using Button = sfg::Button;
-
-    std::weak_ptr<AppStateManager> mState;
-    std::shared_ptr<GameController> mController;
-    std::shared_ptr<const Model> mModel;
-    sfg::Desktop mDesktop;
+    PtrView<IApplication<StateIdsVariant>> mApp;
+    GameController::Ptr mController;
+    PtrView<tgui::GuiSFML> mGui;
+    PtrView<const Model> mModel;
 
     sf::Vector2i mMouseCoords;
     sf::Vector2f mMouseDelta{ 0.f, 0.f };
 
     bool bEscMenuHidden{ true };
-    std::vector<sfg::Widget::Ptr> mMenuWidgets;
+    // TODO Fix UI: Escape menu
+    // std::vector<sfg::Widget::Ptr> mMenuWidgets;
     float mEscMenuColWidth;
     sf::Vector2f mScreenCenter;
     float mEscMenuButtonHeight = 40.f;
@@ -45,8 +39,9 @@ protected:
 
     std::shared_ptr<Location> mBuildGhost;
 
-    MarkerManager mMarkerManager;
-    ExpansionWindow mExpansionWindow;
+    // TODO Fix UI: Bring markers back
+    // MarkerManager mMarkerManager;
+    // ExpansionWindow mExpansionWindow;
 
     std::weak_ptr<ExpansionMarker> mSelectedMarker; // Owned by Model
 
@@ -58,29 +53,20 @@ protected:
 
     sf::Vector2i MapWorldToScreenCoords(const sf::Vector2f&, const sf::View&);
 
-    // Create labelled widgets which are visible during gameplay
-    template<CWidget TWidget>
-    typename TWidget::Ptr CreateWidget(const std::string_view& label);
-
 public:
-    GameView(std::shared_ptr<AppStateManager>,
-             std::shared_ptr<GameController>,
-             std::shared_ptr<const Model>);
+    GameView(PtrView<IApplication<StateIdsVariant>>,
+             PtrView<tgui::GuiSFML>,
+             GameController::Ptr,
+             PtrView<const Model>);
 
-    virtual ~GameView() noexcept;
+    virtual ~GameView() noexcept {};
 
-    void HandleEvent(const sf::Event&) override;
+    void HandleEvent(const sf::Event&);
 
-    void Update(const float update_delta_seconds) override;
+    void Update(const float update_delta_seconds);
 
-    void HandleWindowResize(const sf::Vector2u& window_size) override;
+    void HandleWindowResize(const sf::Vector2u& window_size);
 };
-
-template<CWidget TWidget>
-typename TWidget::Ptr GameView::CreateWidget(const std::string_view& label)
-{
-    return CreateEventConsumingWidget<TWidget>(mController, std::string{label});
-}
 
 } // namespace OpenLabora
 

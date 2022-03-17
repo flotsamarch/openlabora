@@ -1,21 +1,26 @@
 #ifndef GVDUEL_HPP_
 #define GVDUEL_HPP_
 
+#include <TGUI/Core.hpp>
+#include <TGUI/Backends/SFML.hpp>
 #include "GameState/Views/GameView.hpp"
+#include "GameState/Controllers/GCDuel.hpp"
+#include "IApplication.hpp"
+#include "AppState/StateIds.hpp"
 
 namespace OpenLabora
 {
 
 class GameController;
-class AppStateManager;
 class Model;
 
 class GVDuel final : public GameView
 {
 public:
-    GVDuel(std::shared_ptr<AppStateManager>,
-           std::shared_ptr<GameController>,
-           std::shared_ptr<const Model>);
+    GVDuel(PtrView<IApplication<StateIdsVariant>>,
+           PtrView<tgui::GuiSFML>,
+           std::shared_ptr<GCDuel>,
+           PtrView<const Model>);
 };
 
 } // namespace OpenLabora

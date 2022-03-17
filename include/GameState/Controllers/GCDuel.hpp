@@ -2,6 +2,7 @@
 #define GCDUEL_HPP_
 
 #include "GameState/Controllers/GameController.hpp"
+#include "Resource/IResourceManager.hpp"
 
 namespace OpenLabora
 {
@@ -9,8 +10,11 @@ namespace OpenLabora
 class GCDuel final : public GameController
 {
 public:
-    GCDuel(std::shared_ptr<AppStateManager>,
-           std::shared_ptr<Model>);
+    using Ptr = std::shared_ptr<GCDuel>;
+
+    GCDuel(PtrView<IApplication<StateIdsVariant>>,
+           IResourceManager::Ptr,
+           PtrView<Model>);
 };
 
 } // namespace OpenLabora

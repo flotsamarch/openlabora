@@ -1,15 +1,14 @@
 #include "GameState/Controllers/GameController.hpp"
-#include "AppState/AppStateManager.hpp"
 
 namespace OpenLabora
 {
 
-GameController::GameController(std::shared_ptr<AppStateManager> state,
-                               std::shared_ptr<Model> model,
+GameController::GameController(PtrView<IApplication<StateIdsVariant>> app,
+                               IResourceManager::Ptr res_manager,
+                               PtrView<Model> model,
                                uint32_t player_count)
-    : mState{ state }, mModel{ model }
+    : mApp { app }, mResManager{ res_manager }, mModel{ model }
 {
-    auto&& res_mgr = state->GetResourceManager();
     mModel->ResetEntities();
 
     auto pf_width = static_cast<float>(Playfield::kMaxFieldWidth);
@@ -18,7 +17,7 @@ GameController::GameController(std::shared_ptr<AppStateManager> state,
     for (uint32_t player{0}; auto&& pf : mModel->GetPlayfields()) {
         pf.reset();
         if (player < player_count) {
-            pf = mModel->CreateEntity<Playfield>(res_mgr);
+            pf = mModel->CreateEntity<Playfield>(mResManager);
             auto win_size = static_cast<sf::Vector2f>(mModel->GetWindowSize());
             auto position = sf::Vector2f{ win_size.x / 2, win_size.y / 2 };
             position.x -= (pf_width / 2) * Tile::kTileWidth;

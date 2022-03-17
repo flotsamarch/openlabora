@@ -25,7 +25,7 @@ public:
     static constexpr uint32_t kInitialPlotOffset{ 26u * Tile::kTileHeight };
     using Ptr = std::shared_ptr<Playfield>;
 
-    Playfield(const IResourceManager&);
+    Playfield(IResourceManager::Ptr);
 
     Tile::TileInfo GetTileInfoUnderPoint(const sf::Vector2f&) const;
 
@@ -47,7 +47,7 @@ public:
     uint32_t GetDisposableMarkerCount(Plot::PlotType) const;
 
 private:
-    const IResourceManager& mResMgr;
+    IResourceManager::Ptr mResMgr;
     sf::RenderTexture mGroundTexture;
     std::map<Plot::PlotType, std::deque<Plot>> mPlots;
 

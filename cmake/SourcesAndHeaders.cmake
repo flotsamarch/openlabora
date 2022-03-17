@@ -13,11 +13,7 @@ set(sources
     src/GameState/Controllers/GCMainMenu.cpp
     src/GameState/Controllers/GCDuel.cpp
     # GUI
-    src/GUI/ExpansionWindow.cpp
-    # Game systems
-    src/Renderer.cpp
-    src/AppState/AppStateManager.cpp
-    src/Application.cpp
+    # src/GUI/ExpansionWindow.cpp
 )
 
 set(exe_sources
@@ -39,27 +35,26 @@ set(headers
     include/Game/Location.hpp
     # Game states
     include/GameState/Model.hpp
-    include/GameState/Views/IGameView.hpp
     include/GameState/Views/GameView.hpp
     include/GameState/Views/GVFinal.hpp
     include/GameState/Views/GVMainMenu.hpp
     include/GameState/Views/GVDuel.hpp
-    include/GameState/Controllers/IGameController.hpp
     include/GameState/Controllers/GameController.hpp
     include/GameState/Controllers/GCFinal.hpp
     include/GameState/Controllers/GCMainMenu.hpp
     include/GameState/Controllers/GCDuel.hpp
     # GUI
-    include/GUI/Utility.hpp
+    # include/GUI/Utility.hpp
     include/GUI/ClickableArea.hpp
-    include/GUI/ExpansionWindow.hpp
+    # include/GUI/ExpansionWindow.hpp
     # Game systems
+    include/Misc/PtrView.hpp
+    include/AppState/AppState.hpp
+    include/AppState/StateIds.hpp
+    include/AppState/Transitions.hpp
     include/resource/ResourceManager.hpp
     include/resource/IResourceManager.hpp
-    include/IRenderer.hpp
     include/Renderer.hpp
-    include/AppState/AppStateManager.hpp
-    include/AppState/AppStateDefs.hpp
     include/IApplication.hpp
     include/Application.hpp
 )

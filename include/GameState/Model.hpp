@@ -24,6 +24,9 @@ public:
     enum PlayerAffiliation { Player1, Player2, Player3, Player4 };
     static constexpr uint32_t kMaxPlayers = 4;
 
+    using Ptr = std::shared_ptr<Model>;
+    using CPtr = std::shared_ptr<const Model>;
+
     using CDrawableSpan = std::span<const std::shared_ptr<const IDrawable>>;
     using CEntitySpan = std::span<const std::shared_ptr<const IEntity>>;
     // Selectable is a GUI mixin, so pointer to non-const

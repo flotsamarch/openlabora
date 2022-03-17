@@ -15,7 +15,7 @@ using PlotType = Plot::PlotType;
 using MarkerType = ExpansionMarker::MarkerType;
 }
 
-Playfield::Playfield(const IResourceManager& res_mgr)
+Playfield::Playfield(IResourceManager::Ptr res_mgr)
     : mResMgr{ res_mgr }
 {
     auto plot_top = Plot{ Plot::kCentralPlotTop, res_mgr };

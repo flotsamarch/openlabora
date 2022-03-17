@@ -10,7 +10,7 @@
 namespace OpenLabora
 {
 
-// std::vector wrapper that ensures that expansion marker usage is correct
+// std::vector wrapper that ensures correct usage of expansion markers
 class MarkerManager final
 {
     using MarkerType = ExpansionMarker::MarkerType;
@@ -25,7 +25,7 @@ class MarkerManager final
     void CreateMarker(PlotType, MarkerType, Delegate);
 
 public:
-    MarkerManager(GameController::Ptr, IResourceManager&);
+    MarkerManager(GameController::Ptr, IResourceManager::Ptr);
     ~MarkerManager();
 
     MarkerManager(const MarkerManager&) = delete;
@@ -34,7 +34,8 @@ public:
     MarkerManager& operator=(const MarkerManager&) = delete;
     MarkerManager& operator=(MarkerManager&&) = delete;
 
-    // @on_select - Select() delegate for markers that might get created
+     // Updates positions and number of expansion markers
+     // @arg on_select - Select() delegate for markers that might get created
     void UpdateMarkers(Delegate on_select);
 };
 

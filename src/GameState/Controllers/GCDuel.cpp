@@ -3,8 +3,9 @@
 namespace OpenLabora
 {
 
-GCDuel::GCDuel(std::shared_ptr<AppStateManager> state,
-               std::shared_ptr<Model> model)
-    : GameController(state, model, 1) {} // TODO player_count = 2
+GCDuel::GCDuel(PtrView<IApplication<StateIdsVariant>> app,
+               IResourceManager::Ptr res_manager,
+               PtrView<Model> model)
+    : GameController(app, res_manager, model, 1) {} // TODO player_count = 2
 
 } // namespace OpenLabora

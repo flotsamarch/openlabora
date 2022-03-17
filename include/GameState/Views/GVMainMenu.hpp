@@ -2,40 +2,38 @@
 #define GVMAINMENU_HPP_
 
 #include <memory>
-#include <vector>
-#include <SFGUI/Desktop.hpp>
-#include <SFGUI/Widget.hpp>
-#include "GameState/Views/IGameView.hpp"
-#include "GameState/Controllers/IGameController.hpp"
+#include <SFML/Window/Event.hpp>
+#include <TGUI/Core.hpp>
+#include <TGUI/Backends/SFML.hpp>
+#include "IApplication.hpp"
+#include "Misc/PtrView.hpp"
+#include "AppState/StateIds.hpp"
 
 namespace OpenLabora
 {
 
-class GameController;
-class AppStateManager;
 class Model;
+class GCMainMenu;
 
 // General UI logic base class
-class GVMainMenu final : public IGameView
+class GVMainMenu final
 {
-protected:
-    std::weak_ptr<AppStateManager> mState;
-    std::shared_ptr<IGameController> mController;
-    std::shared_ptr<const Model> mModel;
-    sfg::Desktop mDesktop;
+    PtrView<IApplication<StateIdsVariant>> mApp;
+    PtrView<tgui::GuiSFML> mGui;
+    std::shared_ptr<GCMainMenu> mController;
+    PtrView<const Model> mModel;
 
 public:
-    GVMainMenu(std::shared_ptr<AppStateManager>,
-             std::shared_ptr<IGameController>,
-             std::shared_ptr<const Model>);
+    GVMainMenu(PtrView<IApplication<StateIdsVariant>>,
+               PtrView<tgui::GuiSFML>,
+               std::shared_ptr<GCMainMenu>,
+               PtrView<const Model>);
 
-    ~GVMainMenu() noexcept;
+    void HandleEvent(const sf::Event&);
 
-    void HandleEvent(const sf::Event&) override;
+    void Update(const float update_delta_seconds);
 
-    void Update(const float update_delta_seconds) override;
-
-    void HandleWindowResize(const sf::Vector2u& window_size) override;
+    void HandleWindowResize(const sf::Vector2u& window_size);
 };
 
 } // namespace OpenLabora

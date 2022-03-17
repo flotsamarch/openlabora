@@ -46,7 +46,7 @@ protected:
 
 public:
     Plot(const PlotTilesAndType&,
-         const IResourceManager&);
+         IResourceManager::Ptr);
     virtual ~Plot() {};
 
     static uint32_t GetPlotWidthTileCount(PlotType);

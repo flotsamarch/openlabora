@@ -123,14 +123,14 @@ verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}
 #
 find_package(Freetype REQUIRED)
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
-find_package(SFGUI CONFIG REQUIRED)
+find_package(TGUI CONFIG REQUIRED)
 
 target_link_libraries(
   ${PROJECT_NAME}
       PRIVATE
       sfml-system sfml-network sfml-graphics sfml-window
       Freetype::Freetype
-      SFGUI::SFGUI
+      tgui
 )
 
 if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
@@ -139,7 +139,7 @@ if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
     PRIVATE
     sfml-system sfml-network sfml-graphics sfml-window
     Freetype::Freetype
-    SFGUI::SFGUI
+    tgui
   )
 endif()
 # For Windows, it is necessary to link with the MultiThreaded library.

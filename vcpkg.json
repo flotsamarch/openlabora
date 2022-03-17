@@ -1,7 +1,16 @@
 {
     "name": "openlabora",
     "version": "0.1.0",
-    "dependencies": ["freetype", "sfml", "sfgui", "gtest"],
+    "dependencies": [
+        "freetype",
+        "sfml",
+        {
+            "name": "tgui",
+            "default-features": false,
+            "features": [ "sfml" ]
+        },
+        "gtest"
+    ],
     "builtin-baseline": "a151bfd9892d096cb7ce54afdb70530c09b12e7b",
     "overrides": [
         {

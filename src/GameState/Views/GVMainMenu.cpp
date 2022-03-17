@@ -1,17 +1,14 @@
-#include <SFGUI/Button.hpp>
-#include <SFGUI/Box.hpp>
-#include "AppState/AppStateManager.hpp"
 #include "GameState/Views/GVMainMenu.hpp"
-#include "GameState/Controllers/GameController.hpp"
 #include "GameState/Model.hpp"
 
 namespace OpenLabora
 {
 
-GVMainMenu::GVMainMenu(std::shared_ptr<AppStateManager> state,
-                       std::shared_ptr<IGameController> controller,
-                       std::shared_ptr<const Model> model)
-    : mState{ state }, mController{ controller }, mModel{ model }
+GVMainMenu::GVMainMenu(PtrView<IApplication<StateIdsVariant>> app,
+                       PtrView<tgui::GuiSFML> gui,
+                       std::shared_ptr<GCMainMenu> controller,
+                       PtrView<const Model> model)
+    : mApp{ app }, mController{ controller }, mModel{ model }
 {
     auto win_size = static_cast<sf::Vector2f>(mModel->GetWindowSize());
     auto col_width = win_size.x / 3;
@@ -20,6 +17,7 @@ GVMainMenu::GVMainMenu(std::shared_ptr<AppStateManager> state,
     auto btn_height = 40.f;
     auto total_height = 2 * btn_height + box_padding;
 
+    #if 0
     auto duel_btn = sfg::Button::Create("Duel");
     auto quit_btn = sfg::Button::Create("Quit");
 
@@ -48,26 +46,18 @@ GVMainMenu::GVMainMenu(std::shared_ptr<AppStateManager> state,
                                      total_height));
 
     mDesktop.Add(box);
-};
-
-GVMainMenu::~GVMainMenu() noexcept
-{
-    mDesktop.RemoveAll();
-    mDesktop.Refresh();
+    #endif
 };
 
 void GVMainMenu::HandleEvent(const sf::Event& evt)
 {
-    mDesktop.HandleEvent(evt);
-
     if (evt.type == sf::Event::Resized) {
         HandleWindowResize({ evt.size.width, evt.size.height });
     }
 };
 
-void GVMainMenu::Update(const float update_delta_seconds)
+void GVMainMenu::Update([[maybe_unused]]const float update_delta_seconds)
 {
-    mDesktop.Update(update_delta_seconds);
 }
 
 void GVMainMenu::HandleWindowResize([[maybe_unused]]const sf::Vector2u& window_size)

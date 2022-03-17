@@ -4,12 +4,13 @@
 namespace OpenLabora
 {
 
+template<class TStateIdsVariant>
 class IApplication
 {
 public:
-    virtual ~IApplication() {};
-
-    virtual int run() = 0;
+    // No need for virtual destructor
+    // Application is never heap allocated
+    virtual void ChangeState(TStateIdsVariant state_id) = 0;
 };
 
 }

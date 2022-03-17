@@ -1,15 +1,15 @@
 #include <iostream>
+#include <TGUI/Core.hpp>
+#include <TGUI/Backends/SFML.hpp>
 #include "Application.hpp"
-#include "Renderer.hpp"
-#include "AppState/AppStateDefs.hpp"
+#include "AppState/StateIds.hpp"
+#include "AppState/Transitions.hpp"
 
 int main()
 {
     using namespace OpenLabora;
-    auto renderer = std::make_unique<Renderer>();
-    Application app{ AppStateDefs::MainMenuState{},
-        std::move(renderer)
-    };
+    Application<tgui::GuiSFML, sf::RenderWindow, Transitions, State,
+                StateIdsVariant> app;
 
     return app.run();
 }

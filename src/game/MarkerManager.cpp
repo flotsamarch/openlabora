@@ -1,7 +1,7 @@
 #include <ranges>
 #include <GameState/Controllers/GameController.hpp>
 #include "game/MarkerManager.hpp"
-#include "resource/IResourceManager.hpp"
+#include "Resource/IResourceManager.hpp"
 #include "GUI/Utility.hpp"
 
 
@@ -9,7 +9,7 @@ namespace OpenLabora
 {
 
 MarkerManager::MarkerManager(GameController::Ptr ctlr,
-                             IResourceManager& res_mgr)
+                             IResourceManager::Ptr res_mgr)
     : mController{ ctlr }
 {
     // In case plot_type != PT::Central number of items in this map tells

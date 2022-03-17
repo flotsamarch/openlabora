@@ -2,27 +2,36 @@
 #define GCMAINMENU_HPP_
 
 #include <memory>
-#include "IGameController.hpp"
+#include <SFML/Window/Event.hpp>
+#include "IApplication.hpp"
+#include "Misc/PtrView.hpp"
+#include "Resource/IResourceManager.hpp"
+#include "AppState/StateIds.hpp"
 
 namespace OpenLabora
 {
 
 class Model;
-class AppStateManager;
 
-class GCMainMenu final : public IGameController
+// Game controller for Main Menu state
+class GCMainMenu final
 {
 public:
-    std::weak_ptr<AppStateManager> mState;
-    std::shared_ptr<Model> mModel;
-    GCMainMenu(std::shared_ptr<AppStateManager>, std::shared_ptr<Model>);
-    ~GCMainMenu();
+    using Ptr = std::shared_ptr<GCMainMenu>;
 
-    void HandleEvent(const sf::Event&) override;
+    PtrView<IApplication<StateIdsVariant>> mApp;
+    PtrView<Model> mModel;
+    IResourceManager::Ptr mResManager;
 
-    void Update(const float update_delta_seconds) override;
+    GCMainMenu(PtrView<IApplication<StateIdsVariant>>,
+               IResourceManager::Ptr,
+               PtrView<Model>);
 
-    void HandleWindowResize(const sf::Vector2u&) override {};
+    void HandleEvent(const sf::Event&);
+
+    void Update(const float update_delta_seconds);
+
+    void HandleWindowResize(const sf::Vector2u&) {};
 };
 
 } // namespace OpenLabora

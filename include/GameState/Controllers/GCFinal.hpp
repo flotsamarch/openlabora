@@ -1,24 +1,30 @@
 #ifndef GCFINAL_HPP_
 #define GCFINAL_HPP_
 
-#include "GameState/Controllers/IGameController.hpp"
+#include "IApplication.hpp"
+#include "Misc/PtrView.hpp"
+#include "Resource/IResourceManager.hpp"
+#include "AppState/StateIds.hpp"
 #include "GameState/Model.hpp"
 
 namespace OpenLabora
 {
 
 // A controller indicating that app has reached its final state
-class GCFinal final : public IGameController
+class GCFinal final
 {
 public:
-    GCFinal(std::shared_ptr<AppStateManager>,
-            std::shared_ptr<Model>) {};
+    using Ptr = std::shared_ptr<GCFinal>;
 
-    void HandleEvent(const sf::Event&) override {};
+    GCFinal(PtrView<IApplication<StateIdsVariant>>,
+            IResourceManager::Ptr,
+            PtrView<Model>) {};
 
-    void Update(const float) override {};
+    void HandleEvent(const sf::Event&) {};
 
-    void HandleWindowResize(const sf::Vector2u&) override {};
+    void Update(const float) {};
+
+    void HandleWindowResize(const sf::Vector2u&) {};
 };
 
 } // namespace OpenLabora

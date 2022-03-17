@@ -7,7 +7,7 @@ namespace OpenLabora
 {
 
 Plot::Plot(const PlotTilesAndType& ptat,
-           const IResourceManager& res_mgr)
+           IResourceManager::Ptr res_mgr)
     : mType{ ptat.type }, mPlotTexture{ std::make_shared<sf::RenderTexture>() }
 {
     std::ranges::for_each(ptat.tiles,

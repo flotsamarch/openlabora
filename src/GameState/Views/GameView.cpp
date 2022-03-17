@@ -1,9 +1,4 @@
-#include <SFGUI/Button.hpp>
-#include <SFGUI/Box.hpp>
-#include <SFGUI/Label.hpp>
-#include <SFGUI/Alignment.hpp>
 #include <ranges>
-#include "AppState/AppStateManager.hpp"
 #include "GameState/Views/GameView.hpp"
 #include "GameState/Model.hpp"
 #include "GUI/Utility.hpp"
@@ -11,18 +6,21 @@
 namespace OpenLabora
 {
 
-GameView::GameView(std::shared_ptr<AppStateManager> state,
-                   std::shared_ptr<GameController> controller,
-                   std::shared_ptr<const Model> model)
-    : mState{ state },
+GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
+                   PtrView<tgui::GuiSFML> gui,
+                   GameController::Ptr controller,
+                   PtrView<const Model> model)
+    : mApp{ app },
+      mGui{ gui },
       mController{ controller },
       mModel{ model },
-      mMouseCoords{ sf::Mouse::getPosition() },
-      mExpansionWindow{ controller },
-      mMarkerManager{ controller, state->GetResourceManager() }
+      mMouseCoords{ sf::Mouse::getPosition() }
+      // TODO Fix UI: Bring markers back
+      // mExpansionWindow{ controller },
+      // mMarkerManager{ controller, state->GetResourceManager() }
 {
-    using Widget = sfg::Widget;
-    using Window = sfg::Window;
+    // TODO Fix UI
+    #if 0
     using MarkerType = ExpansionMarker::MarkerType;
 
     auto win_size = static_cast<sf::Vector2f>(mModel->GetWindowSize());
@@ -154,28 +152,24 @@ GameView::GameView(std::shared_ptr<AppStateManager> state,
     connect(expansion_win, Window::OnCloseButton, close_confirm_window);
 
     mMarkerManager.UpdateMarkers(show_window);
+    #endif
     // TODO initialize mModel->mBuildGhost something...something...
-};
-
-GameView::~GameView() noexcept
-{
-    mDesktop.RemoveAll();
-    mDesktop.Refresh();
 };
 
 void GameView::HandleEvent(const sf::Event& evt)
 {
-    mDesktop.HandleEvent(evt);
-
     switch (evt.type) {
         case sf::Event::KeyPressed:
         {
+            // TODO Fix UI: Escape-menu
+            #if 0
             if (evt.key.code == sf::Keyboard::Escape) {
                 for (auto& item : mMenuWidgets) {
                     item->Show(bEscMenuHidden);
                     bEscMenuHidden = !bEscMenuHidden;
                 }
             }
+            #endif
             break;
         }
         case sf::Event::Resized:
@@ -242,10 +236,10 @@ void GameView::HandleEvent(const sf::Event& evt)
     }
 };
 
-void GameView::Update(const float update_delta_seconds)
+void GameView::Update([[maybe_unused]]const float update_delta_seconds)
 {
-    mDesktop.Update(update_delta_seconds);
-
+    // TODO fix iteration over Selectable entities
+    #if 0
     if (bEscMenuHidden && !mExpansionWindow.GetWindow()->IsGloballyVisible())
     {
         auto mouse_world_pos =
@@ -263,6 +257,7 @@ void GameView::Update(const float update_delta_seconds)
             }
         }
     }
+    #endif
 
     // TODO fix build mode. Move this to GameView
     #if 0
