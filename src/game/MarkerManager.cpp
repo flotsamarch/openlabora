@@ -2,7 +2,6 @@
 #include <GameState/Controllers/GameController.hpp>
 #include "game/MarkerManager.hpp"
 #include "Resource/IResourceManager.hpp"
-#include "GUI/Utility.hpp"
 
 
 namespace OpenLabora

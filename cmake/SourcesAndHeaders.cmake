@@ -44,7 +44,6 @@ set(headers
     include/GameState/Controllers/GCMainMenu.hpp
     include/GameState/Controllers/GCDuel.hpp
     # GUI
-    # include/GUI/Utility.hpp
     include/GUI/ClickableArea.hpp
     # include/GUI/ExpansionWindow.hpp
     # Game systems

@@ -2,7 +2,6 @@
 #define EXPANSIONWINDOW_HPP_
 
 #include "GameState/Controllers/GameController.hpp"
-#include "GUI/Utility.hpp"
 #include "Game/Plot.hpp"
 
 namespace OpenLabora

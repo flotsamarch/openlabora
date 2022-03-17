@@ -1,7 +1,6 @@
 #include <ranges>
 #include "GameState/Views/GameView.hpp"
 #include "GameState/Model.hpp"
-#include "GUI/Utility.hpp"
 
 namespace OpenLabora
 {

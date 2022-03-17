@@ -9,7 +9,6 @@
 #include "IApplication.hpp"
 #include "AppState/StateIds.hpp"
 #include "Game/MarkerManager.hpp"
-#include "GUI/Utility.hpp"
 #include "GUI/ExpansionWindow.hpp"
 
 namespace OpenLabora
