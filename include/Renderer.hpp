@@ -23,68 +23,68 @@ class Renderer final
 {
     static constexpr int kFramerateLimit{ 144 };
     static constexpr std::string_view kWindowName{ "OpenLabora" };
-    TWindow mWindow;
+    PtrView<TWindow> mWindow;
     PtrView<TGui> mGui;
     sf::VideoMode mVideoMode{ *sf::VideoMode::getFullscreenModes().begin() };
 
 public:
-    Renderer(PtrView<TGui>);
-    ~Renderer() { mWindow.close(); }
+    Renderer(PtrView<TGui>, PtrView<TWindow>);
+    ~Renderer() { mWindow->close(); }
 
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
     Renderer(Renderer&&) = delete;
     Renderer& operator=(Renderer&&) = delete;
 
-    bool IsWindowOpen() const { return mWindow.isOpen(); };
+    bool IsWindowOpen() const { return mWindow->isOpen(); };
 
     bool PollEvent(sf::Event& evt)
-    { return IsWindowOpen() && mWindow.pollEvent(evt); };
-
-    void Update(const sf::View& view) { mWindow.setView(view); }
+    { return IsWindowOpen() && mWindow->pollEvent(evt); };
 
     // Must be called before Draw()
-    void Clear() { mWindow.clear(); }
+    void Clear() { mWindow->clear(); }
 
-    void Draw(const sf::Drawable& drawable) { mWindow.draw(drawable); }
+    void Draw(const sf::Drawable& drawable) { mWindow->draw(drawable); }
 
     // Must be called after Draw()
     void Display();
 
-    void HandleEvent(const sf::Event&);
+    // @return true if event was handled in GUI, false otherwise
+    bool HandleEvent(const sf::Event&);
 
-    sf::Vector2u GetWindowSize() const { return mWindow.getSize(); }
+    sf::Vector2u GetWindowSize() const { return mWindow->getSize(); }
 };
 
 template<class TGui, class TWindow>
-Renderer<TGui, TWindow>::Renderer(PtrView<TGui> gui)
-    : mGui{ gui }
+Renderer<TGui, TWindow>::Renderer(PtrView<TGui> gui, PtrView<TWindow> window)
+    : mGui{ gui }, mWindow{ window }
 {
-    mWindow.create(mVideoMode,
+    mWindow->create(mVideoMode,
                    std::string(kWindowName),
                    sf::Style::Fullscreen);
-    mWindow.setFramerateLimit(kFramerateLimit);
-    mWindow.setVerticalSyncEnabled(true);
+    mWindow->setFramerateLimit(kFramerateLimit);
+    mWindow->setVerticalSyncEnabled(true);
 
-    mGui->setTarget(mWindow);
+    mGui->setTarget(*mWindow.Get());
 
-    mWindow.resetGLStates();
+    mWindow->resetGLStates();
 }
 
 template<class TGui, class TWindow>
 void Renderer<TGui, TWindow>::Display()
 {
     mGui->draw();
-    mWindow.display();
+    mWindow->display();
 }
 
 template<class TGui, class TWindow>
-void Renderer<TGui, TWindow>::HandleEvent(const sf::Event& evt)
+bool Renderer<TGui, TWindow>::HandleEvent(const sf::Event& evt)
 {
-    mGui->handleEvent(evt);
+    bool result = mGui->handleEvent(evt);
     if (evt.type == sf::Event::Closed) {
-        mWindow.close();
+        mWindow->close();
     }
+    return result;
 }
 
 } // namespace OpenLabora

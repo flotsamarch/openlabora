@@ -28,7 +28,7 @@ public:
 
 protected:
     PtrView<IApplication<StateIdsVariant>> mApp;
-    PtrView<Model> mModel;
+    Model::Ptr mModel;
     IResourceManager::Ptr mResManager;
 
     using SelectableCIterator = Model::CSelectableSpan::iterator;
@@ -36,7 +36,6 @@ protected:
     // TODO multiplayer support
     std::shared_ptr<Playfield> GetActivePlayerPlayfieldInternal() noexcept
     { return mModel->GetPlayfield(Model::Player1); }
-
     // Find mutable entity ptr in O(1) by const random access iterator
     // @arg entity - should be contained in mSelectableEntities
     Selectable::Ptr FindSelectableEntity(SelectableCIterator entity);
@@ -44,7 +43,7 @@ protected:
 public:
     GameController(PtrView<IApplication<StateIdsVariant>>,
                    IResourceManager::Ptr,
-                   PtrView<Model>,
+                   Model::Ptr,
                    uint32_t player_count);
 
     virtual ~GameController() = 0;
@@ -61,19 +60,7 @@ public:
     std::shared_ptr<const Playfield> GetActivePlayerPlayfield() const noexcept
     { return mModel->GetPlayfield(Model::Player1); }
 
-    const sf::View& GetMainView() const noexcept
-    { return mModel->GetMainView(); }
-
-    void MoveMainView(const sf::Vector2f offset)
-    { mModel->MoveMainView(offset); }
-
-    void ResetMainView(const sf::FloatRect& viewport)
-    { mModel->ResetMainView(viewport); }
-
     void HandleWindowResize(const sf::Vector2u& window_size);
-
-    void IgnoreNextEvent(sf::Event::EventType type)
-    { mModel->IgnoreNextEvent(type); }
 
     void AddPlotToTop(const Plot& plot)
     { GetActivePlayerPlayfieldInternal()->AddPlotToTop(plot); }

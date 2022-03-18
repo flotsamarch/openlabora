@@ -6,20 +6,23 @@
 #include <TGUI/Backends/SFML.hpp>
 #include "GameState/Model.hpp"
 #include "IApplication.hpp"
+#include "GameWindow.hpp"
 #include "AppState/StateIds.hpp"
 #include "GameState/Controllers/GCFinal.hpp"
 
 namespace OpenLabora
 {
 
+struct NoModel;
+
 // A view indicating that app has reached its final state
 class GVFinal final
 {
 public:
     GVFinal(PtrView<IApplication<StateIdsVariant>>,
-            PtrView<tgui::GuiSFML>,
+            GameWindow<tgui::GuiSFML, sf::RenderWindow>,
             std::shared_ptr<GCFinal>,
-            PtrView<const Model>) {};
+            NoModel::CPtr) {};
 
     void HandleEvent(const sf::Event&) {};
 

@@ -33,7 +33,6 @@ public:
     using CSelectableSpan = std::span<const std::shared_ptr<Selectable>>;
 
 private:
-    using DrawableSpan = std::span<std::shared_ptr<IDrawable>>;
     using EntitySpan = std::span<std::shared_ptr<IEntity>>;
     using SelectableSpan = std::span<std::shared_ptr<Selectable>>;
 
@@ -41,43 +40,16 @@ private:
     std::vector<std::shared_ptr<IDrawable>> mDrawableEntities;
     std::vector<std::shared_ptr<Selectable>> mSelectableEntities;
 
-    sf::View mMainView;
-    sf::Vector2u mWindowSize;
-    std::bitset<sf::Event::Count> mIgnoredEvents;
-
     bool bPaused{ false };
 
     std::array<std::shared_ptr<Playfield>, kMaxPlayers> mPlayfields;
 
 public:
-    Model(const sf::Vector2u& window_size) : mWindowSize{ window_size } {}
-
     template<CEntity TEntity, class... Args>
     std::shared_ptr<TEntity> CreateEntity(Args&&... args);
 
     template<CEntity TEntity>
     void RemoveEntity(std::shared_ptr<TEntity> entity);
-
-    const sf::View& GetMainView() const noexcept
-    { return mMainView; }
-
-    void MoveMainView(const sf::Vector2f offset)
-    { mMainView.move(offset); }
-
-    void ResetMainView(const sf::FloatRect& viewport)
-    { mMainView.reset(viewport); }
-
-    const sf::Vector2u& GetWindowSize() const noexcept
-    { return mWindowSize; }
-
-    void SetWindowSize(const sf::Vector2u& window_size)
-    { mWindowSize = window_size; }
-
-    const bool IsEventIgnored(sf::Event::EventType type) const
-    { return mIgnoredEvents.test(type); }
-
-    void IgnoreNextEvent(sf::Event::EventType type, bool value = true)
-    { mIgnoredEvents.set(type, value); }
 
     bool IsPaused() const noexcept
     { return bPaused; }
@@ -87,9 +59,6 @@ public:
 
     void ResetEntities() noexcept
     { mEntities.clear(); mSelectableEntities.clear(); mDrawableEntities.clear();}
-
-    DrawableSpan GetDrawableEntities() noexcept
-    { return mDrawableEntities; }
 
     EntitySpan GetEntities() noexcept
     { return mEntities; }
@@ -112,6 +81,14 @@ public:
 
     std::span<std::shared_ptr<Playfield>> GetPlayfields()
     { return mPlayfields; }
+};
+
+struct NoModel
+{
+    using Ptr = std::shared_ptr<NoModel>;
+    using CPtr = std::shared_ptr<const NoModel>;
+
+    Model::CDrawableSpan GetDrawableEntities() const noexcept { return {}; }
 };
 
 template<CEntity TEntity, class... Args>

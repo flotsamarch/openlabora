@@ -6,7 +6,7 @@ namespace OpenLabora
 
 GCMainMenu::GCMainMenu(PtrView<IApplication<StateIdsVariant>> app,
                        IResourceManager::Ptr res_manager,
-                       PtrView<Model> model)
+                       NoModel::Ptr model)
     : mApp{ app }, mResManager{ res_manager }, mModel{ model } {}
 
 void GCMainMenu::HandleEvent(const sf::Event& evt)

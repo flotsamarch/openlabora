@@ -8,6 +8,7 @@
 #include "AppState/Transitions.hpp"
 #include "Renderer.hpp"
 #include "Misc/PtrView.hpp"
+#include "GameWindow.hpp"
 #include "resource/ResourceManager.hpp"
 
 namespace OpenLabora
@@ -17,25 +18,27 @@ namespace OpenLabora
  * Main RAII class for application
  *
  * @tparam TGui - A GUI library class
- * @tparam Window - Render window class
- * @tparam Transitions - Callable for a std::visit that creates new state
+ * @tparam TWindow - Render window class
+ * @tparam TTransitions - Callable for a std::visit that creates new state
  * @tparam TStatesVariant - Variant of all possible states (AppState's)
  * @tparam TStateIdsVariant - Variant of all possible IDs for each state.
- * ID is empty struct that is later used in @Transitions implementation
+ * ID is empty struct that is later used in TTransitions implementation
  */
-template <class TGui, class TWindow, class TTransitions,
+template <class TGui, class TWindow, template<class...> class TTransitions,
           class TStatesVariant, class TStateIdsVariant>
 class Application final : public IApplication<TStateIdsVariant>
 {
     TGui mGui{};
-    Renderer<TGui, TWindow> mRenderer{ PtrView(&mGui) };
-    Model mModel{ mRenderer.GetWindowSize() };
-    IResourceManager::Ptr mResManager = std::make_shared<ResourceManager>();
+    TWindow mWindow{};
+    Renderer<TGui, TWindow> mRenderer{ PtrView(&mGui), PtrView(&mWindow) };
+    ResourceManager::Ptr mResManager = std::make_shared<ResourceManager>();
 
-    TTransitions mTransitions{ PtrView<IApplication<TStateIdsVariant>>(this),
-                               mResManager,
-                               PtrView(&mGui),
-                               PtrView(&mModel) };
+    using IApplicationPtr = PtrView<IApplication<TStateIdsVariant>>;
+    TTransitions<TGui, TWindow, TStateIdsVariant> mTransitions
+    {
+        IApplicationPtr(this), mResManager,
+        GameWindow<TGui, TWindow>{PtrView(&mGui), PtrView(&mWindow)}
+    };
 
     State mState = *std::visit(mTransitions, StateIdsVariant{});
 
@@ -57,9 +60,9 @@ public:
     void ChangeState(TStateIdsVariant state_id) override;
 };
 
-template <class TGui, class TRenderer, class TTransitions,
+template <class TGui, class TWindow, template<class...> class TTransitions,
           class TStatesVar, class TStateIdsVar>
-uint32_t Application<TGui, TRenderer, TTransitions, TStatesVar, TStateIdsVar>
+uint32_t Application<TGui, TWindow, TTransitions, TStatesVar, TStateIdsVar>
 ::run()
 {
     sf::Clock clock;
@@ -71,13 +74,16 @@ uint32_t Application<TGui, TRenderer, TTransitions, TStatesVar, TStateIdsVar>
             state.view.Update(delta_seconds);
             state.controller->Update(delta_seconds);
         };
-
         std::visit(update, mState);
-        mRenderer.Update(mModel.GetMainView());
 
         mRenderer.Clear();
 
-        for(auto entity : mModel.GetDrawableEntities()) {
+        auto get_entities = [] (auto&& state) {
+            return state.model->GetDrawableEntities();
+        };
+
+        Model::CDrawableSpan entities = std::visit(get_entities, mState);
+        for(auto entity : entities) {
             mRenderer.Draw(entity->GetDrawableObject());
         }
         mRenderer.Display();
@@ -89,9 +95,9 @@ uint32_t Application<TGui, TRenderer, TTransitions, TStatesVar, TStateIdsVar>
     return 0;
 }
 
-template <class TGui, class TRenderer, class TTransitions,
+template <class TGui, class TWindow, template<class...> class TTransitions,
           class TStatesVariant, class TStateIdsVariant>
-void Application<TGui, TRenderer, TTransitions, TStatesVariant, TStateIdsVariant>
+void Application<TGui, TWindow, TTransitions, TStatesVariant, TStateIdsVariant>
 ::ChangeState(TStateIdsVariant state_id)
 {
     using OptStates = std::optional<TStatesVariant>;
@@ -101,9 +107,9 @@ void Application<TGui, TRenderer, TTransitions, TStatesVariant, TStateIdsVariant
     mState = *std::move(new_state);
 }
 
-template <class TGui, class TRenderer, class TTransitions,
+template <class TGui, class TWindow, template<class...> class TTransitions,
           class TStatesVariant, class TStateIdsVariant>
-void Application<TGui, TRenderer, TTransitions, TStatesVariant, TStateIdsVariant>
+void Application<TGui, TWindow, TTransitions, TStatesVariant, TStateIdsVariant>
 ::HandleEvents()
 {
     sf::Event evt;

@@ -11,73 +11,69 @@
 #include "IApplication.hpp"
 #include "Misc/PtrView.hpp"
 #include "Resource/IResourceManager.hpp"
-
-#include "GameState/Views/GVMainMenu.hpp"
-#include "GameState/Views/GVDuel.hpp"
-#include "GameState/Views/GVFinal.hpp"
-
-#include "GameState/Controllers/GCMainMenu.hpp"
-#include "GameState/Controllers/GCDuel.hpp"
-#include "GameState/Controllers/GCFinal.hpp"
+#include "GameWindow.hpp"
 
 namespace OpenLabora
 {
-
-// ----------------------- ADD ALL STATES HERE ----------------------------------
-using MainMenuState = AppState<GVMainMenu, GCMainMenu>;
-using DuelState = AppState<GVDuel, GCDuel>;
-using FinalState = AppState<GVFinal, GCFinal>;
-
-using State = std::variant<MainMenuState, DuelState, FinalState>;
 
 /**
  * Callable that allows transitions between application states. Intended to be
  * used as callable for std::visit
  *
+ * @tparam TGui - A GUI library class
+ * @tparam TWindow - Render window class
+ * @tparam TStateIdsVariant - Variant of all possible IDs for each state
+ *
  * @arg Empty struct which represents one of possible application states
  * @return New AppState object or std::nullopt if there is no overload for @arg
  */
+template <class TGui, class TWindow, class TStateIdsVariant>
 class Transitions final
 {
-    using IApplication = IApplication<StateIdsVariant>;
+    using IApplication = IApplication<TStateIdsVariant>;
 
-    template<class TView, class TController>
-    AppState<TView, TController>
-    CreateState()
+    template <class TAppState>
+    TAppState CreateState()
     {
         using std::make_shared;
-        auto controller = make_shared<TController>(mApp, mResManager, mModel);
-        TView view{ mApp, mGui, controller, PtrView<const Model>(mModel.Get()) };
-        return AppState<TView, TController>{ controller, std::move(view) };
+        using ModelT = typename TAppState::ModelT;
+        using ControllerT = typename TAppState::ControllerT;
+        using ViewT = typename TAppState::ViewT;
+        using MVCState = AppState<ModelT, ViewT, ControllerT>;
+
+        auto model = make_shared<ModelT>();
+        auto controller = make_shared<ControllerT>(mApp, mResManager, model);
+        ViewT view(mApp, mWindow, controller, model);
+        return MVCState{ model, std::move(view), controller };
     }
 
     PtrView<IApplication> mApp;
     IResourceManager::Ptr mResManager;
-    PtrView<tgui::GuiSFML> mGui;
-    PtrView<Model> mModel;
+    GameWindow<TGui, TWindow> mWindow;
 
 public:
     using StateOpt = std::optional<State>;
 
-    Transitions(PtrView<IApplication> app, IResourceManager::Ptr res_manager,
-                PtrView<tgui::GuiSFML> gui, PtrView<Model> model)
-        : mApp{ app }, mResManager{ res_manager }, mGui{ gui }, mModel{ model }
+    Transitions(PtrView<IApplication> app,
+                IResourceManager::Ptr res_manager,
+                GameWindow<TGui, TWindow> window)
+        : mApp{ app }, mResManager{ res_manager }, mWindow{ window }
         {}
 
 // ----------------------- ADD ALL TRANSITIONS HERE -----------------------------
     StateOpt operator()(const MainMenuStateId&)
     {
-        return CreateState<GVMainMenu, GCMainMenu>();
+        return CreateState<MainMenuState>();
     };
 
     StateOpt operator()(const DuelStateId&)
     {
-        return CreateState<GVDuel, GCDuel>();
+        return CreateState<DuelState>();
     };
 
     StateOpt operator()(const FinalStateId&)
     {
-        return CreateState<GVFinal, GCFinal>();
+        return CreateState<FinalState>();
     };
 
     template<class T>

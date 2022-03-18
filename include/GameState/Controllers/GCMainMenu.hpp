@@ -7,11 +7,10 @@
 #include "Misc/PtrView.hpp"
 #include "Resource/IResourceManager.hpp"
 #include "AppState/StateIds.hpp"
+#include "GameState/Model.hpp"
 
 namespace OpenLabora
 {
-
-class Model;
 
 // Game controller for Main Menu state
 class GCMainMenu final
@@ -20,12 +19,12 @@ public:
     using Ptr = std::shared_ptr<GCMainMenu>;
 
     PtrView<IApplication<StateIdsVariant>> mApp;
-    PtrView<Model> mModel;
+    NoModel::Ptr mModel;
     IResourceManager::Ptr mResManager;
 
     GCMainMenu(PtrView<IApplication<StateIdsVariant>>,
                IResourceManager::Ptr,
-               PtrView<Model>);
+               NoModel::Ptr);
 
     void HandleEvent(const sf::Event&);
 

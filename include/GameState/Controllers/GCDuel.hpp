@@ -14,7 +14,7 @@ public:
 
     GCDuel(PtrView<IApplication<StateIdsVariant>>,
            IResourceManager::Ptr,
-           PtrView<Model>);
+           Model::Ptr);
 };
 
 } // namespace OpenLabora

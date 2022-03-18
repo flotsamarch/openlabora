@@ -18,7 +18,7 @@ public:
 
     GCFinal(PtrView<IApplication<StateIdsVariant>>,
             IResourceManager::Ptr,
-            PtrView<Model>) {};
+            NoModel::Ptr) {};
 
     void HandleEvent(const sf::Event&) {};
 

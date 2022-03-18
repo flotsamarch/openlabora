@@ -5,6 +5,7 @@
 #include <vector>
 #include <TGUI/Core.hpp>
 #include <TGUI/Backends/SFML.hpp>
+#include "GameWindow.hpp"
 #include "GameState/Controllers/GameController.hpp"
 #include "IApplication.hpp"
 #include "AppState/StateIds.hpp"
@@ -21,9 +22,9 @@ class GameView
 {
 protected:
     PtrView<IApplication<StateIdsVariant>> mApp;
+    GameWindow<tgui::GuiSFML, sf::RenderWindow> mWindow;
     GameController::Ptr mController;
-    PtrView<tgui::GuiSFML> mGui;
-    PtrView<const Model> mModel;
+    Model::CPtr mModel;
 
     sf::Vector2i mMouseCoords;
     sf::Vector2f mMouseDelta{ 0.f, 0.f };
@@ -44,19 +45,11 @@ protected:
 
     std::weak_ptr<ExpansionMarker> mSelectedMarker; // Owned by Model
 
-    // These are SFML screenspace<->world coordinate transformation methods
-    // They are copied since i cannot pass window around easily
-    sf::IntRect TransformViewToWindowCoords(const sf::View&);
-
-    sf::Vector2f MapScreenToWorldCoords(const sf::Vector2i&, const sf::View&);
-
-    sf::Vector2i MapWorldToScreenCoords(const sf::Vector2f&, const sf::View&);
-
 public:
     GameView(PtrView<IApplication<StateIdsVariant>>,
-             PtrView<tgui::GuiSFML>,
+             GameWindow<tgui::GuiSFML, sf::RenderWindow>,
              GameController::Ptr,
-             PtrView<const Model>);
+             Model::CPtr);
 
     virtual ~GameView() noexcept {};
 

@@ -4,10 +4,10 @@ namespace OpenLabora
 {
 
 GVDuel::GVDuel(PtrView<IApplication<StateIdsVariant>> app,
-               PtrView<tgui::GuiSFML> gui,
+               GameWindow<tgui::GuiSFML, sf::RenderWindow> window,
                std::shared_ptr<GCDuel> controller,
-               PtrView<const Model> model)
-    : GameView(app, gui, controller, model)
+               Model::CPtr model)
+    : GameView(app, window, controller, model)
 {
     // TODO fix GUI. Move this to GameView
 #if 0

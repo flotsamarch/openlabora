@@ -6,11 +6,11 @@ namespace OpenLabora
 {
 
 GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
-                   PtrView<tgui::GuiSFML> gui,
+                   GameWindow<tgui::GuiSFML, sf::RenderWindow> window,
                    GameController::Ptr controller,
-                   PtrView<const Model> model)
+                   Model::CPtr model)
     : mApp{ app },
-      mGui{ gui },
+      mWindow{ window },
       mController{ controller },
       mModel{ model },
       mMouseCoords{ sf::Mouse::getPosition() }
@@ -18,12 +18,20 @@ GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
       // mExpansionWindow{ controller },
       // mMarkerManager{ controller, state->GetResourceManager() }
 {
+    auto win_size = static_cast<sf::Vector2f>(mWindow.GetSize());
+    auto position = sf::Vector2f{ -1 * win_size.x / 2, -1 * win_size.y / 2 };
+    auto pf_width = static_cast<float>(Playfield::kMaxFieldWidth);
+    auto pf_height = static_cast<float>(Playfield::kMaxFieldHeight);
+    position.x += (pf_width / 2) * Tile::kTileWidth;
+    position.y += (pf_height / 2) * Tile::kTileHeight;
+
+    mWindow.SetView(sf::View {
+            sf::FloatRect{position, win_size}
+        });
     // TODO Fix UI
     #if 0
     using MarkerType = ExpansionMarker::MarkerType;
 
-    auto win_size = static_cast<sf::Vector2f>(mModel->GetWindowSize());
-    mController->ResetMainView(sf::FloatRect{0.f, 0.f, win_size.x, win_size.y});
 
     // UI helper lambdas
 
@@ -183,16 +191,14 @@ void GameView::HandleEvent(const sf::Event& evt)
             mMouseCoords = { evt.mouseMove.x, evt.mouseMove.y };
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && bEscMenuHidden) {
-                mController->MoveMainView({-mMouseDelta.x, -mMouseDelta.y});
+                auto view = mWindow.GetView();
+                view.move({-mMouseDelta.x, -mMouseDelta.y});
+                mWindow.SetView(view);
             }
             break;
         }
         case sf::Event::MouseButtonReleased:
         {
-            if (mModel->IsEventIgnored(evt.type)) {
-                break;
-            }
-
             if (evt.mouseButton.button == sf::Mouse::Left) {
                 auto begin = mModel->GetSelectableEntities().begin();
                 auto end = mModel->GetSelectableEntities().end();
@@ -280,47 +286,6 @@ void GameView::HandleWindowResize(const sf::Vector2u& window_size)
 {
     mController->HandleWindowResize(window_size);
     // TODO resizable interface
-}
-
-sf::IntRect GameView::TransformViewToWindowCoords(const sf::View& view)
-{
-    auto win_size  = static_cast<sf::Vector2f>(mModel->GetWindowSize());
-    auto&& viewport = view.getViewport();
-
-    return sf::IntRect({static_cast<int>(0.5f + win_size.x * viewport.left),
-                        static_cast<int>(0.5f + win_size.y * viewport.top)},
-                       {static_cast<int>(0.5f + win_size.x * viewport.width),
-                        static_cast<int>(0.5f + win_size.y * viewport.height)});
-}
-
-sf::Vector2f GameView::MapScreenToWorldCoords(const sf::Vector2i& pixel,
-                                              const sf::View& view)
-{
-    // Convert from viewport coordinates to homogeneous coordinates
-    auto viewport = sf::FloatRect(TransformViewToWindowCoords(view));
-    auto dx = static_cast<float>(pixel.x) - viewport.left;
-    auto dy = static_cast<float>(pixel.y) - viewport.top;
-
-    sf::Vector2f normalized{ -1.f + 2.f * dx / viewport.width,
-                              1.f - 2.f * dy / viewport.height };
-
-    // Transform by the inverse of the view matrix
-    return view.getInverseTransform().transformPoint(normalized);
-}
-
-sf::Vector2i GameView::MapWorldToScreenCoords(const sf::Vector2f& coords,
-                                              const sf::View& view)
-{
-    // Transform the point by the view matrix
-    auto normalized = view.getTransform().transformPoint(coords);
-
-    // Convert to viewport coordinates
-    auto viewport = sf::FloatRect(TransformViewToWindowCoords(view));
-    auto offset_x = (normalized.x + 1.f) / 2.f;
-    auto offset_y = (-normalized.y + 1.f) / 2.f;
-
-    return { static_cast<int>(offset_x * viewport.width  + viewport.left),
-             static_cast<int>(offset_y * viewport.height + viewport.top)};
 }
 
 } // namespace OpenLabora

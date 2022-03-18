@@ -6,28 +6,29 @@
 #include <TGUI/Core.hpp>
 #include <TGUI/Backends/SFML.hpp>
 #include "IApplication.hpp"
+#include "GameWindow.hpp"
 #include "Misc/PtrView.hpp"
 #include "AppState/StateIds.hpp"
+#include "GameState/Model.hpp"
 
 namespace OpenLabora
 {
 
-class Model;
 class GCMainMenu;
 
 // General UI logic base class
 class GVMainMenu final
 {
     PtrView<IApplication<StateIdsVariant>> mApp;
-    PtrView<tgui::GuiSFML> mGui;
+    GameWindow<tgui::GuiSFML, sf::RenderWindow> mWindow;
     std::shared_ptr<GCMainMenu> mController;
-    PtrView<const Model> mModel;
+    NoModel::CPtr mModel;
 
 public:
     GVMainMenu(PtrView<IApplication<StateIdsVariant>>,
-               PtrView<tgui::GuiSFML>,
+               GameWindow<tgui::GuiSFML, sf::RenderWindow>,
                std::shared_ptr<GCMainMenu>,
-               PtrView<const Model>);
+               NoModel::CPtr);
 
     void HandleEvent(const sf::Event&);
 

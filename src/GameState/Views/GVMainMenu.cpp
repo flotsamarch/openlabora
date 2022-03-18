@@ -1,23 +1,23 @@
 #include "GameState/Views/GVMainMenu.hpp"
-#include "GameState/Model.hpp"
 
 namespace OpenLabora
 {
 
 GVMainMenu::GVMainMenu(PtrView<IApplication<StateIdsVariant>> app,
-                       PtrView<tgui::GuiSFML> gui,
+                       GameWindow<tgui::GuiSFML, sf::RenderWindow> window,
                        std::shared_ptr<GCMainMenu> controller,
-                       PtrView<const Model> model)
-    : mApp{ app }, mController{ controller }, mModel{ model }
+                       NoModel::CPtr model)
+    : mApp{ app }, mWindow{ window }, mController{ controller }, mModel{ model }
 {
-    auto win_size = static_cast<sf::Vector2f>(mModel->GetWindowSize());
+    auto win_size = static_cast<sf::Vector2f>(mWindow.GetSize());
+    // TODO Fix UI: Main menu
+    #if 0
     auto col_width = win_size.x / 3;
     auto screen_center_y = win_size.y / 2;
     auto box_padding = 8.f;
     auto btn_height = 40.f;
     auto total_height = 2 * btn_height + box_padding;
 
-    #if 0
     auto duel_btn = sfg::Button::Create("Duel");
     auto quit_btn = sfg::Button::Create("Quit");
 

@@ -18,9 +18,9 @@ class GVDuel final : public GameView
 {
 public:
     GVDuel(PtrView<IApplication<StateIdsVariant>>,
-           PtrView<tgui::GuiSFML>,
+           GameWindow<tgui::GuiSFML, sf::RenderWindow>,
            std::shared_ptr<GCDuel>,
-           PtrView<const Model>);
+           Model::CPtr);
 };
 
 } // namespace OpenLabora
