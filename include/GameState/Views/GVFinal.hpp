@@ -19,6 +19,8 @@ struct NoModel;
 class GVFinal final
 {
 public:
+    using Ptr = std::unique_ptr<GVFinal>;
+
     GVFinal(PtrView<IApplication<StateIdsVariant>>,
             GameWindow<tgui::GuiSFML, sf::RenderWindow>,
             std::shared_ptr<GCFinal>,

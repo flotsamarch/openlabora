@@ -46,6 +46,8 @@ protected:
     std::weak_ptr<ExpansionMarker> mSelectedMarker; // Owned by Model
 
 public:
+    using Ptr = std::unique_ptr<GameView>;
+
     GameView(PtrView<IApplication<StateIdsVariant>>,
              GameWindow<tgui::GuiSFML, sf::RenderWindow>,
              GameController::Ptr,

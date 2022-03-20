@@ -43,7 +43,7 @@ class Transitions final
 
         auto model = make_shared<ModelT>();
         auto controller = make_shared<ControllerT>(mApp, mResManager, model);
-        ViewT view(mApp, mWindow, controller, model);
+        auto view = std::make_unique<ViewT>(mApp, mWindow, controller, model);
         return MVCState{ model, std::move(view), controller };
     }
 

@@ -1,8 +1,9 @@
 #ifndef GAMEWINDOW_HPP_
 #define GAMEWINDOW_HPP_
 
+#include <TGUI/Widget.hpp>
+#include <SFML/Graphics/View.hpp>
 #include "Misc/PtrView.hpp"
-#include "SFML/Graphics/View.hpp"
 
 namespace OpenLabora
 {
@@ -28,10 +29,14 @@ public:
     auto GetSize() { return mWindow->getSize(); } const
 
     auto MapScreenToWorldCoords(const sf::Vector2i& point) const
-    { mWindow->mapPixelToCoords(point); }
+    { return mWindow->mapPixelToCoords(point); }
 
     auto MapWorldToScreenCoords(const sf::Vector2f& coord) const
-    { mWindow->mapCoordsToPixel(coord); }
+    { return mWindow->mapCoordsToPixel(coord); }
+
+    void AddWidget(const tgui::Widget::Ptr& widget,
+                   const tgui::String& name="") const
+    { mGui->add(widget, name); }
 };
 
 } // namespace OpenLabora

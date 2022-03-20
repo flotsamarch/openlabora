@@ -71,7 +71,7 @@ uint32_t Application<TGui, TWindow, TTransitions, TStatesVar, TStateIdsVar>
         HandleEvents();
 
         auto update = [delta_seconds] (auto&& state) {
-            state.view.Update(delta_seconds);
+            state.view->Update(delta_seconds);
             state.controller->Update(delta_seconds);
         };
         std::visit(update, mState);
@@ -101,9 +101,9 @@ void Application<TGui, TWindow, TTransitions, TStatesVariant, TStateIdsVariant>
 ::ChangeState(TStateIdsVariant state_id)
 {
     using OptStates = std::optional<TStatesVariant>;
-    OptStates new_state = std::visit(mTransitions, state_id);
-    assert(new_state != std::nullopt);
     mGui.removeAllWidgets();
+    OptStates new_state = std::move(std::visit(mTransitions, state_id));
+    assert(new_state != std::nullopt);
     mState = *std::move(new_state);
 }
 
@@ -114,9 +114,12 @@ void Application<TGui, TWindow, TTransitions, TStatesVariant, TStateIdsVariant>
 {
     sf::Event evt;
     while (mRenderer.PollEvent(evt)) {
-        mRenderer.HandleEvent(evt);
+        bool consumed = mRenderer.HandleEvent(evt);
+        if (consumed) {
+            return;
+        }
         auto handle = [&evt] (auto&& state) {
-            state.view.HandleEvent(evt);
+            state.view->HandleEvent(evt);
             state.controller->HandleEvent(evt);
         };
         std::visit(handle, mState);

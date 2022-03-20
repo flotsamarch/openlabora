@@ -25,6 +25,8 @@ class GVMainMenu final
     NoModel::CPtr mModel;
 
 public:
+    using Ptr = std::unique_ptr<GVMainMenu>;
+
     GVMainMenu(PtrView<IApplication<StateIdsVariant>>,
                GameWindow<tgui::GuiSFML, sf::RenderWindow>,
                std::shared_ptr<GCMainMenu>,

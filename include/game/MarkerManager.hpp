@@ -25,7 +25,7 @@ class MarkerManager final
     void CreateMarker(PlotType, MarkerType, Delegate);
 
 public:
-    MarkerManager(GameController::Ptr, IResourceManager::Ptr);
+    MarkerManager(GameController::Ptr);
     ~MarkerManager();
 
     MarkerManager(const MarkerManager&) = delete;

@@ -72,6 +72,9 @@ public:
     std::shared_ptr<ExpansionMarker> CreateMarker(Args&&... args);
 
     void RemoveMarker(ExpansionMarker::Ptr marker);
+
+    IResourceManager::Ptr GetResourceManager() const noexcept
+    { return mResManager; }
 };
 
 inline GameController::~GameController() {}

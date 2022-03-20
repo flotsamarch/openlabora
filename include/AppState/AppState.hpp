@@ -19,6 +19,7 @@ template<class TModel, class TView, class TController>
 class AppState final
 {
     using ModelPtr = typename TModel::Ptr;
+    using ViewPtr = typename TView::Ptr;
     using ControllerPtr = typename TController::Ptr;
 
 public:
@@ -28,10 +29,10 @@ public:
 
     ModelPtr model;
     ControllerPtr controller;
-    TView view;
+    ViewPtr view;
 
-    AppState(ModelPtr _model, TView _view, ControllerPtr _controller)
-        : model{ _model }, controller{ _controller }, view{ _view } {}
+    AppState(ModelPtr _model, ViewPtr _view, ControllerPtr _controller)
+        : model{ _model }, controller{ _controller }, view{ std::move(_view) } {}
 };
 
 // ----------------------- ADD ALL STATES HERE ----------------------------------

@@ -19,13 +19,6 @@ void GCMainMenu::HandleEvent(const sf::Event& evt)
                 mApp->ChangeState(FinalStateId{});
                 break;
             }
-            // TODO Fix UI: Remove this case
-            case sf::Keyboard::N:
-            {
-                assert(mApp != nullptr);
-                mApp->ChangeState(DuelStateId{});
-                break;
-            }
             default: {}
         }
     }
