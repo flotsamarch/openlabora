@@ -5,6 +5,7 @@
 #include <vector>
 #include <TGUI/Core.hpp>
 #include <TGUI/Backends/SFML.hpp>
+#include <TGUI/Widgets/VerticalLayout.hpp>
 #include "GameWindow.hpp"
 #include "GameState/Controllers/GameController.hpp"
 #include "IApplication.hpp"
@@ -21,6 +22,8 @@ class Model;
 class GameView
 {
 protected:
+    using VBox = tgui::VerticalLayout;
+
     PtrView<IApplication<StateIdsVariant>> mApp;
     GameWindow<tgui::GuiSFML, sf::RenderWindow> mWindow;
     GameController::Ptr mController;
@@ -29,19 +32,11 @@ protected:
     sf::Vector2i mMouseCoords;
     sf::Vector2f mMouseDelta{ 0.f, 0.f };
 
-    bool bEscMenuHidden{ true };
-    // TODO Fix UI: Escape menu
-    // std::vector<sfg::Widget::Ptr> mMenuWidgets;
-    float mEscMenuColWidth;
-    sf::Vector2f mScreenCenter;
-    float mEscMenuButtonHeight = 40.f;
-    float mEscMenuTotalHeight = mEscMenuButtonHeight;
-
     std::shared_ptr<Location> mBuildGhost;
 
-    // TODO Fix UI: Bring markers back
-    // MarkerManager mMarkerManager;
-    // ExpansionWindow mExpansionWindow;
+    VBox::Ptr mMenuVBox = VBox::create();
+    MarkerManager mMarkerManager;
+    ExpansionWindow mExpansionWindow;
 
     std::weak_ptr<ExpansionMarker> mSelectedMarker; // Owned by Model
 

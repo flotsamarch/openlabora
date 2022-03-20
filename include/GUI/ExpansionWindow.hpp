@@ -1,6 +1,10 @@
 #ifndef EXPANSIONWINDOW_HPP_
 #define EXPANSIONWINDOW_HPP_
 
+#include <TGUI/Widgets/ChildWindow.hpp>
+#include <TGUI/Widgets/VerticalLayout.hpp>
+#include <TGUI/Widgets/Button.hpp>
+#include <string>
 #include "GameState/Controllers/GameController.hpp"
 #include "Game/Plot.hpp"
 
@@ -10,32 +14,28 @@ namespace OpenLabora
 // Window that handles purchasing of plots - confirmation or selection
 class ExpansionWindow final
 {
-    static constexpr std::string_view kConfirmButtonLabel= "Confirm";
-    static constexpr std::string_view kDeclineButtonLabel = "Cancel";
-    static constexpr std::string_view kConfirmWindowText =
+    inline static const tgui::String kConfirmButtonLabel= "Confirm";
+    inline static const tgui::String kDeclineButtonLabel = "Cancel";
+    inline static const tgui::String kConfirmWindowText =
         "Are you sure want to buy this plot?";
-    static constexpr std::string_view kSelectWindowText =
+    inline static const tgui::String kSelectWindowText =
         "Select which plot you want to purchase";
+    inline static const tgui::String kWindowTitle = "";
 
-    // TODO fix gui
-    #if 0
-    static constexpr char kWindowStyle = Window::Style::BACKGROUND |
-                                         Window::Style::TITLEBAR |
-                                         Window::Style::SHADOW |
-                                         Window::Style::CLOSE;
+    static constexpr unsigned int kTitleBarButtons = 0u;
+
+    using Window = tgui::ChildWindow;
+    using Button = tgui::Button;
 
     GameController::Ptr mController;
 
-    Window::Ptr mWindow = CreateEventConsumingWidget<Window>(mController,
-                                                             kWindowStyle);
-    Button::Ptr mConfirmButton = CreateWidget<Button>(kConfirmButtonLabel);
-    Button::Ptr mDeclineButton = CreateWidget<Button>(kDeclineButtonLabel);
-    #endif
+    Window::Ptr mWindow = Window::create(kWindowTitle, kTitleBarButtons);
+    Button::Ptr mConfirmButton = Button::create(kConfirmButtonLabel);
+    Button::Ptr mDeclineButton = Button::create(kDeclineButtonLabel);
 
 public:
     ExpansionWindow(GameController::Ptr);
 
-    #if 0
     Window::Ptr GetWindow() { return mWindow; }
 
     Button::Ptr GetConfirmButton() { return mConfirmButton; }
@@ -44,8 +44,7 @@ public:
 
     void SetState(Plot::PlotType);
 
-    void Show(bool show) { mWindow->Show(show); };
-    #endif
+    void Show(bool show) { mWindow->setVisible(show); };
 };
 
 } // namespace OpenLabora

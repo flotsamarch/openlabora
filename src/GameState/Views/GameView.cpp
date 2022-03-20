@@ -1,4 +1,6 @@
 #include <ranges>
+#include <TGUI/Widgets/ChildWindow.hpp>
+#include <TGUI/Widgets/Button.hpp>
 #include "GameState/Views/GameView.hpp"
 #include "GameState/Model.hpp"
 
@@ -13,10 +15,9 @@ GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
       mWindow{ window },
       mController{ controller },
       mModel{ model },
-      mMouseCoords{ sf::Mouse::getPosition() }
-      // TODO Fix UI: Bring markers back
-      // mExpansionWindow{ controller },
-      // mMarkerManager{ controller, state->GetResourceManager() }
+      mMouseCoords{ sf::Mouse::getPosition() },
+      mExpansionWindow{ controller },
+      mMarkerManager{ controller }
 {
     auto win_size = static_cast<sf::Vector2f>(mWindow.GetSize());
     auto position = sf::Vector2f{ -1 * win_size.x / 2, -1 * win_size.y / 2 };
@@ -25,49 +26,20 @@ GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
     position.x += (pf_width / 2) * Tile::kTileWidth;
     position.y += (pf_height / 2) * Tile::kTileHeight;
 
-    mWindow.SetView(sf::View {
-            sf::FloatRect{position, win_size}
-        });
-    // TODO Fix UI
-    #if 0
-    using MarkerType = ExpansionMarker::MarkerType;
+    mWindow.SetView(sf::View{ sf::FloatRect{ position, win_size } });
 
+    using MarkerType = ExpansionMarker::MarkerType;
+    using Window = tgui::ChildWindow;
+    using VBox = tgui::VerticalLayout;
+    using Button = tgui::Button;
 
     // UI helper lambdas
 
-    // Generate delegate for SFGUI that closes specific window
-    auto close_window =
-    [] (Window::Ptr window)
-    {
-        return [window = std::weak_ptr<Window>(window)]
-        {
-                assert(!window.expired());
-                window.lock()->Show(false);
-        };
-    };
-
-    auto center_window =
-    [&screen_size = mModel->GetWindowSize()]
-    (Window::Ptr window, sf::Vector2f window_size)
-    {
-        auto half_width = window_size.x / 2;
-        auto half_height = window_size.y / 2;
-        auto center_x = screen_size.x / 2;
-        auto center_y = screen_size.y / 2;
-
-        window->SetAllocation({center_x - half_width,
-                               center_y - half_height,
-                               window_size.x,
-                               window_size.y});
-    };
-
     auto add_new_plot =
-    [&wmarker = mSelectedMarker, wctlr = GameController::WPtr{ mController }]
+    [&wmarker = mSelectedMarker, controller = mController]
     {
         assert(!wmarker.expired());
-        assert(!wctlr.expired());
         auto marker = wmarker.lock();
-        auto ctlr = wctlr.lock();
         assert(marker != nullptr);
 
         auto [plot_top, plot_bottom] = marker->GetPlots();
@@ -76,14 +48,14 @@ GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
         if (marker->GetType() == MarkerType::Upper) {
             if (is_multiplot)
             {
-                ctlr->AddPlotToTop(plot_bottom.value());
+                controller->AddPlotToTop(plot_bottom.value());
             }
-            ctlr->AddPlotToTop(plot_top);
+            controller->AddPlotToTop(plot_top);
         } else {
-            ctlr->AddPlotToBottom(plot_top);
+            controller->AddPlotToBottom(plot_top);
             if (is_multiplot)
             {
-                ctlr->AddPlotToBottom(plot_bottom.value());
+                controller->AddPlotToBottom(plot_bottom.value());
             }
         }
     };
@@ -91,8 +63,7 @@ GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
     auto expansion_win = mExpansionWindow.GetWindow();
 
     auto close_confirm_window =
-    [close = close_window(expansion_win),
-     &wmarker = mSelectedMarker]
+    [&window = mExpansionWindow, &wmarker = mSelectedMarker]
     {
         assert(!wmarker.expired());
         auto marker = wmarker.lock();
@@ -100,11 +71,11 @@ GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
             marker->Deselect();
             marker = nullptr;
         }
-        close();
+        window.Show(false);
     };
 
     auto show_window =
-    [&window = mExpansionWindow, &wmarker = mSelectedMarker]
+    [&window = mExpansionWindow, &wmarker = this->mSelectedMarker]
     {
         assert(!wmarker.expired());
         auto marker = wmarker.lock();
@@ -118,48 +89,36 @@ GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
     { manager.UpdateMarkers(show_window); };
 
     // Escape menu UI
-    mEscMenuColWidth =  win_size.x / 3.f;
-    mScreenCenter = { win_size.x / 2.f, win_size.y / 2.f };
 
-    auto quit_btn = sfg::Button::Create("Quit");
+    auto quit_btn = Button::create("Quit");
+    auto resume_btn = Button::create("Resume");
 
-    connect(quit_btn, Widget::OnLeftClick,
-    [state = mState]
-    {
-        assert(!state.expired());
-        state.lock()->SetNextState<AppStateDefs::FinalState>();
-    });
+    quit_btn->onPress([app]{ app->ChangeState(FinalStateId{}); });
+    resume_btn->onPress([box = mMenuVBox]{ box->setVisible(false); });
 
-    auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
-    box->Show(false);
+    mMenuVBox->setVisible(false);
+    mMenuVBox->add(quit_btn, true);
+    mMenuVBox->addSpace(0.1f);
+    mMenuVBox->add(resume_btn, true);
+    mMenuVBox->setOrigin(0.5f, 0.5f);
+    mMenuVBox->setPosition("50%", "50%");
+    mMenuVBox->setSize("20%", "10%");
 
-    box->Pack(quit_btn, true);
-
-    box->SetAllocation(sf::FloatRect(mEscMenuColWidth,
-                                     mScreenCenter.y - mEscMenuTotalHeight / 2,
-                                     mEscMenuColWidth,
-                                     mEscMenuTotalHeight));
-
-    mDesktop.Add(box);
-    mMenuWidgets.push_back(box);
-
-    center_window(expansion_win, {350.f, 90.f});
-    mDesktop.Add(expansion_win);
+    mWindow.AddWidget(mMenuVBox);
+    mWindow.AddWidget(expansion_win);
 
     auto confirm_btn = mExpansionWindow.GetConfirmButton();
     auto decline_btn = mExpansionWindow.GetDeclineButton();
 
     // Order is important
-    connect(confirm_btn, Widget::OnMouseLeftRelease, add_new_plot);
-    connect(confirm_btn, Widget::OnMouseLeftRelease, close_confirm_window);
-    connect(confirm_btn, Widget::OnMouseLeftRelease, update_markers);
+    confirm_btn->onPress(add_new_plot);
+    confirm_btn->onPress(close_confirm_window);
+    confirm_btn->onPress(update_markers);
 
-    connect(decline_btn, Widget::OnMouseLeftRelease, close_confirm_window);
-
-    connect(expansion_win, Window::OnCloseButton, close_confirm_window);
+    decline_btn->onPress(close_confirm_window);
+    expansion_win->onClose(close_confirm_window);
 
     mMarkerManager.UpdateMarkers(show_window);
-    #endif
     // TODO initialize mModel->mBuildGhost something...something...
 };
 
@@ -168,15 +127,9 @@ void GameView::HandleEvent(const sf::Event& evt)
     switch (evt.type) {
         case sf::Event::KeyPressed:
         {
-            // TODO Fix UI: Escape-menu
-            #if 0
             if (evt.key.code == sf::Keyboard::Escape) {
-                for (auto& item : mMenuWidgets) {
-                    item->Show(bEscMenuHidden);
-                    bEscMenuHidden = !bEscMenuHidden;
-                }
+                mMenuVBox->setVisible(!mMenuVBox->isVisible());
             }
-            #endif
             break;
         }
         case sf::Event::Resized:
@@ -190,7 +143,9 @@ void GameView::HandleEvent(const sf::Event& evt)
             mMouseDelta.y = static_cast<float>(evt.mouseMove.y - mMouseCoords.y);
             mMouseCoords = { evt.mouseMove.x, evt.mouseMove.y };
 
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && bEscMenuHidden) {
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Right) &&
+                !mMenuVBox->isVisible())
+            {
                 auto view = mWindow.GetView();
                 view.move({-mMouseDelta.x, -mMouseDelta.y});
                 mWindow.SetView(view);
@@ -243,12 +198,10 @@ void GameView::HandleEvent(const sf::Event& evt)
 
 void GameView::Update([[maybe_unused]]const float update_delta_seconds)
 {
-    // TODO fix iteration over Selectable entities
-    #if 0
-    if (bEscMenuHidden && !mExpansionWindow.GetWindow()->IsGloballyVisible())
+    if (!mMenuVBox->isVisible() && !mExpansionWindow.GetWindow()->isVisible())
     {
         auto mouse_world_pos =
-            MapScreenToWorldCoords(mMouseCoords, mModel->GetMainView());
+            mWindow.MapScreenToWorldCoords(mMouseCoords);
 
         // TODO Take Z-coordinate into account
         auto begin = mModel->GetSelectableEntities().begin();
@@ -262,7 +215,6 @@ void GameView::Update([[maybe_unused]]const float update_delta_seconds)
             }
         }
     }
-    #endif
 
     // TODO fix build mode. Move this to GameView
     #if 0

@@ -1,4 +1,7 @@
+#include <TGUI/Widgets/VerticalLayout.hpp>
+#include <TGUI/Widgets/Button.hpp>
 #include "GameState/Views/GVMainMenu.hpp"
+#include "AppState/StateIds.hpp"
 
 namespace OpenLabora
 {
@@ -10,43 +13,24 @@ GVMainMenu::GVMainMenu(PtrView<IApplication<StateIdsVariant>> app,
     : mApp{ app }, mWindow{ window }, mController{ controller }, mModel{ model }
 {
     auto win_size = static_cast<sf::Vector2f>(mWindow.GetSize());
-    // TODO Fix UI: Main menu
-    #if 0
-    auto col_width = win_size.x / 3;
-    auto screen_center_y = win_size.y / 2;
-    auto box_padding = 8.f;
-    auto btn_height = 40.f;
-    auto total_height = 2 * btn_height + box_padding;
+    auto box_padding_ratio = 0.1f;
 
-    auto duel_btn = sfg::Button::Create("Duel");
-    auto quit_btn = sfg::Button::Create("Quit");
+    auto vbox = tgui::VerticalLayout::create();
+    vbox->setOrigin(0.5f, 0.5f);
+    vbox->setPosition("50%", "50%");
+    vbox->setSize("20%", "10%");
 
-    duel_btn->GetSignal(sfg::Widget::OnLeftClick).Connect(
-    [state_ptr = this->mState]
-    {
-        assert(!state_ptr.expired());
-        state_ptr.lock()->SetNextState<AppStateDefs::DuelState>();
-    });
+    auto duel_btn = tgui::Button::create("Duel");
+    auto quit_btn = tgui::Button::create("Quit");
 
-    quit_btn->GetSignal(sfg::Widget::OnLeftClick).Connect(
-    [state_ptr = this->mState]
-    {
-        assert(!state_ptr.expired());
-        state_ptr.lock()->SetNextState<AppStateDefs::FinalState>();
-    });
+    duel_btn->onPress([app]{ app->ChangeState(DuelStateId{}); });
+    quit_btn->onPress([app]{ app->ChangeState(FinalStateId{}); });
 
-    auto box = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, box_padding);
+    vbox->add(duel_btn);
+    vbox->addSpace(box_padding_ratio);
+    vbox->add(quit_btn);
 
-    box->Pack(duel_btn, true);
-    box->Pack(quit_btn, true);
-
-    box->SetAllocation(sf::FloatRect(col_width,
-                                     screen_center_y - total_height / 2,
-                                     col_width,
-                                     total_height));
-
-    mDesktop.Add(box);
-    #endif
+    mWindow.AddWidget(vbox);
 };
 
 void GVMainMenu::HandleEvent(const sf::Event& evt)

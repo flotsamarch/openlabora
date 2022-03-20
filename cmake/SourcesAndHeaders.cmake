@@ -13,7 +13,7 @@ set(sources
     src/GameState/Controllers/GCMainMenu.cpp
     src/GameState/Controllers/GCDuel.cpp
     # GUI
-    # src/GUI/ExpansionWindow.cpp
+    src/GUI/ExpansionWindow.cpp
 )
 
 set(exe_sources
@@ -45,7 +45,7 @@ set(headers
     include/GameState/Controllers/GCDuel.hpp
     # GUI
     include/GUI/ClickableArea.hpp
-    # include/GUI/ExpansionWindow.hpp
+    include/GUI/ExpansionWindow.hpp
     # Game systems
     include/Misc/PtrView.hpp
     include/AppState/AppState.hpp
