@@ -1,6 +1,3 @@
-#include <TGUI/Widgets/HorizontalLayout.hpp>
-#include <TGUI/Widgets/VerticalLayout.hpp>
-#include <TGUI/Widgets/Label.hpp>
 #include "GUI/ExpansionWindow.hpp"
 
 namespace OpenLabora
@@ -10,46 +7,94 @@ ExpansionWindow::ExpansionWindow(GameController::Ptr controller)
     : mController{ controller }
 {
     using TextAlignment = tgui::Label::HorizontalAlignment;
-    using HBox = tgui::HorizontalLayout;
-    using VBox = tgui::VerticalLayout;
-    const auto vbox_margin_ratio = 0.07f;
     const auto hbox_margin_ratio = 0.03f;
-    const auto buttons_size_ratio = 0.4f;
     const auto text_size = 18u;
 
     mWindow->setOrigin(0.5f, 0.5f);
     mWindow->setPosition("50%", "50%");
-    mWindow->setSize("15%", "10%");
 
-    auto btn_hbox = HBox::create();
-    btn_hbox->addSpace(hbox_margin_ratio);
-    btn_hbox->add(mConfirmButton);
-    btn_hbox->addSpace(hbox_margin_ratio);
-    btn_hbox->add(mDeclineButton);
-    btn_hbox->addSpace(hbox_margin_ratio);
+    mConfirmText->setTextSize(text_size);
+    mConfirmText->setHorizontalAlignment(TextAlignment::Center);
+    mSelectText->setTextSize(text_size);
+    mSelectText->setHorizontalAlignment(TextAlignment::Center);
 
-    auto confirm_text = tgui::Label::create(kConfirmWindowText);
-    confirm_text->setTextSize(text_size);
-    confirm_text->setHorizontalAlignment(TextAlignment::Center);
+    mToggleButtonsHBox->addSpace(hbox_margin_ratio);
+    mToggleButtonsHBox->add(mAltToggle1);
+    mToggleButtonsHBox->addSpace(hbox_margin_ratio);
+    mToggleButtonsHBox->add(mAltToggle2);
+    mToggleButtonsHBox->addSpace(hbox_margin_ratio);
 
-    auto text_hbox = HBox::create();
-    text_hbox->addSpace(hbox_margin_ratio);
-    text_hbox->add(confirm_text);
-    text_hbox->addSpace(hbox_margin_ratio);
+    mAcceptDeclineHBox->addSpace(hbox_margin_ratio);
+    mAcceptDeclineHBox->add(mConfirmButton);
+    mAcceptDeclineHBox->addSpace(hbox_margin_ratio);
+    mAcceptDeclineHBox->add(mDeclineButton);
+    mAcceptDeclineHBox->addSpace(hbox_margin_ratio);
 
-    auto main_vbox = VBox::create();
-    main_vbox->addSpace(vbox_margin_ratio);
-    main_vbox->add(text_hbox);
-    main_vbox->addSpace(vbox_margin_ratio);
-    main_vbox->add(btn_hbox, buttons_size_ratio);
-    main_vbox->addSpace(vbox_margin_ratio);
+    mAltToggle1->onClick(&ExpansionWindow::ButtonOnToggle, this, mAltToggle2);
+    mAltToggle2->onClick(&ExpansionWindow::ButtonOnToggle, this, mAltToggle1);
 
-    mWindow->add(main_vbox);
+    mWindow->add(mMainVBox);
     mWindow->setVisible(false);
 }
 
-void ExpansionWindow::SetState(Plot::PlotType)
+void ExpansionWindow::SetState(Plot::PlotType type)
 {
+    const auto vbox_padding_ratio = 3.f;
+    const auto buttons_ratio = 30.f;
+
+    mMainVBox->removeAllWidgets();
+
+    if (type != Plot::PlotType::Central) {
+        mWindow->setSize("15%", "10%");
+        auto remaining_ratio = mWindow->getClientSize().y;
+        remaining_ratio -= buttons_ratio + 3 * vbox_padding_ratio;
+
+        mMainVBox->addSpace(vbox_padding_ratio);
+        mMainVBox->add(mConfirmText, remaining_ratio);
+        mMainVBox->addSpace(vbox_padding_ratio);
+        mMainVBox->add(mAcceptDeclineHBox, buttons_ratio);
+        mMainVBox->addSpace(vbox_padding_ratio);
+
+        mConfirmButton->setEnabled(true);
+    } else {
+        mWindow->setSize("15%", "23%");
+        const auto toggle_ratio = 137.f;
+        auto remaining_ratio = mWindow->getClientSize().y;
+        remaining_ratio -= buttons_ratio + toggle_ratio + 4 * vbox_padding_ratio;
+
+        mMainVBox->addSpace(vbox_padding_ratio);
+        mMainVBox->add(mSelectText, remaining_ratio);
+        mMainVBox->addSpace(vbox_padding_ratio);
+        mMainVBox->add(mToggleButtonsHBox, toggle_ratio);
+        mMainVBox->addSpace(vbox_padding_ratio);
+        mMainVBox->add(mAcceptDeclineHBox, buttons_ratio);
+        mMainVBox->addSpace(vbox_padding_ratio);
+
+        mConfirmButton->setEnabled(false);
+        mAltToggle1->setDown(false);
+        mAltToggle2->setDown(false);
+    }
+}
+
+void ExpansionWindow::ButtonOnToggle(ToggleButton::Ptr other)
+{
+    other->setDown(false);
+    if (mAltToggle1->isDown() || mAltToggle2->isDown()) {
+        mConfirmButton->setEnabled(true);
+        return;
+    }
+    mConfirmButton->setEnabled(false);
+}
+
+uint32_t ExpansionWindow::GetToggleValue() const
+{
+    const bool alt1_toggled = mAltToggle1->isDown();
+    const bool alt2_toggled = mAltToggle2->isDown();
+
+    if (!alt1_toggled && !alt2_toggled) {
+        return 0;
+    }
+    return alt1_toggled ? 1 : 2;
 }
 
 } // namespace OpenLabora

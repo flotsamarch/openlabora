@@ -18,8 +18,8 @@ using MarkerType = ExpansionMarker::MarkerType;
 Playfield::Playfield(IResourceManager::Ptr res_mgr)
     : mResMgr{ res_mgr }
 {
-    auto plot_top = Plot{ Plot::kCentralPlotTop, res_mgr };
-    auto plot_bottom = Plot{ Plot::kCentralPlotBottom, res_mgr };
+    auto plot_top = Plot{ Plot::kCentralPlot, res_mgr };
+    auto plot_bottom = Plot{ Plot::kCentralPlotAlt, res_mgr };
     auto offset_x = Tile::kTileWidth *
         Plot::GetPlotWidthTileCount(PlotType::Coastal);
     auto init_pos =

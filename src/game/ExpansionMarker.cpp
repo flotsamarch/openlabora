@@ -7,22 +7,22 @@ namespace OpenLabora
 {
 
 ExpansionMarker::ExpansionMarker(MarkerType type,
-                                 const Plot& plot_top,
-                                 OptionalPlot plot_bottom)
-    : mType{ type }, mPlotTop{ plot_top },
-      mPlotBottom{ plot_bottom }
+                                 const Plot& plot,
+                                 const Plot& plot_alt)
+    : mType{ type }, mPlot{ plot },
+      mPlotAlt{ plot_alt }
 {
     auto spritefy = [] (const sf::Drawable& item)
     { return static_cast<const sf::Sprite&>(item); };
 
-    mPlotTop.SetPosition(0.f, 0.f);
-    if (mPlotBottom == std::nullopt) {
-        mObject = spritefy(mPlotTop.GetDrawableObject());
+    mPlot.SetPosition(0.f, 0.f);
+    if (mPlot.GetType() == Plot::PlotType::Central) {
+        mObject = spritefy(mPlot.GetDrawableObject());
     } else {
-        mPlotBottom->SetPosition(0.f, Tile::kTileHeight);
-        auto top = spritefy(mPlotTop.GetDrawableObject());
-        auto bottom = spritefy(mPlotBottom->GetDrawableObject());
-        mTexture.create(mPlotTop.GetTileCount() * Tile::kTileWidth,
+        mPlotAlt.SetPosition(0.f, Tile::kTileHeight);
+        auto top = spritefy(mPlot.GetDrawableObject());
+        auto bottom = spritefy(mPlotAlt.GetDrawableObject());
+        mTexture.create(mPlot.GetTileCount() * Tile::kTileWidth,
                         2 * Tile::kTileHeight);
         mTexture.clear();
         mTexture.draw(top);
@@ -53,43 +53,35 @@ void ExpansionMarker::Move(float offset_x, float offset_y)
 {
     mObject.move(offset_x, offset_y);
     mClickableArea.Move(offset_x, offset_y);
-    mPlotTop.Move(offset_x, offset_y);
-    if (mPlotBottom.has_value()) {
-        mPlotBottom->Move(offset_x, offset_y);
-    }
+    mPlot.Move(offset_x, offset_y);
+    mPlotAlt.Move(offset_x, offset_y);
 }
 
 void ExpansionMarker::Move(const sf::Vector2f& offset)
 {
     mObject.move(offset);
     mClickableArea.Move(offset);
-    mPlotTop.Move(offset);
-    if (mPlotBottom.has_value()) {
-        mPlotBottom->Move(offset);
-    }
+    mPlot.Move(offset);
+    mPlotAlt.Move(offset);
 }
 
 void ExpansionMarker::SetPosition(float position_x, float position_y)
 {
+    auto delta_pos = mPlotAlt.GetPosition() - mPlot.GetPosition();
     mObject.setPosition(position_x, position_y);
     mClickableArea.SetPosition(position_x, position_y);
-    if (mPlotBottom.has_value()) {
-        auto delta_pos = mPlotBottom->GetPosition() - mPlotTop.GetPosition();
-        mPlotBottom->SetPosition(position_x + delta_pos.x,
-                                 position_y + delta_pos.y);
-    }
-    mPlotTop.SetPosition(position_x, position_y);
+    mPlot.SetPosition(position_x, position_y);
+    mPlotAlt.SetPosition(position_x + delta_pos.x,
+                         position_y + delta_pos.y);
 }
 
 void ExpansionMarker::SetPosition(const sf::Vector2f& position)
 {
+    auto delta_pos = mPlotAlt.GetPosition() - mPlot.GetPosition();
     mObject.setPosition(position);
     mClickableArea.SetPosition(position);
-    if (mPlotBottom.has_value()) {
-        auto delta_pos = mPlotBottom->GetPosition() - mPlotTop.GetPosition();
-        mPlotBottom->SetPosition(position + delta_pos);
-    }
-    mPlotTop.SetPosition(position);
+    mPlot.SetPosition(position);
+    mPlotAlt.SetPosition(position + delta_pos);
 }
 
 void ExpansionMarker::ResetClickableArea()

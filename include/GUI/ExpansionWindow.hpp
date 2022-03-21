@@ -2,8 +2,11 @@
 #define EXPANSIONWINDOW_HPP_
 
 #include <TGUI/Widgets/ChildWindow.hpp>
+#include <TGUI/Widgets/HorizontalLayout.hpp>
 #include <TGUI/Widgets/VerticalLayout.hpp>
 #include <TGUI/Widgets/Button.hpp>
+#include <TGUI/Widgets/ToggleButton.hpp>
+#include <TGUI/Widgets/Label.hpp>
 #include <string>
 #include "GameState/Controllers/GameController.hpp"
 #include "Game/Plot.hpp"
@@ -26,12 +29,25 @@ class ExpansionWindow final
 
     using Window = tgui::ChildWindow;
     using Button = tgui::Button;
+    using ToggleButton = tgui::ToggleButton;
+    using HBox = tgui::HorizontalLayout;
+    using VBox = tgui::VerticalLayout;
+    using Label = tgui::Label;
 
     GameController::Ptr mController;
 
     Window::Ptr mWindow = Window::create(kWindowTitle, kTitleBarButtons);
     Button::Ptr mConfirmButton = Button::create(kConfirmButtonLabel);
     Button::Ptr mDeclineButton = Button::create(kDeclineButtonLabel);
+    ToggleButton::Ptr mAltToggle1 = ToggleButton::create("1");
+    ToggleButton::Ptr mAltToggle2 = ToggleButton::create("2");
+
+    Label::Ptr mConfirmText = Label::create(kConfirmWindowText);
+    Label::Ptr mSelectText = Label::create(kSelectWindowText);
+
+    HBox::Ptr mAcceptDeclineHBox = HBox::create();
+    HBox::Ptr mToggleButtonsHBox = HBox::create();
+    VBox::Ptr mMainVBox = VBox::create();
 
 public:
     ExpansionWindow(GameController::Ptr);
@@ -45,6 +61,12 @@ public:
     void SetState(Plot::PlotType);
 
     void Show(bool show) { mWindow->setVisible(show); };
+
+    // Callback for ToggleButtons
+    // @arg other - Other toggle button to be untoggled;
+    void ButtonOnToggle(ToggleButton::Ptr other);
+
+    uint32_t GetToggleValue() const;
 };
 
 } // namespace OpenLabora

@@ -17,10 +17,10 @@ MarkerManager::MarkerManager(GameController::Ptr controller)
     mPlotsForMarkerCreation.insert({PlotType::Coastal, coastal_plot});
     mPlotsForMarkerCreation.insert({PlotType::Coastal, coastal_plot});
 
-    auto central_plot_top = Plot{ Plot::kCentralPlotTop, res_manager };
-    auto central_plot_bottom = Plot{ Plot::kCentralPlotBottom, res_manager };
-    mPlotsForMarkerCreation.insert({PlotType::Central, central_plot_top});
-    mPlotsForMarkerCreation.insert({PlotType::Central, central_plot_bottom});
+    auto central_plot = Plot{ Plot::kCentralPlot, res_manager };
+    auto central_plot_alt = Plot{ Plot::kCentralPlotAlt, res_manager };
+    mPlotsForMarkerCreation.insert({PlotType::Central, central_plot});
+    mPlotsForMarkerCreation.insert({PlotType::Central, central_plot_alt});
 
     auto mountain_plot_bottom = Plot{ Plot::kMountainPlotBottom, res_manager };
     auto mountain_plot_top = Plot{ Plot::kMountainPlotTop, res_manager };
@@ -141,19 +141,13 @@ void MarkerManager::CreateMarker(PlotType plot_type,
     const bool is_central = plot_type == PlotType::Central;
 
     auto [plot, end] = mPlotsForMarkerCreation.equal_range(plot_type);
-    assert(plot != mPlotsForMarkerCreation.end());
+    assert(std::distance(plot, end) > 1);
 
-    auto marker = ExpansionMarker::Ptr{};
-    if (plot_type == PlotType::Central || std::distance(plot, end) < 2) {
-        marker = mController->CreateMarker(marker_type,
-                                           plot->second);
-    } else {
-        auto plot_alt = plot++;
-        assert(plot != mPlotsForMarkerCreation.end());
-        marker = mController->CreateMarker(marker_type,
-                                           plot->second,
-                                           plot_alt->second);
-    }
+    auto plot_alt = plot++;
+    assert(plot != mPlotsForMarkerCreation.end());
+    auto marker = mController->CreateMarker(marker_type,
+                                            plot->second,
+                                            plot_alt->second);
     assert(marker != nullptr);
     mMarkers[plot_type].push_back(marker);
     marker->SetSelectDelegate(on_select);

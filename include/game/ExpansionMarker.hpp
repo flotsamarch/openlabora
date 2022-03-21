@@ -25,25 +25,24 @@ public:
 
 private:
     using PlotRef = std::reference_wrapper<const Plot>;
-    using OptionalPlot = std::optional<PlotRef>;
     using RectangleArea = ClickableArea<sf::RectangleShape>;
     using GameControllerPtr = std::shared_ptr<GameController>;
 
     inline static const sf::Color kHalfTransparent{ 255, 255, 255, 200 };
-    Plot mPlotTop;
-    std::optional<Plot> mPlotBottom{ std::nullopt };
+    Plot mPlot;
+    Plot mPlotAlt;
     MarkerType mType;
     sf::RenderTexture mTexture;
 
 public:
     ExpansionMarker(MarkerType,
-                    const Plot& top,
-                    OptionalPlot bottom = std::nullopt);
+                    const Plot& plot,
+                    const Plot& plot_alt);
 
     bool IsPointInRegisteringArea(const sf::Vector2f& point) const override
     { return mClickableArea.GetGlobalBounds().contains(point); }
 
-    Plot::PlotType GetPlotType() const noexcept { return mPlotTop.GetType(); }
+    Plot::PlotType GetPlotType() const noexcept { return mPlot.GetType(); }
 
     MarkerType GetType() const noexcept { return mType; }
 
@@ -60,8 +59,8 @@ public:
 
     void ResetClickableArea();
 
-    std::pair<PlotRef, OptionalPlot> GetPlots() const
-    { return { mPlotTop, mPlotBottom }; };
+    std::pair<PlotRef, PlotRef> GetPlots() const
+    { return { mPlot, mPlotAlt }; };
 };
 
 } // namespace OpenLabora

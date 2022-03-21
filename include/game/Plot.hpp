@@ -7,7 +7,7 @@
 #include <memory>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include "Tile.hpp"
-#include "resource/IResourceManager.hpp"
+#include "Resource/IResourceManager.hpp"
 #include "Entity.hpp"
 
 namespace OpenLabora
@@ -71,14 +71,14 @@ protected:
     static constexpr CoastalPlotArray kCoastalPlotTiles
     { Tile::TileType::Water, Tile::TileType::Coast };
 
-    static constexpr CentralPlotArray kCentralPlotTopTiles
+    static constexpr CentralPlotArray kCentralPlotTiles
     {
         Tile::TileType::Peat,
         Tile::TileType::Forest, Tile::TileType::Forest, Tile::TileType::Forest,
         Tile::TileType::Hill
     };
 
-    static constexpr CentralPlotArray kCentralPlotBottomTiles
+    static constexpr CentralPlotArray kCentralPlotAltTiles
     {
         Tile::TileType::Peat,
         Tile::TileType::Forest, Tile::TileType::Forest, Tile::TileType::Forest,
@@ -92,8 +92,8 @@ protected:
     { Tile::TileType::Hill, Tile::TileType::MountainLower };
 
     static constexpr TileSpan kCoastalPlotSpan{ kCoastalPlotTiles };
-    static constexpr TileSpan kCentralPlotTopSpan{ kCentralPlotTopTiles };
-    static constexpr TileSpan kCentralPlotBottomSpan{ kCentralPlotBottomTiles };
+    static constexpr TileSpan kCentralPlotSpan{ kCentralPlotTiles };
+    static constexpr TileSpan kCentralPlotAltSpan{ kCentralPlotAltTiles };
     static constexpr TileSpan kMountainPlotTopSpan{ kMountainPlotTopTiles };
     static constexpr TileSpan kMountainPlotBottomSpan{kMountainPlotBottomTiles};
 
@@ -101,10 +101,10 @@ public:
     // Defs for neat Plot object creation - constructor params packed in a struct
     static constexpr PlotTilesAndType kCostalPlot
         { kCoastalPlotSpan, PlotType::Coastal };
-    static constexpr PlotTilesAndType kCentralPlotTop
-        { kCentralPlotTopSpan, PlotType::Central };
-    static constexpr PlotTilesAndType kCentralPlotBottom
-        { kCentralPlotBottomSpan, PlotType::Central };
+    static constexpr PlotTilesAndType kCentralPlot
+        { kCentralPlotSpan, PlotType::Central };
+    static constexpr PlotTilesAndType kCentralPlotAlt
+        { kCentralPlotAltSpan, PlotType::Central };
     static constexpr PlotTilesAndType kMountainPlotTop
         { kMountainPlotTopSpan, PlotType::Mountain };
     static constexpr PlotTilesAndType kMountainPlotBottom

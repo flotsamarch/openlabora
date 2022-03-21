@@ -36,27 +36,33 @@ GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
     // UI helper lambdas
 
     auto add_new_plot =
-    [&wmarker = mSelectedMarker, controller = mController]
+    [&wmarker = mSelectedMarker,
+     controller = mController,
+     exp_window = mExpansionWindow]
     {
         assert(!wmarker.expired());
         auto marker = wmarker.lock();
         assert(marker != nullptr);
 
-        auto [plot_top, plot_bottom] = marker->GetPlots();
-        const bool is_multiplot = plot_bottom != std::nullopt;
+        auto [plot, plot_alt] = marker->GetPlots();
+
+        if (marker->GetPlotType() == Plot::PlotType::Central) {
+            const auto toggle_value = exp_window.GetToggleValue();
+            assert(toggle_value != 0);
+            if (marker->GetType() == MarkerType::Upper) {
+                controller->AddPlotToTop(toggle_value < 2 ? plot : plot_alt);
+            } else {
+                controller->AddPlotToBottom(toggle_value < 2 ? plot : plot_alt);
+            }
+            return;
+        }
 
         if (marker->GetType() == MarkerType::Upper) {
-            if (is_multiplot)
-            {
-                controller->AddPlotToTop(plot_bottom.value());
-            }
-            controller->AddPlotToTop(plot_top);
+            controller->AddPlotToTop(plot_alt);
+            controller->AddPlotToTop(plot);
         } else {
-            controller->AddPlotToBottom(plot_top);
-            if (is_multiplot)
-            {
-                controller->AddPlotToBottom(plot_bottom.value());
-            }
+            controller->AddPlotToBottom(plot);
+            controller->AddPlotToBottom(plot_alt);
         }
     };
 
