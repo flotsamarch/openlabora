@@ -29,8 +29,6 @@ public:
     void HandleEvent(const sf::Event&);
 
     void Update(const float update_delta_seconds);
-
-    void HandleWindowResize(const sf::Vector2u&) {};
 };
 
 } // namespace OpenLabora

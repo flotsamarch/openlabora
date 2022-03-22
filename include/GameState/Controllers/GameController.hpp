@@ -36,9 +36,6 @@ protected:
     // TODO multiplayer support
     std::shared_ptr<Playfield> GetActivePlayerPlayfieldInternal() noexcept
     { return mModel->GetPlayfield(Model::Player1); }
-    // Find mutable entity ptr in O(1) by const random access iterator
-    // @arg entity - should be contained in mSelectableEntities
-    Selectable::Ptr FindSelectableEntity(SelectableCIterator entity);
 
 public:
     GameController(PtrView<IApplication<StateIdsVariant>>,
@@ -59,8 +56,6 @@ public:
 
     std::shared_ptr<const Playfield> GetActivePlayerPlayfield() const noexcept
     { return mModel->GetPlayfield(Model::Player1); }
-
-    void HandleWindowResize(const sf::Vector2u& window_size);
 
     void AddPlotToTop(const Plot& plot)
     { GetActivePlayerPlayfieldInternal()->AddPlotToTop(plot); }

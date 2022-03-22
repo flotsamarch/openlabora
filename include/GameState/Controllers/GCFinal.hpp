@@ -23,8 +23,6 @@ public:
     void HandleEvent(const sf::Event&) {};
 
     void Update(const float) {};
-
-    void HandleWindowResize(const sf::Vector2u&) {};
 };
 
 } // namespace OpenLabora

@@ -138,11 +138,6 @@ void GameView::HandleEvent(const sf::Event& evt)
             }
             break;
         }
-        case sf::Event::Resized:
-        {
-            HandleWindowResize({ evt.size.width, evt.size.height });
-            break;
-        }
         case sf::Event::MouseMoved:
         {
             mMouseDelta.x = static_cast<float>(evt.mouseMove.x - mMouseCoords.x);
@@ -238,12 +233,6 @@ void GameView::Update([[maybe_unused]]const float update_delta_seconds)
     }
     #endif
     return;
-}
-
-void GameView::HandleWindowResize(const sf::Vector2u& window_size)
-{
-    mController->HandleWindowResize(window_size);
-    // TODO resizable interface
 }
 
 } // namespace OpenLabora

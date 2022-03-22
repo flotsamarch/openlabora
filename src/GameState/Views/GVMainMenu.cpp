@@ -33,21 +33,12 @@ GVMainMenu::GVMainMenu(PtrView<IApplication<StateIdsVariant>> app,
     mWindow.AddWidget(vbox);
 };
 
-void GVMainMenu::HandleEvent(const sf::Event& evt)
+void GVMainMenu::HandleEvent([[maybe_unused]]const sf::Event& evt)
 {
-    if (evt.type == sf::Event::Resized) {
-        HandleWindowResize({ evt.size.width, evt.size.height });
-    }
 };
 
 void GVMainMenu::Update([[maybe_unused]]const float update_delta_seconds)
 {
-}
-
-void GVMainMenu::HandleWindowResize([[maybe_unused]]const sf::Vector2u& window_size)
-{
-    // TODO resizable interface
-    // mController->HandleWindowResize(window_size);
 }
 
 } // namespace OpenLabora

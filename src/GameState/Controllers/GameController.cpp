@@ -42,11 +42,6 @@ GameController::GameController(PtrView<IApplication<StateIdsVariant>> app,
     #endif
 }
 
-void GameController::HandleWindowResize(const sf::Vector2u&)
-{
-    // mModel->SetWindowSize(window_size);
-}
-
 void GameController::Update([[maybe_unused]]const float update_delta_seconds) {}
 
 void GameController::EnableBuildMode([[maybe_unused]]Location::LocationType type)
