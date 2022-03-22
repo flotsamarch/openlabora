@@ -9,7 +9,7 @@
 #include "Renderer.hpp"
 #include "Misc/PtrView.hpp"
 #include "GameWindow.hpp"
-#include "resource/ResourceManager.hpp"
+#include "Resource/IResourceManager.hpp"
 
 namespace OpenLabora
 {
@@ -25,13 +25,13 @@ namespace OpenLabora
  * ID is empty struct that is later used in TTransitions implementation
  */
 template <class TGui, class TWindow, template<class...> class TTransitions,
-          class TStatesVariant, class TStateIdsVariant>
+          class TStatesVariant, class TStateIdsVariant, class TResourceManager>
 class Application final : public IApplication<TStateIdsVariant>
 {
     TGui mGui{};
     TWindow mWindow{};
     Renderer<TGui, TWindow> mRenderer{ PtrView(&mGui), PtrView(&mWindow) };
-    ResourceManager::Ptr mResManager = std::make_shared<ResourceManager>();
+    IResourceManager::Ptr mResManager = std::make_shared<TResourceManager>();
 
     using IApplicationPtr = PtrView<IApplication<TStateIdsVariant>>;
     TTransitions<TGui, TWindow, TStateIdsVariant> mTransitions
@@ -61,8 +61,13 @@ public:
 };
 
 template <class TGui, class TWindow, template<class...> class TTransitions,
-          class TStatesVar, class TStateIdsVar>
-uint32_t Application<TGui, TWindow, TTransitions, TStatesVar, TStateIdsVar>
+          class TStatesVariant, class TStateIdsVariant, class TResourceManager>
+uint32_t Application<TGui,
+                     TWindow,
+                     TTransitions,
+                     TStatesVariant,
+                     TStateIdsVariant,
+                     TResourceManager>
 ::run()
 {
     sf::Clock clock;
@@ -96,8 +101,13 @@ uint32_t Application<TGui, TWindow, TTransitions, TStatesVar, TStateIdsVar>
 }
 
 template <class TGui, class TWindow, template<class...> class TTransitions,
-          class TStatesVariant, class TStateIdsVariant>
-void Application<TGui, TWindow, TTransitions, TStatesVariant, TStateIdsVariant>
+          class TStatesVariant, class TStateIdsVariant, class TResourceManager>
+void Application<TGui,
+                 TWindow,
+                 TTransitions,
+                 TStatesVariant,
+                 TStateIdsVariant,
+                 TResourceManager>
 ::ChangeState(TStateIdsVariant state_id)
 {
     using OptStates = std::optional<TStatesVariant>;
@@ -108,8 +118,13 @@ void Application<TGui, TWindow, TTransitions, TStatesVariant, TStateIdsVariant>
 }
 
 template <class TGui, class TWindow, template<class...> class TTransitions,
-          class TStatesVariant, class TStateIdsVariant>
-void Application<TGui, TWindow, TTransitions, TStatesVariant, TStateIdsVariant>
+          class TStatesVariant, class TStateIdsVariant, class TResourceManager>
+void Application<TGui,
+                 TWindow,
+                 TTransitions,
+                 TStatesVariant,
+                 TStateIdsVariant,
+                 TResourceManager>
 ::HandleEvents()
 {
     sf::Event evt;
