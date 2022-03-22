@@ -49,6 +49,7 @@ set(headers
     # Game systems
     include/Misc/PtrView.hpp
     include/AppState/AppState.hpp
+    include/AppState/AppStateDefs.hpp
     include/AppState/StateIds.hpp
     include/AppState/Transitions.hpp
     include/resource/ResourceManager.hpp

@@ -7,7 +7,7 @@
 #include <TGUI/Backends/SFML.hpp>
 
 #include "StateIds.hpp"
-#include "AppState.hpp"
+#include "AppStateDefs.hpp"
 #include "IApplication.hpp"
 #include "Misc/PtrView.hpp"
 #include "Resource/IResourceManager.hpp"

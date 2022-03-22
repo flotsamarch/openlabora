@@ -35,13 +35,6 @@ public:
         : model{ _model }, controller{ _controller }, view{ std::move(_view) } {}
 };
 
-// ----------------------- ADD ALL STATES HERE ----------------------------------
-using MainMenuState = AppState<NoModel, GVMainMenu, GCMainMenu>;
-using DuelState = AppState<Model, GVDuel, GCDuel>;
-using FinalState = AppState<NoModel, GVFinal, GCFinal>;
-
-using State = std::variant<MainMenuState, DuelState, FinalState>;
-
 } // namespace OpenLabora
 
 #endif // APPSTATE_HPP_
