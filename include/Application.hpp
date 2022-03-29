@@ -131,8 +131,7 @@ void Application<TGui,
                  TResourceManager>
 ::HandleEvents()
  {
-    auto&& event = mRenderer.PollEvent();
-    while (event != std::nullopt) {
+     while (auto&& event = mRenderer.PollEvent()) {
         bool consumed = mRenderer.HandleEvent(*event);
         if (consumed) {
             return;
