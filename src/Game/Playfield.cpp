@@ -2,8 +2,8 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <algorithm>
 #include <cmath>
-#include "game/Playfield.hpp"
-#include "resource/ResourceManager.hpp"
+#include "Game/Playfield.hpp"
+#include "Resource/ResourceManager.hpp"
 
 namespace OpenLabora
 {

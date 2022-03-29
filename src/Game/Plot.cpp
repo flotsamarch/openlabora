@@ -1,7 +1,7 @@
 #include <cassert>
 #include <ranges>
 #include <algorithm>
-#include "game/Plot.hpp"
+#include "Game/Plot.hpp"
 
 namespace OpenLabora
 {

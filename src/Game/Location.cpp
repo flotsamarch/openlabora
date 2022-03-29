@@ -1,5 +1,5 @@
 #include <cassert>
-#include "game/Location.hpp"
+#include "Game/Location.hpp"
 
 namespace OpenLabora
 {

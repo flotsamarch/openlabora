@@ -2,7 +2,7 @@
 #define CLICKABLEAREA_HPP_
 
 #include <SFML/Graphics/Shape.hpp>
-#include "game/ITransformable.hpp"
+#include "Game/ITransformable.hpp"
 
 namespace OpenLabora
 {

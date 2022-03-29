@@ -1,6 +1,6 @@
 #include <ranges>
-#include <GameState/Controllers/GameController.hpp>
-#include "game/MarkerManager.hpp"
+#include "GameState/Controllers/GameController.hpp"
+#include "Game/MarkerManager.hpp"
 #include "Resource/IResourceManager.hpp"
 
 
@@ -43,10 +43,11 @@ void MarkerManager::UpdateMarkers(Delegate on_select)
     auto playfield = mController->GetActivePlayerPlayfield();
 
     if (mMarkers.empty()) {
-        for (auto type = PlotType::Begin, end = PlotType::End; type < end; ++type) {
+        using PT = PlotType;
+        for (auto type = PT::Begin, end = PT::End; type < end; ++type) {
             CreateMarker(type, MarkerType::Upper, on_select);
             CreateMarker(type, MarkerType::Lower, on_select);
-            if (type != PlotType::Central) {
+            if (type != PT::Central) {
                 CreateMarker(type, MarkerType::Disposable, on_select);
             }
         }
@@ -137,13 +138,10 @@ void MarkerManager::CreateMarker(PlotType plot_type,
     if (type_index < 2) { // Meaning either Upper or Lower marker type
         assert(mMarkers[plot_type].size() == type_index);
     }
-
-    const bool is_central = plot_type == PlotType::Central;
-
-    auto [plot, end] = mPlotsForMarkerCreation.equal_range(plot_type);
+    auto&& [plot, end] = mPlotsForMarkerCreation.equal_range(plot_type);
     assert(std::distance(plot, end) > 1);
 
-    auto plot_alt = plot++;
+    auto&& plot_alt = plot++;
     assert(plot != mPlotsForMarkerCreation.end());
     auto marker = mController->CreateMarker(marker_type,
                                             plot->second,
