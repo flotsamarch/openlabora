@@ -7,22 +7,23 @@
 namespace Test
 {
 
-struct GVMock1 final
+struct GVMock1
 {
     using Ptr = std::unique_ptr<GVMock1>;
     MOCK_METHOD(void, HandleEvent, (const sf::Event&), ());
     MOCK_METHOD(void, Update, (const float), ());
 };
 
-struct GVMock2 final
+struct GVMock2
 {
     using Ptr = std::unique_ptr<GVMock2>;
     MOCK_METHOD(void, HandleEvent, (const sf::Event&), ());
     MOCK_METHOD(void, Update, (const float), ());
 };
 
-struct GVMockFinal final
+struct GVMockFinal
 {
+    GVMockFinal() = default;
     using Ptr = std::unique_ptr<GVMockFinal>;
     MOCK_METHOD(void, HandleEvent, (const sf::Event&), ());
     MOCK_METHOD(void, Update, (const float), ());

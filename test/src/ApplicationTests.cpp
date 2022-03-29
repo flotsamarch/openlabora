@@ -1,200 +1,199 @@
 #include <gtest/gtest.h>
-
+#include <variant>
+#include <optional>
 #include "Application.hpp"
-#include "state/AppStateDefs.hpp"
-#include "state/gs/GSFinal.hpp"
-#include "state/ui/UISFinal.hpp"
-#include "RendererMock.hpp"
-#include "TestStates.hpp"
-#include "ResourceManagerMock.hpp"
-#include "DrawableMock.hpp"
-#include <iostream>
+#include "RendererDependenciesMocks.hpp"
+#include "AppState/TestTransitions.hpp"
+#include "AppState/TestStateIds.hpp"
+#include "AppState/TestAppStateDefs.hpp"
+#include "Resource/IResourceManagerMock.hpp"
 
 namespace Test
 {
 
-using ::testing::Return;
-using ::testing::ReturnRef;
-using ::testing::_;
 using ::testing::NiceMock;
 
-class TFAppBasicTests : public ::testing::Test
-{
-protected:
-    Application mApp{ AppStateDefs::FinalState{},
-            std::make_unique<NiceMock<RendererMock>>(),
-            std::make_unique<NiceMock<ResourceManagerMock>>() };
-};
+using NiceWindow = NiceMock<WindowMock<false>>;
+using NiceGui = NiceMock<GuiMock<NiceWindow, false>>;
 
-class TFAppStateMachineTests : public ::testing::Test
+template<template<class...> class TTransitions,
+         class TStateVariant, class TStateVariantId>
+using TestApp = OpenLabora::Application<NiceGui,
+                                        NiceWindow,
+                                        TTransitions,
+                                        TStateVariant,
+                                        TStateVariantId,
+                                        IResourceManagerMock>;
+
+/**
+ * Create a state transitions class that returns only a single default state
+ * in every case. This is used to initialize Application class in tests in some
+ * specific default state.
+ *
+ * @tparam TRequiredState - Default state
+ */
+template <class TRequiredState>
+class TransitionToDefault
 {
-protected:
-    Application mApp{ StateMock{},
-            std::make_unique<NiceMock<RendererMock>>(),
-            std::make_unique<NiceMock<ResourceManagerMock>>() };
-    RendererMock* mRenderer;
+    template<class, class>
+    struct TtdImpl final
+    {
+        template <class T, class Y, class Z>
+        TtdImpl(T, Y, Z) {};
+
+        template <class T>
+        std::optional<std::variant<TRequiredState>> operator()(const T&)
+        {
+            using ModelT = typename TRequiredState::ModelType;
+            using ControllerT = typename TRequiredState::ControllerType;
+            using ViewT = typename TRequiredState::ViewType;
+            using MVCState = OpenLabora::AppState<ModelT, ViewT, ControllerT>;
+
+            auto model = std::make_shared<ModelT>();
+            auto controller = std::make_shared<ControllerT>();
+            auto view = std::make_unique<ViewT>();
+            return MVCState{ model, std::move(view), controller };
+        };
+    };
+
 public:
-    TFAppStateMachineTests() :
-        mRenderer{ static_cast<RendererMock*>(&mApp.GetRenderer()) } {}
+    template<class T, class Y>
+    using Impl = TtdImpl<T, Y>;
 };
 
-TEST_F(TFAppBasicTests, StateGetter)
+template<class T, class Y>
+using Ttd1 = TransitionToDefault<TestState1>::Impl<T, Y>;
+template<class T, class Y>
+using Ttd2 = TransitionToDefault<TestState2>::Impl<T, Y>;
+template<class T, class Y>
+using TtdFinal = TransitionToDefault<TestStateFinal>::Impl<T, Y>;
+
+TEST(ApplicationStatesTests, IsSameStateBasic)
 {
-    ASSERT_NE(mApp.GetState().get(), nullptr);
+    using State1 = std::variant<TestState1>;
+    using State2 = std::variant<TestState2>;
+    using StateFinal = std::variant<TestStateFinal>;
+
+    using State1Id = std::variant<TestState1Id>;
+    using State2Id = std::variant<TestState2Id>;
+    using StateFinalId = std::variant<TestStateFinalId>;
+
+    TestApp<Ttd1, State1, State1Id> app_in_state_1;
+    TestApp<Ttd2, State2, State2Id> app_in_state_2;
+    TestApp<TtdFinal, StateFinal, StateFinalId> app_in_state_final;
+    TestApp<TestTransitions, TestState, TestStateIds> app_all_states;
+
+    EXPECT_TRUE(app_in_state_1.IsSameState<TestState1>());
+    EXPECT_TRUE(app_in_state_1.IsFinalState());
+    EXPECT_TRUE(app_in_state_2.IsSameState<TestState2>());
+    EXPECT_TRUE(app_in_state_2.IsFinalState());
+    EXPECT_TRUE(app_in_state_final.IsSameState<TestStateFinal>());
+    EXPECT_TRUE(app_in_state_final.IsFinalState());
+    EXPECT_TRUE(app_all_states.IsSameState<TestState1>());
+    EXPECT_FALSE(app_all_states.IsFinalState());
+    EXPECT_FALSE(app_all_states.IsSameState<TestState2>());
+    ASSERT_FALSE(app_all_states.IsSameState<TestStateFinal>());
 }
 
-TEST_F(TFAppBasicTests, AppClosesNoWindow)
+TEST(ApplicationStatesTests, ChangeState)
 {
-    auto renderer = static_cast<RendererMock*>(&mApp.GetRenderer());
+    TestApp<TestTransitions, TestState, TestStateIds> app;
+    EXPECT_TRUE(app.IsSameState<TestState1>());
+    EXPECT_FALSE(app.IsFinalState());
 
-    EXPECT_CALL(*renderer, IsWindowOpen())
-        .Times(1)
-        .WillOnce(Return(false));
+    app.ChangeState(TestState2Id{});
+    EXPECT_TRUE(app.IsSameState<TestState2>());
+    EXPECT_FALSE(app.IsFinalState());
 
-    ASSERT_NO_FATAL_FAILURE(mApp.run());
+    app.ChangeState(TestStateFinalId{});
+    EXPECT_TRUE(app.IsFinalState());
+    ASSERT_TRUE(app.IsSameState<TestStateFinal>());
 }
 
-TEST_F(TFAppBasicTests, AppClosesInFinalState)
+TEST(ApplicationStatesTests, MainLoop)
 {
-    auto renderer = static_cast<RendererMock*>(&mApp.GetRenderer());
+    const auto cycles{ 5u };
+    const auto display_calls{ cycles };
+    const auto poll_event_calls{ cycles };
+    const auto poll_event_true_calls{ 0u };
+    const auto open_true_calls{ cycles * 2 };
+    const auto open_calls{ open_true_calls + 1 };
+    const auto draw_calls{ 0u };
+    const auto getSize_calls{ 0u };
+    const auto remove_widget_calls{ 0u };
+    const auto handle_event_false_calls{ poll_event_true_calls };
+    const auto handle_event_true_calls{ 0u };
 
-    EXPECT_CALL(*renderer, IsWindowOpen())
-        .Times(1)
-        .WillOnce(Return(true));
+    using WindowMockConf = WindowMock<true,
+                                      true,
+                                      open_calls,
+                                      open_true_calls,
+                                      true,
+                                      poll_event_calls,
+                                      poll_event_true_calls,
+                                      display_calls,
+                                      draw_calls,
+                                      getSize_calls>;
 
-    ON_CALL(*renderer, PollEvent(_))
-        .WillByDefault(Return(false));
+    using GuiMockConf = GuiMock<WindowMockConf,
+                                true,
+                                display_calls,
+                                remove_widget_calls,
+                                handle_event_false_calls,
+                                handle_event_true_calls>;
 
-    ASSERT_NO_FATAL_FAILURE(mApp.run());
+
+    OpenLabora::Application<GuiMockConf,
+                            WindowMockConf,
+                            NiceTransitions,
+                            NiceState,
+                            TestStateIds,
+                            IResourceManagerMock> app{};
+
+    ASSERT_NO_FATAL_FAILURE(app.run());
 }
 
-TEST_F(TFAppStateMachineTests, MainLoopUpdatesMemberObjects)
+TEST(ApplicationStatesTests, FinalStateStopsApp)
 {
-    auto&& game_state = static_cast<GSMock&>(mApp.GetState()->GetGameState());
-    auto&& ui_state = static_cast<UISMock&>(mApp.GetState()->GetUiState());
+    const auto display_calls{ 1u };
+    const auto poll_event_calls{ 1u };
+    const auto poll_event_true_calls{ 0u };
+    const auto open_true_calls{ 2u };
+    const auto open_calls{ 2u };
+    const auto draw_calls{ 0u };
+    const auto getSize_calls{ 0u };
+    const auto remove_widget_calls{ 1u };
+    const auto handle_event_false_calls{ 0u };
+    const auto handle_event_true_calls{ 0u };
 
-    sf::Sprite sprite;
-    auto drawable = std::make_shared<DrawableMock>();
-    std::vector<IDrawable::Ptr> objects;
-    objects.push_back(drawable);
+    using WindowMockConf = WindowMock<true,
+                                      true,
+                                      open_calls,
+                                      open_true_calls,
+                                      true,
+                                      poll_event_calls,
+                                      poll_event_true_calls,
+                                      display_calls,
+                                      draw_calls,
+                                      getSize_calls>;
 
-    EXPECT_CALL(*drawable, GetSprite())
-        .Times(10)
-        .WillRepeatedly(ReturnRef(sprite));
-
-    // Game state
-    EXPECT_CALL(game_state, Update(_))
-        .Times(10);
-
-    EXPECT_CALL(game_state, GetGameObjectBegin())
-        .Times(10)
-        .WillRepeatedly(Return(objects.begin()));
-
-    EXPECT_CALL(game_state, GetGameObjectEnd())
-        .Times(10)
-        .WillRepeatedly(Return(objects.end()));
-
-    // Ui state
-    EXPECT_CALL(ui_state, Update(_))
-        .Times(10);
-
-    // Iterate 10 times then simulate window closure
-    // Renderer
-    EXPECT_CALL(*mRenderer, IsWindowOpen())
-        .Times(1)
-        .WillOnce(Return(false));
-
-    EXPECT_CALL(*mRenderer, IsWindowOpen())
-        .Times(10)
-        .WillRepeatedly(Return(true))
-        .RetiresOnSaturation();
-
-    EXPECT_CALL(*mRenderer, Clear())
-        .Times(10);
-    EXPECT_CALL(*mRenderer, Draw(_))
-        .Times(10);
-    EXPECT_CALL(*mRenderer, Update(_))
-        .Times(10);
-
-    EXPECT_CALL(*mRenderer, PollEvent(_))
-        .Times(10)
-        .WillRepeatedly(Return(false));
+    using GuiMockConf = GuiMock<WindowMockConf,
+                                true,
+                                display_calls,
+                                remove_widget_calls,
+                                handle_event_false_calls,
+                                handle_event_true_calls>;
 
 
-    ASSERT_NO_FATAL_FAILURE(mApp.run());
-}
+    OpenLabora::Application<GuiMockConf,
+                            WindowMockConf,
+                            NiceTransitions,
+                            NiceState,
+                            TestStateIds,
+                            IResourceManagerMock> app{};
 
-TEST_F(TFAppStateMachineTests, EventHandling)
-{
-    auto&& game_state = static_cast<GSMock&>(mApp.GetState()->GetGameState());
-    auto&& ui_state = static_cast<UISMock&>(mApp.GetState()->GetUiState());
-
-    // Renderer
-    EXPECT_CALL(*mRenderer, IsWindowOpen())
-        .Times(1)
-        .WillOnce(Return(false));
-
-    EXPECT_CALL(*mRenderer, IsWindowOpen())
-        .Times(3)
-        .WillRepeatedly(Return(true))
-        .RetiresOnSaturation();
-
-    for (int i = 0; i < 3; i++) {
-        EXPECT_CALL(*mRenderer, PollEvent(_))
-            .Times(1)
-            .WillOnce(Return(false))
-            .RetiresOnSaturation();
-
-        EXPECT_CALL(*mRenderer, PollEvent(_))
-            .Times(10)
-            .WillRepeatedly(Return(true))
-            .RetiresOnSaturation();
-    }
-
-    // Game state
-    EXPECT_CALL(game_state, HandleEvent(_))
-        .Times(30);
-
-    // Ui state
-    EXPECT_CALL(ui_state, HandleEvent(_))
-        .Times(30);
-
-    ASSERT_NO_FATAL_FAILURE(mApp.run());
-}
-
-TEST(StateMachineTests, IsSameStateTest)
-{
-    Application app{ StateMock{},
-            std::make_unique<NiceMock<RendererMock>>(),
-            std::make_unique<NiceMock<ResourceManagerMock>>() };
-    Application app2{  StateTest{},
-            std::make_unique<NiceMock<RendererMock>>(),
-            std::make_unique<NiceMock<ResourceManagerMock>>() };
-    Application app3{ AppStateDefs::FinalState{},
-            std::make_unique<NiceMock<RendererMock>>(),
-            std::make_unique<NiceMock<ResourceManagerMock>>() };
-
-    ASSERT_TRUE(app.GetState()->IsSameState<StateMock>());
-    ASSERT_TRUE(app2.GetState()->IsSameState<StateTest>());
-    ASSERT_TRUE(app3.GetState()->IsSameState<AppStateDefs::FinalState>());
-}
-
-TEST(StateMachineTests, ChangeStateTest)
-{
-    Application app{ StateTest{},
-            std::make_unique<NiceMock<RendererMock>>(),
-            std::make_unique<NiceMock<ResourceManagerMock>>() };
-
-    auto renderer = static_cast<RendererMock*>(&app.GetRenderer());
-    NiceMock<DesktopMock> desktop;
-
-    EXPECT_CALL(*renderer, RemoveWidgets(_, _))
-        .Times(1);
-
-    app.GetState()->ChangeState<AppStateDefs::FinalState>();
-
-    ASSERT_FALSE(app.GetState()->IsSameState<StateTest>());
-    ASSERT_TRUE(app.GetState()->IsSameState<AppStateDefs::FinalState>());
+    app.ChangeState(TestStateFinalId{});
+    ASSERT_NO_FATAL_FAILURE(app.run());
 }
 
 } // namespace Test
