@@ -8,6 +8,9 @@ CMakeFiles/*
 
 # Ccls
 .ccls*
+# Clangd
+compile_flags.txt
+compile_commands.json
 
 ### VisualStudioCode ###
 .vscode/*
