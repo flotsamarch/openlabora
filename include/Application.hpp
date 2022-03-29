@@ -2,10 +2,9 @@
 #define APPLICATION_HPP_
 
 #include <memory>
+#include <variant>
 #include "IApplication.hpp"
-#include "Renderer.hpp"
 #include "GameState/Model.hpp"
-#include "AppState/Transitions.hpp"
 #include "Renderer.hpp"
 #include "Misc/PtrView.hpp"
 #include "GameWindow.hpp"
@@ -24,7 +23,7 @@ namespace OpenLabora
  * @tparam TStateIdsVariant - Variant of all possible IDs for each state.
  * ID is empty struct that is later used in TTransitions implementation
  */
-template <class TGui, class TWindow, template<class...> class TTransitions,
+ template<class TGui, class TWindow, template<class...> class TTransitions,
           class TStatesVariant, class TStateIdsVariant, class TResourceManager>
 class Application final : public IApplication<TStateIdsVariant>
 {
@@ -34,18 +33,16 @@ class Application final : public IApplication<TStateIdsVariant>
     IResourceManager::Ptr mResManager = std::make_shared<TResourceManager>();
 
     using IApplicationPtr = PtrView<IApplication<TStateIdsVariant>>;
-    TTransitions<TGui, TWindow, TStateIdsVariant> mTransitions
+    TTransitions<TGui, TWindow> mTransitions
     {
         IApplicationPtr(this), mResManager,
         GameWindow<TGui, TWindow>{PtrView(&mGui), PtrView(&mWindow)}
     };
 
-    State mState = *std::visit(mTransitions, StateIdsVariant{});
+    TStatesVariant mState = *std::visit(mTransitions, TStateIdsVariant{});
 
     void HandleEvents();
 
-    template<class TAppState>
-    bool IsSameState() { return std::holds_alternative<TAppState>(mState); }
 public:
     Application() = default;
     Application(const Application&) = delete;
@@ -58,9 +55,16 @@ public:
 
     // @arg state_id - Empty struct that represents one of possible app states
     void ChangeState(TStateIdsVariant state_id) override;
+
+    template<class TAppState>
+    bool IsSameState() const noexcept
+    { return std::holds_alternative<TAppState>(mState); }
+
+    bool IsFinalState() const noexcept
+    { return mState.index() == std::variant_size_v<TStatesVariant> - 1; }
 };
 
-template <class TGui, class TWindow, template<class...> class TTransitions,
+ template<class TGui, class TWindow, template<class...> class TTransitions,
           class TStatesVariant, class TStateIdsVariant, class TResourceManager>
 uint32_t Application<TGui,
                      TWindow,
@@ -93,14 +97,14 @@ uint32_t Application<TGui,
         }
         mRenderer.Display();
 
-        if (IsSameState<FinalState>()) {
+        if (IsFinalState()) {
             break;
         }
     }
     return 0;
 }
 
-template <class TGui, class TWindow, template<class...> class TTransitions,
+ template<class TGui, class TWindow, template<class...> class TTransitions,
           class TStatesVariant, class TStateIdsVariant, class TResourceManager>
 void Application<TGui,
                  TWindow,
@@ -117,7 +121,7 @@ void Application<TGui,
     mState = *std::move(new_state);
 }
 
-template <class TGui, class TWindow, template<class...> class TTransitions,
+ template<class TGui, class TWindow, template<class...> class TTransitions,
           class TStatesVariant, class TStateIdsVariant, class TResourceManager>
 void Application<TGui,
                  TWindow,
@@ -126,14 +130,14 @@ void Application<TGui,
                  TStateIdsVariant,
                  TResourceManager>
 ::HandleEvents()
-{
-    sf::Event evt;
-    while (mRenderer.PollEvent(evt)) {
-        bool consumed = mRenderer.HandleEvent(evt);
+ {
+    auto&& event = mRenderer.PollEvent();
+    while (event != std::nullopt) {
+        bool consumed = mRenderer.HandleEvent(*event);
         if (consumed) {
             return;
         }
-        auto handle = [&evt] (auto&& state) {
+        auto handle = [&evt = *event] (auto&& state) {
             state.view->HandleEvent(evt);
             state.controller->HandleEvent(evt);
         };

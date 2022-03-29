@@ -23,16 +23,16 @@ class AppState final
     using ControllerPtr = typename TController::Ptr;
 
 public:
-    using ModelT = TModel;
-    using ViewT = TView;
-    using ControllerT = TController;
+    using ModelType = TModel;
+    using ViewType = TView;
+    using ControllerType = TController;
 
     ModelPtr model;
-    ControllerPtr controller;
     ViewPtr view;
+    ControllerPtr controller;
 
     AppState(ModelPtr _model, ViewPtr _view, ControllerPtr _controller)
-        : model{ _model }, controller{ _controller }, view{ std::move(_view) } {}
+        : model{ _model }, view{ std::move(_view) }, controller{ _controller } {}
 };
 
 } // namespace OpenLabora

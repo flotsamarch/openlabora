@@ -13,18 +13,15 @@
 namespace OpenLabora
 {
 
-struct NoModel;
-
 // A view indicating that app has reached its final state
 class GVFinal final
 {
 public:
     using Ptr = std::unique_ptr<GVFinal>;
 
-    GVFinal(PtrView<IApplication<StateIdsVariant>>,
-            GameWindow<tgui::GuiSFML, sf::RenderWindow>,
-            std::shared_ptr<GCFinal>,
-            NoModel::CPtr) {};
+    // No need for actual arguments here, we ignore them anyway
+    template <typename... Args>
+    GVFinal([[maybe_unused]]Args&&... args) {};
 
     void HandleEvent(const sf::Event&) {};
 

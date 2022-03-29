@@ -6,6 +6,7 @@
 #include <TGUI/Backends/SFML.hpp>
 #include <string_view>
 #include <memory>
+#include <utility>
 #include "Misc/PtrView.hpp"
 
 namespace OpenLabora
@@ -38,8 +39,7 @@ public:
 
     bool IsWindowOpen() const { return mWindow->isOpen(); };
 
-    bool PollEvent(sf::Event& evt)
-    { return IsWindowOpen() && mWindow->pollEvent(evt); };
+    std::optional<sf::Event> PollEvent() const;
 
     // Must be called before Draw()
     void Clear() { mWindow->clear(); }
@@ -51,8 +51,6 @@ public:
 
     // @return true if event was handled in GUI, false otherwise
     bool HandleEvent(const sf::Event&);
-
-    sf::Vector2u GetWindowSize() const { return mWindow->getSize(); }
 };
 
 template<class TGui, class TWindow>
@@ -69,6 +67,16 @@ Renderer<TGui, TWindow>::Renderer(PtrView<TGui> gui, PtrView<TWindow> window)
 
     mWindow->resetGLStates();
 }
+
+template<class TGui, class TWindow>
+std::optional<sf::Event> Renderer<TGui, TWindow>::PollEvent() const
+{
+    sf::Event event;
+    if (!IsWindowOpen() || !mWindow->pollEvent(event)) {
+        return std::nullopt;
+    }
+    return event;
+};
 
 template<class TGui, class TWindow>
 void Renderer<TGui, TWindow>::Display()

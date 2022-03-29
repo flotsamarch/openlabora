@@ -83,14 +83,6 @@ public:
     { return mPlayfields; }
 };
 
-struct NoModel
-{
-    using Ptr = std::shared_ptr<NoModel>;
-    using CPtr = std::shared_ptr<const NoModel>;
-
-    Model::CDrawableSpan GetDrawableEntities() const noexcept { return {}; }
-};
-
 template<CEntity TEntity, class... Args>
 std::shared_ptr<TEntity> Model::CreateEntity(Args&&... args)
 {

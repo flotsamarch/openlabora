@@ -16,9 +16,9 @@ class GCFinal final
 public:
     using Ptr = std::shared_ptr<GCFinal>;
 
-    GCFinal(PtrView<IApplication<StateIdsVariant>>,
-            IResourceManager::Ptr,
-            NoModel::Ptr) {};
+    // No need for actual arguments here, we ignore them anyway
+    template <typename... Args>
+    GCFinal([[maybe_unused]]Args&&... args) {};
 
     void HandleEvent(const sf::Event&) {};
 

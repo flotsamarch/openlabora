@@ -7,7 +7,7 @@
 #include "Misc/PtrView.hpp"
 #include "Resource/IResourceManager.hpp"
 #include "AppState/StateIds.hpp"
-#include "GameState/Model.hpp"
+#include "GameState/NoModel.hpp"
 
 namespace OpenLabora
 {

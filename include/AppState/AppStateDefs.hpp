@@ -3,6 +3,7 @@
 
 #include "AppState.hpp"
 #include "GameState/Model.hpp"
+#include "GameState/NoModel.hpp"
 
 #include "GameState/Views/GVMainMenu.hpp"
 #include "GameState/Views/GVDuel.hpp"

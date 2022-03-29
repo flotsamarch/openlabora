@@ -22,29 +22,27 @@ namespace OpenLabora
  *
  * @tparam TGui - A GUI library class
  * @tparam TWindow - Render window class
- * @tparam TStateIdsVariant - Variant of all possible IDs for each state
  *
  * @arg Empty struct which represents one of possible application states
  * @return New AppState object or std::nullopt if there is no overload for @arg
  */
-template <class TGui, class TWindow, class TStateIdsVariant>
+template <class TGui, class TWindow>
 class Transitions final
 {
-    using IApplication = IApplication<TStateIdsVariant>;
+    using IApplication = IApplication<StateIdsVariant>;
 
     template <class TAppState>
     TAppState CreateState()
     {
-        using std::make_shared;
-        using ModelT = typename TAppState::ModelT;
-        using ControllerT = typename TAppState::ControllerT;
-        using ViewT = typename TAppState::ViewT;
+        using ModelT = typename TAppState::ModelType;
+        using ControllerT = typename TAppState::ControllerType;
+        using ViewT = typename TAppState::ViewType;
         using MVCState = AppState<ModelT, ViewT, ControllerT>;
 
-        auto model = make_shared<ModelT>();
-        auto controller = make_shared<ControllerT>(mApp, mResManager, model);
-        auto view = std::make_unique<ViewT>(mApp, mWindow, controller, model);
-        return MVCState{ model, std::move(view), controller };
+        auto model = std::make_shared<ModelT>();
+        auto ctlr = std::make_shared<ControllerT>(mApp, mResManager, model);
+        auto view = std::make_unique<ViewT>(mApp, mWindow, ctlr, model);
+        return MVCState{ model, std::move(view), ctlr };
     }
 
     PtrView<IApplication> mApp;
