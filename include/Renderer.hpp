@@ -30,7 +30,7 @@ class Renderer final
 
 public:
     Renderer(PtrView<TGui>, PtrView<TWindow>);
-    ~Renderer() { mWindow->close(); }
+    ~Renderer() { if (mWindow->isOpen()) mWindow->close(); }
 
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
