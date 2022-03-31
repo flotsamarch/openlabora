@@ -51,6 +51,8 @@ public:
 
     // @return true if event was handled in GUI, false otherwise
     bool HandleEvent(const sf::Event&);
+
+    void RemoveAllWidgets() { mGui->removeAllWidgets(); }
 };
 
 template<class TGui, class TWindow>

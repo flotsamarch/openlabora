@@ -61,5 +61,5 @@ set(headers
 )
 
 set(test_sources
-  src/ApplicationTests.cpp
+    src/ApplicationTests.cpp
 )

@@ -27,7 +27,7 @@ public:
     constexpr operator bool() const noexcept
     { return Get() != nullptr; }
 
-    constexpr std::add_lvalue_reference<T> operator*() const
+    constexpr typename std::add_lvalue_reference<T>::type operator*() const
     { return *Get(); }
 
     constexpr T* operator->() const noexcept

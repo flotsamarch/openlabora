@@ -3,9 +3,9 @@
 
 #include <memory>
 #include <variant>
+#include <chrono>
 #include "IApplication.hpp"
 #include "GameState/Model.hpp"
-#include "Renderer.hpp"
 #include "Misc/PtrView.hpp"
 #include "GameWindow.hpp"
 #include "Resource/IResourceManager.hpp"
@@ -18,18 +18,21 @@ namespace OpenLabora
  *
  * @tparam TGui - A GUI library class
  * @tparam TWindow - Render window class
+ * @tparam TRenderer - Wrapper for graphics and GUI libraries
  * @tparam TTransitions - Callable for a std::visit that creates new state
  * @tparam TStatesVariant - Variant of all possible states (AppState's)
  * @tparam TStateIdsVariant - Variant of all possible IDs for each state.
  * ID is empty struct that is later used in TTransitions implementation
  */
- template<class TGui, class TWindow, template<class...> class TTransitions,
-          class TStatesVariant, class TStateIdsVariant, class TResourceManager>
+template<class TGui, class TWindow, template<class...> class TRenderer,
+         template<class...> class TTransitions, class TStatesVariant,
+         class TStateIdsVariant, class TResourceManager>
 class Application final : public IApplication<TStateIdsVariant>
 {
+    using Clock = std::chrono::steady_clock;
     TGui mGui{};
     TWindow mWindow{};
-    Renderer<TGui, TWindow> mRenderer{ PtrView(&mGui), PtrView(&mWindow) };
+    TRenderer<TGui, TWindow> mRenderer{ PtrView(&mGui), PtrView(&mWindow) };
     IResourceManager::Ptr mResManager = std::make_shared<TResourceManager>();
 
     using IApplicationPtr = PtrView<IApplication<TStateIdsVariant>>;
@@ -40,8 +43,6 @@ class Application final : public IApplication<TStateIdsVariant>
     };
 
     TStatesVariant mState = *std::visit(mTransitions, TStateIdsVariant{});
-
-    void HandleEvents();
 
 public:
     Application() = default;
@@ -62,26 +63,38 @@ public:
 
     bool IsFinalState() const noexcept
     { return mState.index() == std::variant_size_v<TStatesVariant> - 1; }
+
+    IResourceManager::Ptr GetResManager() const { return mResManager; }
+    TStatesVariant& GetState() noexcept { return mState; }
+    TRenderer<TGui, TWindow>& GetRenderer() noexcept
+    { return mRenderer; }
+
+    void HandleEvents();
 };
 
- template<class TGui, class TWindow, template<class...> class TTransitions,
-          class TStatesVariant, class TStateIdsVariant, class TResourceManager>
+template<class TGui, class TWindow, template<class...> class TRenderer,
+         template<class...> class TTransitions, class TStatesVariant,
+         class TStateIdsVariant, class TResourceManager>
 uint32_t Application<TGui,
                      TWindow,
+                     TRenderer,
                      TTransitions,
                      TStatesVariant,
                      TStateIdsVariant,
                      TResourceManager>
 ::run()
 {
-    sf::Clock clock;
+    auto start_time = Clock::now();
     while (mRenderer.IsWindowOpen()) {
-        const float delta_seconds = clock.restart().asSeconds();
+        auto end_time = Clock::now();
+        std::chrono::duration<float> delta_seconds = end_time - start_time;
+        start_time = end_time;
+
         HandleEvents();
 
-        auto update = [delta_seconds] (auto&& state) {
-            state.view->Update(delta_seconds);
-            state.controller->Update(delta_seconds);
+        auto update = [ds = delta_seconds.count()] (auto&& state) {
+            state.view->Update(ds);
+            state.controller->Update(ds);
         };
         std::visit(update, mState);
 
@@ -104,10 +117,12 @@ uint32_t Application<TGui,
     return 0;
 }
 
- template<class TGui, class TWindow, template<class...> class TTransitions,
-          class TStatesVariant, class TStateIdsVariant, class TResourceManager>
+template<class TGui, class TWindow, template<class...> class TRenderer,
+         template<class...> class TTransitions, class TStatesVariant,
+         class TStateIdsVariant, class TResourceManager>
 void Application<TGui,
                  TWindow,
+                 TRenderer,
                  TTransitions,
                  TStatesVariant,
                  TStateIdsVariant,
@@ -115,16 +130,17 @@ void Application<TGui,
 ::ChangeState(TStateIdsVariant state_id)
 {
     using OptStates = std::optional<TStatesVariant>;
-    mGui.removeAllWidgets();
+    mRenderer.RemoveAllWidgets();
     OptStates new_state = std::move(std::visit(mTransitions, state_id));
-    assert(new_state != std::nullopt);
     mState = *std::move(new_state);
 }
 
- template<class TGui, class TWindow, template<class...> class TTransitions,
-          class TStatesVariant, class TStateIdsVariant, class TResourceManager>
+template<class TGui, class TWindow, template<class...> class TRenderer,
+         template<class...> class TTransitions, class TStatesVariant,
+         class TStateIdsVariant, class TResourceManager>
 void Application<TGui,
                  TWindow,
+                 TRenderer,
                  TTransitions,
                  TStatesVariant,
                  TStateIdsVariant,
@@ -134,7 +150,7 @@ void Application<TGui,
      while (auto&& event = mRenderer.PollEvent()) {
         bool consumed = mRenderer.HandleEvent(*event);
         if (consumed) {
-            return;
+            continue;
         }
         auto handle = [&evt = *event] (auto&& state) {
             state.view->HandleEvent(evt);

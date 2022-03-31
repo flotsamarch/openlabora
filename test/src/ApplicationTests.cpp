@@ -2,24 +2,23 @@
 #include <variant>
 #include <optional>
 #include "Application.hpp"
+#include "RendererMock.hpp"
 #include "RendererDependenciesMocks.hpp"
 #include "AppState/TestTransitions.hpp"
 #include "AppState/TestStateIds.hpp"
-#include "AppState/TestAppStateDefs.hpp"
 #include "Resource/IResourceManagerMock.hpp"
 
 namespace Test
 {
 
-using ::testing::NiceMock;
-
-using NiceWindow = NiceMock<WindowMock<false>>;
-using NiceGui = NiceMock<GuiMock<NiceWindow, false>>;
+struct Empty{};
+using ::testing::Return;
+using ::testing::Field;
 
 template<template<class...> class TTransitions,
          class TStateVariant, class TStateVariantId>
-using TestApp = OpenLabora::Application<NiceGui,
-                                        NiceWindow,
+using TestApp = OpenLabora::Application<Empty, Empty,
+                                        RendererMock,
                                         TTransitions,
                                         TStateVariant,
                                         TStateVariantId,
@@ -110,90 +109,172 @@ TEST(ApplicationStatesTests, ChangeState)
     ASSERT_TRUE(app.IsSameState<TestStateFinal>());
 }
 
-TEST(ApplicationStatesTests, MainLoop)
+TEST(ApplicationTests, MainLoop)
 {
-    const auto cycles{ 5u };
-    const auto display_calls{ cycles };
-    const auto poll_event_calls{ cycles };
-    const auto poll_event_true_calls{ 0u };
-    const auto open_true_calls{ cycles * 2 };
-    const auto open_calls{ open_true_calls + 1 };
-    const auto draw_calls{ 0u };
-    const auto getSize_calls{ 0u };
-    const auto remove_widget_calls{ 0u };
-    const auto handle_event_false_calls{ poll_event_true_calls };
-    const auto handle_event_true_calls{ 0u };
+    constexpr auto cycles{ 5u };
+    constexpr auto display_calls{ cycles };
+    constexpr auto update_calls{ cycles };
+    constexpr auto poll_event_calls{ cycles };
+    constexpr auto open_true_calls{ cycles };
 
-    using WindowMockConf = WindowMock<true,
-                                      true,
-                                      open_calls,
-                                      open_true_calls,
-                                      true,
-                                      poll_event_calls,
-                                      poll_event_true_calls,
-                                      display_calls,
-                                      draw_calls,
-                                      getSize_calls>;
+    TestApp<NiceTransitions,
+            NiceState,
+            TestStateIds> app{};
 
-    using GuiMockConf = GuiMock<WindowMockConf,
-                                true,
-                                display_calls,
-                                remove_widget_calls,
-                                handle_event_false_calls,
-                                handle_event_true_calls>;
+    auto&& renderer = app.GetRenderer();
+    auto&& state = app.GetState();
 
+    EXPECT_CALL(renderer, IsWindowOpen())
+        .WillOnce(Return(false));
 
-    OpenLabora::Application<GuiMockConf,
-                            WindowMockConf,
-                            NiceTransitions,
-                            NiceState,
-                            TestStateIds,
-                            IResourceManagerMock> app{};
+    EXPECT_CALL(renderer, IsWindowOpen())
+        .Times(open_true_calls)
+        .WillRepeatedly(Return(true))
+        .RetiresOnSaturation();
+
+    EXPECT_CALL(renderer, PollEvent())
+        .Times(poll_event_calls)
+        .WillRepeatedly(Return(std::nullopt));
+
+    EXPECT_CALL(renderer, Display())
+        .Times(display_calls);
+
+    auto setup_expects = [] (auto&& state)
+    {
+        EXPECT_CALL(*state.view, Update)
+            .Times(update_calls);
+
+        EXPECT_CALL(*state.controller, Update)
+            .Times(update_calls);
+    };
+    std::visit(setup_expects, state);
 
     ASSERT_NO_FATAL_FAILURE(app.run());
 }
 
 TEST(ApplicationStatesTests, FinalStateStopsApp)
 {
-    const auto display_calls{ 1u };
-    const auto poll_event_calls{ 1u };
-    const auto poll_event_true_calls{ 0u };
-    const auto open_true_calls{ 2u };
-    const auto open_calls{ 2u };
-    const auto draw_calls{ 0u };
-    const auto getSize_calls{ 0u };
-    const auto remove_widget_calls{ 1u };
-    const auto handle_event_false_calls{ 0u };
-    const auto handle_event_true_calls{ 0u };
+    TestApp<NiceTransitions,
+            NiceState,
+            TestStateIds> app{};
 
-    using WindowMockConf = WindowMock<true,
-                                      true,
-                                      open_calls,
-                                      open_true_calls,
-                                      true,
-                                      poll_event_calls,
-                                      poll_event_true_calls,
-                                      display_calls,
-                                      draw_calls,
-                                      getSize_calls>;
+    auto&& renderer = app.GetRenderer();
 
-    using GuiMockConf = GuiMock<WindowMockConf,
-                                true,
-                                display_calls,
-                                remove_widget_calls,
-                                handle_event_false_calls,
-                                handle_event_true_calls>;
+    ON_CALL(renderer, IsWindowOpen)
+        .WillByDefault(Return(true));
 
-
-    OpenLabora::Application<GuiMockConf,
-                            WindowMockConf,
-                            NiceTransitions,
-                            NiceState,
-                            TestStateIds,
-                            IResourceManagerMock> app{};
+    EXPECT_CALL(renderer, Display()) // Main loop executes only once
+        .Times(1);
 
     app.ChangeState(TestStateFinalId{});
     ASSERT_NO_FATAL_FAILURE(app.run());
+}
+
+TEST(ApplicationStatesTests, ChangeStateRemovesWidgets)
+{
+    TestApp<NiceTransitions,
+            NiceState,
+            TestStateIds> app{};
+
+    auto&& renderer = app.GetRenderer();
+
+    EXPECT_CALL(renderer, RemoveAllWidgets())
+        .Times(2);
+
+    EXPECT_NO_FATAL_FAILURE(app.ChangeState(TestState2Id{}));
+    ASSERT_NO_FATAL_FAILURE(app.ChangeState(TestStateFinalId{}));
+}
+
+TEST(ApplicationEventHandlingTests, HandleEventsBasic)
+{
+    TestApp<TestTransitions,
+            TestState,
+            TestStateIds> app{};
+
+    constexpr auto poll_event_calls{ 5u };
+
+    auto&& renderer = app.GetRenderer();
+    auto&& state = app.GetState();
+
+    auto event{ std::optional<sf::Event>{ sf::Event{} } };
+    event->type = sf::Event::MouseMoved;
+
+    const auto evt_type_match = Field(&sf::Event::type, event->type);
+
+    EXPECT_CALL(renderer, HandleEvent(evt_type_match))
+        .WillRepeatedly(Return(false));
+
+    EXPECT_CALL(renderer, PollEvent())
+        .WillOnce(Return(std::nullopt));
+
+    EXPECT_CALL(renderer, PollEvent())
+        .Times(poll_event_calls)
+        .WillRepeatedly(Return(event))
+        .RetiresOnSaturation();
+
+    auto setup_expects = [&evt_type_match] (auto&& state)
+    {
+        EXPECT_CALL(*state.view, HandleEvent(evt_type_match))
+            .Times(poll_event_calls);
+
+        EXPECT_CALL(*state.controller, HandleEvent(evt_type_match))
+            .Times(poll_event_calls);
+    };
+    std::visit(setup_expects, state);
+
+    ASSERT_NO_FATAL_FAILURE(app.HandleEvents());
+}
+
+TEST(ApplicationEventHandlingTests, HandleEventsGuiConsumes)
+{
+    TestApp<TestTransitions,
+            TestState,
+            TestStateIds> app{};
+
+    constexpr auto poll_event_pack_size{ 3u };
+    constexpr auto handle_event_calls{ 10u };
+
+    auto&& renderer = app.GetRenderer();
+    auto&& state = app.GetState();
+
+    auto consumed_event{ std::optional<sf::Event>{ sf::Event{} } };
+    auto regular_event{ std::optional<sf::Event>{ sf::Event{} } };
+
+    consumed_event->type = sf::Event::MouseButtonPressed;
+
+    const auto regular_evt_match = Field(&sf::Event::type, regular_event->type);
+    const auto consumed_evt_match = Field(&sf::Event::type,
+                                          consumed_event->type);
+
+    EXPECT_CALL(renderer, HandleEvent(regular_evt_match))
+        .WillRepeatedly(Return(false));
+
+    EXPECT_CALL(renderer, HandleEvent(consumed_evt_match))
+        .WillRepeatedly(Return(true));
+
+    EXPECT_CALL(renderer, PollEvent())
+        .WillOnce(Return(std::nullopt));
+
+    for (size_t i{ 0u }; i < 5u; ++i) {
+        EXPECT_CALL(renderer, PollEvent())
+            .Times(poll_event_pack_size)
+            .WillOnce(Return(consumed_event))
+            .WillOnce(Return(regular_event))
+            .WillOnce(Return(regular_event))
+            .RetiresOnSaturation();
+    }
+
+    auto setup_expects = [&regular_evt_match] (auto&& state)
+    {
+        EXPECT_CALL(*state.view, HandleEvent(regular_evt_match))
+            .Times(handle_event_calls);
+
+        EXPECT_CALL(*state.controller, HandleEvent(regular_evt_match))
+            .Times(handle_event_calls);
+    };
+    std::visit(setup_expects, state);
+
+    ASSERT_NO_FATAL_FAILURE(app.HandleEvents());
 }
 
 } // namespace Test
