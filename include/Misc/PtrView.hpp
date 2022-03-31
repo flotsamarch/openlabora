@@ -21,7 +21,7 @@ public:
     constexpr T* Get() const noexcept
     { return mPtr; }
 
-    constexpr T* Reset(T* other = nullptr) noexcept
+    constexpr void Reset(T* other = nullptr) noexcept
     { mPtr = other; }
 
     constexpr operator bool() const noexcept
@@ -34,13 +34,13 @@ public:
     { return Get(); }
 
     constexpr void Swap(PtrView<T>& other) noexcept
-    { std::swap(other.Get(), mPtr); }
+    { std::swap(other.mPtr, mPtr); }
 
     constexpr T* Release()
     {
-        T* tmp{ nullptr };
-        tmp->Swap(mPtr);
-        return tmp;
+        PtrView<T> tmp{ nullptr };
+        this->Swap(tmp);
+        return tmp.mPtr;
     }
 };
 
@@ -78,11 +78,11 @@ bool operator<=(const PtrView<T>& lhs, const PtrView<Y>& rhs)
 
 template<class T, class Y>
 bool operator>(const PtrView<T>& lhs, const PtrView<Y>& rhs)
-{ return lhs.Get() >= rhs.Get(); };
+{ return lhs.Get() > rhs.Get(); };
 
 template<class T, class Y>
 bool operator<(const PtrView<T>& lhs, const PtrView<Y>& rhs)
-{ return lhs.Get() <= rhs.Get(); };
+{ return lhs.Get() < rhs.Get(); };
 
 } // namespace OpenLabora
 
