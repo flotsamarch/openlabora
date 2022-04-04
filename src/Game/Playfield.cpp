@@ -8,12 +8,9 @@
 namespace OpenLabora
 {
 
-namespace
-{
 using TileInfo = Tile::TileInfo;
 using PlotType = Plot::PlotType;
 using MarkerType = ExpansionMarker::MarkerType;
-}
 
 Playfield::Playfield(IResourceManager::Ptr res_mgr)
     : mResMgr{ res_mgr }
@@ -48,11 +45,12 @@ void Playfield::DrawPlotsAsSprite()
     mObject.setTexture(mGroundTexture.getTexture(), true);
 }
 
-TileInfo Playfield::GetTileInfoUnderPoint(const sf::Vector2f& point) const
+Plot::OptionalTileInfo
+Playfield::GetTileInfoUnderPoint(const sf::Vector2f& point) const
 {
     // This is just a general check, we cannot rely on it for weirdly shaped pfs
     if (!mObject.getGlobalBounds().contains(point)) {
-        return Tile::kBadTile;
+        return std::nullopt;
     }
 
     auto local_pos = GetPosition() - point;
@@ -66,14 +64,14 @@ TileInfo Playfield::GetTileInfoUnderPoint(const sf::Vector2f& point) const
 
     auto&& plot_deq = mPlots.find(type);
     if (plot_deq == mPlots.end() || plot_deq->second.empty()) {
-        return Tile::kBadTile;
+        return std::nullopt;
     }
 
     auto plot_top = plot_deq->second.front().GetPosition().y;
     auto plot_index = static_cast<int>((plot_top - point.y) / Tile::kTileHeight);
 
     if (plot_index < 0 || plot_index > plot_deq->second.size()) {
-        return Tile::kBadTile;
+        return std::nullopt;
     }
 
     return plot_deq->second[plot_index].GetTileInfoUnderPoint(point);

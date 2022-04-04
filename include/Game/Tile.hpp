@@ -21,24 +21,16 @@ public:
         Hill, MountainUpper, MountainLower, Water, Coast,
         Peat, End
     };
+
 private:
     TileType mType{ TileType::None };
 
 public:
-
     struct TileInfo
     {
         sf::Vector2f coord{ 0.f, 0.f };
         TileType type{ TileType::None };
-        bool valid{ true };
-    };
-
-    // TODO make constexpr with latest SFML ver.
-    inline static const TileInfo kBadTile
-    {
-        sf::Vector2f{ 0.f, 0.f },
-        TileType{ TileType::None },
-        false
+        bool valid{ false };
     };
 
     static constexpr uint32_t kTileHeight{ 150u };
@@ -57,8 +49,8 @@ public:
         { TileType::MountainLower, "mountain_lower" }
     };
 
-    Tile(TileType type, IResourceManager::Ptr res_mgr) :
-        mType{ type }
+    Tile(TileType type, IResourceManager::Ptr res_mgr)
+        : mType{ type }
     {
         if (type != TileType::None) {
             auto iter = kTileToTextureMap.find(type);
@@ -69,13 +61,13 @@ public:
     };
 
     TileInfo GetTileInfo() const
-    { return TileInfo{ mObject.getPosition(), mType }; }
+    { return TileInfo{ mObject.getPosition(), mType, true }; }
 
     bool IsValid() const noexcept { return mType != TileType::None; }
 };
 
 
-inline Tile::TileType operator++ (Tile::TileType& type) {
+inline Tile::TileType operator++ (Tile::TileType& type) noexcept {
     if (type == Tile::TileType::End) {
         return type;
     }
@@ -83,14 +75,9 @@ inline Tile::TileType operator++ (Tile::TileType& type) {
     return type;
 }
 
-// I dont know why i have to do this
-inline bool operator==(const Tile::TileInfo& lhs,
-                       const Tile::TileInfo& rhs)
-{
-    return !std::islessgreater(lhs.coord.x, rhs.coord.x) &&
-        !std::islessgreater(lhs.coord.y, rhs.coord.y) &&
-        lhs.type == rhs.type && lhs.valid == rhs.valid;
-}
+bool operator==(const Tile::TileInfo& lhs, const Tile::TileInfo& rhs);
+Tile::TileType operator+(int lhs, const Tile::TileType& rhs) noexcept;
+Tile::TileType operator+(const Tile::TileType& lhs, int rhs) noexcept;
 
 } // namespace OpenLabora
 

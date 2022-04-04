@@ -39,10 +39,11 @@ float Plot::GetOffsetXForPlotType(PlotType type)
     return static_cast<float>(offset);
 }
 
-Tile::TileInfo Plot::GetTileInfoUnderPoint(const sf::Vector2f& point) const
+Plot::OptionalTileInfo
+Plot::GetTileInfoUnderPoint(const sf::Vector2f& point) const
 {
     if (!GetGlobalBounds().contains(point)) {
-        return Tile::kBadTile;
+        return std::nullopt;
     }
 
     auto index = (point.y - GetPosition().y) / Tile::kTileWidth;

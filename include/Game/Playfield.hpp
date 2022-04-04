@@ -27,7 +27,7 @@ public:
 
     Playfield(IResourceManager::Ptr);
 
-    Tile::TileInfo GetTileInfoUnderPoint(const sf::Vector2f&) const;
+    Plot::OptionalTileInfo GetTileInfoUnderPoint(const sf::Vector2f&) const;
 
     void SetPosition(const sf::Vector2f&) override;
 

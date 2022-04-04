@@ -1,5 +1,6 @@
 set(sources
     # Gameplay classes
+    src/Game/Tile.cpp
     src/Game/Plot.cpp
     src/Game/ExpansionMarker.cpp
     src/Game/MarkerManager.cpp
@@ -64,4 +65,5 @@ set(test_sources
     src/ApplicationTests.cpp
     src/RendererTests.cpp
     src/Misc/PtrViewTests.cpp
+    src/Game/TileTests.cpp
 )

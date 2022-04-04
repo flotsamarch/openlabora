@@ -5,6 +5,7 @@
 #include <vector>
 #include <span>
 #include <memory>
+#include <optional>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include "Tile.hpp"
 #include "Resource/IResourceManager.hpp"
@@ -21,6 +22,7 @@ public:
 
     using TileSpan = std::span<const Tile::TileType>;
     using Ptr = std::shared_ptr<Plot>;
+    using OptionalTileInfo = std::optional<Tile::TileInfo>;
 
     struct PlotTilesAndType
     {
@@ -53,7 +55,7 @@ public:
 
     static float GetOffsetXForPlotType(PlotType);
 
-    Tile::TileInfo GetTileInfoUnderPoint(const sf::Vector2f& point) const;
+    OptionalTileInfo GetTileInfoUnderPoint(const sf::Vector2f& point) const;
 
     PlotType GetType() const noexcept { return mType; }
 
