@@ -101,7 +101,7 @@ protected:
 
 public:
     // Defs for neat Plot object creation - constructor params packed in a struct
-    static constexpr PlotTilesAndType kCostalPlot
+    static constexpr PlotTilesAndType kCoastalPlot
         { kCoastalPlotSpan, PlotType::Coastal };
     static constexpr PlotTilesAndType kCentralPlot
         { kCentralPlotSpan, PlotType::Central };

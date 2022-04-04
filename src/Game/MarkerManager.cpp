@@ -13,7 +13,7 @@ MarkerManager::MarkerManager(GameController::Ptr controller)
     auto res_manager = controller->GetResourceManager();
     // In case plot_type != PT::Central number of items in this map tells
     // if there are 2 or 1 plots in marker
-    auto coastal_plot = Plot{ Plot::kCostalPlot, res_manager };
+    auto coastal_plot = Plot{ Plot::kCoastalPlot, res_manager };
     mPlotsForMarkerCreation.insert({PlotType::Coastal, coastal_plot});
     mPlotsForMarkerCreation.insert({PlotType::Coastal, coastal_plot});
 
