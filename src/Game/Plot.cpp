@@ -6,12 +6,10 @@
 namespace OpenLabora
 {
 
-Plot::Plot(const PlotTilesAndType& ptat,
-           IResourceManager::Ptr res_mgr)
-    : mType{ ptat.type }, mPlotTexture{ std::make_shared<sf::RenderTexture>() }
+Plot::Plot(const PlotTilesAndType& ptat, IResourceManager::Ptr res_mgr)
+    :  mPlotTexture{ std::make_shared<sf::RenderTexture>() }, mType{ ptat.type }
 {
-    std::ranges::for_each(ptat.tiles,
-                          [&res_mgr, this]
+    std::ranges::for_each(ptat.tiles, [&res_mgr, this]
                           (Tile::TileType type)
                           {
                               mTiles.emplace_back(type, res_mgr);
@@ -34,7 +32,7 @@ float Plot::GetOffsetXForPlotType(PlotType type)
     assert(type != PlotType::End);
     auto offset{ 0u };
     for (auto i = PlotType::Begin; i < type && i <PlotType::End; ++i) {
-        offset += Tile::kTileWidth * static_cast<uint32_t>(GetPlotWidthTileCount(i));
+        offset += Tile::kTileWidth * GetPlotWidthTileCount(i);
     }
     return static_cast<float>(offset);
 }

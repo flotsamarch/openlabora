@@ -66,4 +66,5 @@ set(test_sources
     src/RendererTests.cpp
     src/Misc/PtrViewTests.cpp
     src/Game/TileTests.cpp
+    src/Game/PlotTests.cpp
 )

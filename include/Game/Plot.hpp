@@ -14,7 +14,7 @@
 namespace OpenLabora
 {
 
-class Plot : public Entity<sf::Sprite>
+class Plot final : public Entity<sf::Sprite>
 {
 public:
     enum class PlotType
@@ -47,9 +47,7 @@ protected:
     void DrawTilesAsSprite();
 
 public:
-    Plot(const PlotTilesAndType&,
-         IResourceManager::Ptr);
-    virtual ~Plot() {};
+    Plot(const PlotTilesAndType&, IResourceManager::Ptr);
 
     static uint32_t GetPlotWidthTileCount(PlotType);
 
