@@ -2,7 +2,7 @@
 #define LOCATION_HPP_
 
 #include <map>
-#include "resource/IResourceManager.hpp"
+#include "Resource/IResourceManager.hpp"
 #include "Entity.hpp"
 #include "Playfield.hpp"
 #include "Tile.hpp"

@@ -9,7 +9,7 @@
 #include "IEntity.hpp"
 #include "IDrawable.hpp"
 #include "ITransformable.hpp"
-#include "resource/IResourceManager.hpp"
+#include "Resource/IResourceManager.hpp"
 
 namespace OpenLabora
 {

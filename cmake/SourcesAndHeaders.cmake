@@ -53,8 +53,8 @@ set(headers
     include/AppState/AppStateDefs.hpp
     include/AppState/StateIds.hpp
     include/AppState/Transitions.hpp
-    include/resource/ResourceManager.hpp
-    include/resource/IResourceManager.hpp
+    include/Resource/ResourceManager.hpp
+    include/Resource/IResourceManager.hpp
     include/GameWindow.hpp
     include/Renderer.hpp
     include/IApplication.hpp

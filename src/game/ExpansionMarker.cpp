@@ -1,6 +1,6 @@
 #include "Game/ExpansionMarker.hpp"
 #include "GameState/Controllers/GameController.hpp"
-#include "resource/IResourceManager.hpp"
+#include "Resource/IResourceManager.hpp"
 #include "GUI/ClickableArea.hpp"
 
 namespace OpenLabora
