@@ -11,7 +11,7 @@ using OpenLabora::Tile;
 using Type = Tile::TileType;
 using ::testing::ReturnRef;
 
-class TestFTile : public ::testing::Test
+class TileTests: public ::testing::Test
 {
 protected:
     IResourceManagerMock::Ptr mResManager =
@@ -19,14 +19,21 @@ protected:
 
     sf::Texture mTexture;
 public:
-    TestFTile() { mTexture.create(1u, 1u); }
-    virtual ~TestFTile() {};
+    virtual ~TileTests() {};
+
+    TileTests()
+    {
+        mTexture.create(1u, 1u);
+
+        ON_CALL(*mResManager, GetTextureByName)
+            .WillByDefault(ReturnRef(mTexture));
+    }
 };
 
-TEST_F(TestFTile, IsValid)
+TEST_F(TileTests, IsValid)
 {
     EXPECT_CALL(*mResManager, GetTextureByName)
-        .WillOnce(ReturnRef(mTexture));
+        .Times(1);
 
     auto invalid_tile = Tile{ Type::None, mResManager };
     auto tile = Tile{ Type::Begin + 1, mResManager }; // First non-None
@@ -35,12 +42,12 @@ TEST_F(TestFTile, IsValid)
     ASSERT_TRUE(tile.IsValid());
 }
 
-TEST_F(TestFTile, Construction)
+TEST_F(TileTests, Construction)
 {
     for (auto type = Type::Begin; type < Type::End; ++type) {
         if (type != Type::None) {
             EXPECT_CALL(*mResManager, GetTextureByName)
-                .WillOnce(ReturnRef(mTexture))
+                .Times(1)
                 .RetiresOnSaturation();
         }
 
@@ -51,13 +58,10 @@ TEST_F(TestFTile, Construction)
     }
 }
 
-TEST_F(TestFTile, TileInfo)
+TEST_F(TileTests, TileInfo)
 {
     constexpr float position{ 150.f };
     constexpr float offset{ 10.f };
-
-    EXPECT_CALL(*mResManager, GetTextureByName)
-        .WillOnce(ReturnRef(mTexture));
 
     auto tile = Tile{ Type::Begin + 1, mResManager }; // First non-None
 
@@ -66,6 +70,11 @@ TEST_F(TestFTile, TileInfo)
     auto default_info = Tile::TileInfo{};
 
     EXPECT_NE(info, default_info);
+
+    tile.Move(offset, offset);
+    info = tile.GetTileInfo();
+    EXPECT_EQ(info.coord.x, offset);
+    EXPECT_EQ(info.coord.y, offset);
 
     tile.SetPosition(position, position);
     info = tile.GetTileInfo();
@@ -144,6 +153,72 @@ TEST(TileOperatorsTests, TileInfoOperatorEquals)
     two.coord.y = 5.52345234f;
 
     ASSERT_TRUE(one == two);
+}
+
+TEST_F(TileTests, EntityTransformations)
+{
+    constexpr auto offset_x = 10.4f;
+    constexpr auto offset_y = 11.4f;
+    constexpr auto position_x = 150.15f;
+    constexpr auto position_y = 152.15f;
+    auto tile_1 = Tile{ Type::Begin + 1, mResManager };
+    auto tile_2 = Tile{ Type::Begin + 1, mResManager };
+
+    ASSERT_FLOAT_EQ(tile_1.GetPosition().x, 0.f);
+    ASSERT_FLOAT_EQ(tile_1.GetPosition().y, 0.f);
+    ASSERT_FLOAT_EQ(tile_2.GetPosition().x, 0.f);
+    ASSERT_FLOAT_EQ(tile_2.GetPosition().y, 0.f);
+
+    tile_1.Move(offset_x, offset_y);
+    tile_2.Move(sf::Vector2f{ offset_x, offset_y });
+
+    ASSERT_FLOAT_EQ(tile_1.GetPosition().x, offset_x);
+    ASSERT_FLOAT_EQ(tile_1.GetPosition().y, offset_y);
+    ASSERT_FLOAT_EQ(tile_2.GetPosition().x, offset_x);
+    ASSERT_FLOAT_EQ(tile_2.GetPosition().y, offset_y);
+
+    tile_1.SetPosition(position_x, position_y);
+    tile_2.SetPosition(sf::Vector2f{ position_x, position_y });
+
+    ASSERT_FLOAT_EQ(tile_1.GetPosition().x, position_x);
+    ASSERT_FLOAT_EQ(tile_1.GetPosition().y, position_y);
+    ASSERT_FLOAT_EQ(tile_2.GetPosition().x, position_x);
+    ASSERT_FLOAT_EQ(tile_2.GetPosition().y, position_y);
+
+    tile_1.Move(offset_x, offset_y);
+    tile_2.Move(sf::Vector2f{ offset_x, offset_y });
+
+    ASSERT_FLOAT_EQ(tile_1.GetPosition().x, offset_x + position_x);
+    ASSERT_FLOAT_EQ(tile_1.GetPosition().y, offset_y + position_y);
+    ASSERT_FLOAT_EQ(tile_2.GetPosition().x, offset_x + position_x);
+    ASSERT_FLOAT_EQ(tile_2.GetPosition().y, offset_y + position_y);
+}
+
+TEST_F(TileTests, GetDrawableObject)
+{
+    auto tile = Tile{ Type::Begin + 1, mResManager };
+
+    auto&& drawable = tile.GetDrawableObject();
+    ASSERT_EQ(static_cast<const sf::Sprite&>(drawable).getTexture(), &mTexture);
+}
+
+TEST_F(TileTests, EntityBounds)
+{
+    constexpr auto offset_x = 10.4f;
+    constexpr auto offset_y = 11.4f;
+    auto tile = Tile{ Type::Begin + 1, mResManager };
+
+    auto bounds = tile.GetLocalBounds();
+    EXPECT_EQ(bounds.width, OpenLabora::Tile::kTileWidth);
+    EXPECT_EQ(bounds.height, OpenLabora::Tile::kTileHeight);
+    ASSERT_EQ(bounds, tile.GetGlobalBounds());
+
+    tile.Move(offset_x, offset_y);
+    bounds = tile.GetGlobalBounds();
+    EXPECT_EQ(bounds.width, OpenLabora::Tile::kTileWidth);
+    EXPECT_EQ(bounds.height, OpenLabora::Tile::kTileHeight);
+    EXPECT_EQ(bounds.left, offset_x);
+    ASSERT_EQ(bounds.top, offset_y);
 }
 
 } // namespace Test

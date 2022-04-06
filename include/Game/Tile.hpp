@@ -56,7 +56,8 @@ public:
             auto iter = kTileToTextureMap.find(type);
             assert(iter != kTileToTextureMap.end());
             auto texture_name = iter->second;
-            mObject.setTexture(res_mgr->GetTextureByName(texture_name), true);
+            mObject.setTexture(res_mgr->GetTextureByName(texture_name));
+            mObject.setTextureRect(sf::IntRect{ 0, 0, kTileWidth, kTileHeight });
         }
     };
 
