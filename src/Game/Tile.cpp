@@ -10,9 +10,6 @@ bool IsValid(Type type) noexcept { return type != Type::None; }
 
 Type operator++(Type& type) noexcept
 {
-    if (type == Type::End) {
-        return type;
-    }
     type = static_cast<Type>(static_cast<int>(type) + 1);
     return type;
 }
