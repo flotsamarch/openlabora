@@ -8,18 +8,19 @@
 #include "Misc/PtrView.hpp"
 #include "Resource/IResourceManager.hpp"
 #include "AppState/StateIds.hpp"
-#include "GameState/Model.hpp"
+#include "GameState/Model/Model.hpp"
 #include "Game/Playfield.hpp"
-#include "Game/IDrawable.hpp"
-#include "Game/Selectable.hpp"
-#include "Game/IEntity.hpp"
-#include "Game/Location.hpp"
+#include "ECS/Entity.hpp"
+// TODO: Reimplement selectable
+// #include "Game/Selectable.hpp"
+// TODO: Reimplement Build Mode
+// #include "Game/Location.hpp"
 
 namespace OpenLabora
 {
 
 // General game logic base class
-class GameController
+class GameController : public std::enable_shared_from_this<GameController>
 {
 public:
     using Ptr = std::shared_ptr<GameController>;
@@ -31,11 +32,10 @@ protected:
     Model::Ptr mModel;
     IResourceManager::Ptr mResManager;
 
-    using SelectableCIterator = Model::CSelectableSpan::iterator;
-
-    // TODO multiplayer support
+    #if 0 // TODO: multiplayer support
     std::shared_ptr<Playfield> GetActivePlayerPlayfieldInternal() noexcept
     { return mModel->GetPlayfield(Model::Player1); }
+    #endif
 
 public:
     GameController(PtrView<IApplication<StateIdsVariant>>,
@@ -52,21 +52,27 @@ public:
     void SetPaused(bool value) noexcept
     { mModel->SetPaused(value); };
 
-    void EnableBuildMode(Location::LocationType);
+    template<model::Drawable T>
+    void AddDrawableObject(T&& drawable)
+    { mModel->AddDrawableObject(std::forward<T>(drawable)); }
 
-    std::shared_ptr<const Playfield> GetActivePlayerPlayfield() const noexcept
+    template<class T>
+    void AddEntity(T&& entity)
+    { mModel->AddEntity(std::forward<T>(entity)); }
+
+    // TODO: Reimplement Build Mode
+    // void EnableBuildMode(Location::LocationType);
+
+    std::shared_ptr<const playfield::Playfield>
+    GetActivePlayerPlayfield() const noexcept
     { return mModel->GetPlayfield(Model::Player1); }
 
-    void AddPlotToTop(const Plot& plot)
-    { GetActivePlayerPlayfieldInternal()->AddPlotToTop(plot); }
-
-    void AddPlotToBottom(const Plot& plot)
-    { GetActivePlayerPlayfieldInternal()->AddPlotToBottom(plot); }
-
+    #if 0 // TODO: Reimplement markers (again)
     template<typename... Args>
     std::shared_ptr<ExpansionMarker> CreateMarker(Args&&... args);
 
     void RemoveMarker(ExpansionMarker::Ptr marker);
+    #endif
 
     IResourceManager::Ptr GetResourceManager() const noexcept
     { return mResManager; }
@@ -74,11 +80,13 @@ public:
 
 inline GameController::~GameController() {}
 
+#if 0
 template<typename... Args>
 std::shared_ptr<ExpansionMarker> GameController::CreateMarker(Args&&... args)
 {
     return mModel->CreateEntity<ExpansionMarker>(std::forward<Args>(args)...);
 }
+#endif
 
 } // namespace OpenLabora
 

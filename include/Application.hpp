@@ -5,7 +5,7 @@
 #include <variant>
 #include <chrono>
 #include "IApplication.hpp"
-#include "GameState/Model.hpp"
+#include "GameState/Model/Model.hpp"
 #include "Misc/PtrView.hpp"
 #include "GameWindow.hpp"
 #include "Resource/IResourceManager.hpp"
@@ -100,13 +100,13 @@ uint32_t Application<TGui,
 
         mRenderer.Clear();
 
-        auto get_entities = [] (auto&& state) {
-            return state.model->GetDrawableEntities();
+        auto get_drawable_objects = [] (auto&& state) {
+            return state.model->GetDrawableObjects();
         };
 
-        Model::CDrawableSpan entities = std::visit(get_entities, mState);
-        for(auto entity : entities) {
-            mRenderer.Draw(entity->GetDrawableObject());
+        auto&& drawable_objects = std::visit(get_drawable_objects, mState);
+        for(auto&& drawable : drawable_objects) {
+            mRenderer.Draw(*drawable);
         }
         mRenderer.Display();
 

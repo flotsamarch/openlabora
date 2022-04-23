@@ -1,35 +1,95 @@
 #include <cassert>
-#include <ranges>
+#include <array>
 #include <algorithm>
+#include <stdexcept>
 #include "Game/Plot.hpp"
 
 namespace OpenLabora
 {
 
-Plot::Plot(const PlotTilesAndType& ptat, IResourceManager::Ptr res_mgr)
-    :  mPlotTexture{ std::make_shared<sf::RenderTexture>() }, mType{ ptat.type }
+namespace plot
 {
-    std::ranges::for_each(ptat.tiles, [&res_mgr, this]
-                          (Tile::TileType type)
-                          {
-                              mTiles.emplace_back(type, res_mgr);
-                          });
 
-    auto width = Tile::kTileWidth * static_cast<uint32_t>(mTiles.size());
-    mPlotTexture->create(width, Tile::kTileHeight);
-    mObject.setTexture(mPlotTexture->getTexture(), true);
-    DrawTilesAsSprite();
+void InitializeSpriteComponent(Plot&, IResourceManager::Ptr);
+
+Plot create(Type type, TileSpan span, sf::Vector2f position,
+            bool alternative, IResourceManager::Ptr res_manager)
+{
+    auto plot = Plot{ position, { span, type, alternative }, {} };
+    InitializeSpriteComponent(plot, res_manager);
+    return plot;
 }
 
-uint32_t Plot::GetPlotWidthTileCount(PlotType type)
+// Use to create plots during gameplay
+Plot create(Type type, const sf::Vector2f& position,
+            IResourceManager::Ptr res_manager,
+            bool alternative)
 {
-    assert(type != PlotType::End);
-    return kPlotSizes[static_cast<size_t>(type)];
+    const auto spans = kPlotTypeToSpans.Get(type);
+    return create(type, alternative ? spans.first : spans.second,
+                  position, alternative, res_manager);
+};
+
+// NOT the same as create(Type::Coastal, ...) - Uses special spans
+Plot createCentralInitial(const sf::Vector2f& position,
+                          IResourceManager::Ptr res_manager,
+                          bool alternative)
+{
+    const auto span =
+        alternative ? kInitialCentralPlotSpan : kInitialCentralPlotAltSpan;
+
+    return create(Type::Central, span, position, alternative, res_manager);
+};
+
+void InitializeSpriteComponent(Plot& plot, IResourceManager::Ptr res_manager)
+{
+    auto&& plot_component = ecs::getComponent<PlotComponent>(plot);
+    auto&& position = ecs::getComponent<PositionComponent>(plot);
+    auto&& sprite_component = ecs::getComponent<SpriteComponent>(plot);
+
+    const auto type = plot_component.GetType();
+
+    const auto ids = kTextureIdMap.Get(type);
+    const auto id = plot_component.IsAlternative() ? ids.first : ids.second;
+
+    sprite_component.SetPosition(position.position);
+
+    auto&& stored_texture = res_manager->GetTexture(id);
+    if (!stored_texture) {
+        const auto width = kPlotWidthTileCount.Get(type) * tile::kTileWidth;
+
+        auto render_texture = sf::RenderTexture{};
+        render_texture.create(width, tile::kTileHeight);
+        render_texture.clear();
+
+        {
+            auto sprite = sf::Sprite{};
+            sprite.setPosition({ 0.f, 0.f });
+            sprite.setTextureRect({ 0, 0, tile::kTileWidth, tile::kTileHeight });
+
+            for (auto&& item : plot_component.GetTiles()) {
+                const auto texture_name = tile::kTileToTextureMap.Get(item);
+                auto&& texture = res_manager->GetTextureOrDefault(texture_name);
+                sprite.setTexture(texture);
+                render_texture.draw(sprite);
+                sprite.move({tile::kTileWidth, 0.f});
+            }
+        }
+
+        auto&& registered_texture =
+            res_manager->RegisterTexture(id, render_texture.getTexture());
+        sprite_component.SetTexture(registered_texture, true);
+        return;
+    }
+    sprite_component.SetTexture(stored_texture.value(), true);
 }
 
+} // namespace plot
+
+#if 0 // TODO: Reimplement Build Mode
 float Plot::GetOffsetXForPlotType(PlotType type)
 {
-    assert(type != PlotType::End);
+    assert(type >= PlotType::Begin && type < PlotType::End);
     auto offset{ 0u };
     for (auto i = PlotType::Begin; i < type && i <PlotType::End; ++i) {
         offset += Tile::kTileWidth * GetPlotWidthTileCount(i);
@@ -47,23 +107,6 @@ Plot::GetTileInfoUnderPoint(const sf::Vector2f& point) const
     auto index = (point.y - GetPosition().y) / Tile::kTileWidth;
     return mTiles[static_cast<size_t>(index)].GetTileInfo();
 }
-
-void Plot::DrawTilesAsSprite()
-{
-    mPlotTexture->clear();
-    auto width = Tile::kTileWidth * static_cast<uint32_t>(mTiles.size());
-    auto position = mObject.getPosition();
-    auto view = sf::View({position.x, position.y,
-            static_cast<float>(width), Tile::kTileHeight});
-    mPlotTexture->setView(view);
-    for (float offset_x = 0.f; auto&& tile : mTiles) {
-        if (tile.IsValid()) {
-            tile.SetPosition(position.x + offset_x, position.y);
-            mPlotTexture->draw(tile.GetDrawableObject());
-        }
-        offset_x += Tile::kTileWidth;
-    }
-    mPlotTexture->display();
-}
+#endif
 
 } // namespace OpenLabora

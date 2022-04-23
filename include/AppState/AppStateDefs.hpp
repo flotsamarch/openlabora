@@ -2,8 +2,8 @@
 #define APPSTATEDEFS_HPP_
 
 #include "AppState.hpp"
-#include "GameState/Model.hpp"
-#include "GameState/NoModel.hpp"
+#include "GameState/Model/Model.hpp"
+#include "GameState/Model/NoModel.hpp"
 
 #include "GameState/Views/GVMainMenu.hpp"
 #include "GameState/Views/GVDuel.hpp"

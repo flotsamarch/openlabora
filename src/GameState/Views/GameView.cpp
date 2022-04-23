@@ -1,8 +1,7 @@
-#include <ranges>
 #include <TGUI/Widgets/ChildWindow.hpp>
 #include <TGUI/Widgets/Button.hpp>
 #include "GameState/Views/GameView.hpp"
-#include "GameState/Model.hpp"
+#include "GameState/Model/Model.hpp"
 
 namespace OpenLabora
 {
@@ -10,31 +9,33 @@ namespace OpenLabora
 GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
                    GameWindow<tgui::GuiSFML, sf::RenderWindow> window,
                    GameController::Ptr controller,
-                   Model::CPtr model)
+                   Model::PtrConst model)
     : mApp{ app },
       mWindow{ window },
       mController{ controller },
       mModel{ model },
-      mMouseCoords{ sf::Mouse::getPosition() },
+      mMouseCoords{ sf::Mouse::getPosition() }//,
+      #if 0 // TODO: Reimplement markers (again)
       mExpansionWindow{ controller },
       mMarkerManager{ controller }
+      #endif
 {
-    auto win_size = static_cast<sf::Vector2f>(mWindow.GetSize());
+    const auto win_size = static_cast<sf::Vector2f>(mWindow.GetSize());
     auto position = sf::Vector2f{ -1 * win_size.x / 2, -1 * win_size.y / 2 };
-    auto pf_width = static_cast<float>(Playfield::kMaxFieldWidth);
-    auto pf_height = static_cast<float>(Playfield::kMaxFieldHeight);
-    position.x += (pf_width / 2) * Tile::kTileWidth;
-    position.y += (pf_height / 2) * Tile::kTileHeight;
+    auto pf_width = static_cast<float>(playfield::kMaxFieldWidth);
+    auto pf_height = static_cast<float>(playfield::kMaxFieldHeight);
+    position.x += (pf_width / 2) * tile::kTileWidth;
+    position.y += (pf_height / 2) * tile::kTileHeight;
 
     mWindow.SetView(sf::View{ sf::FloatRect{ position, win_size } });
 
-    using MarkerType = ExpansionMarker::MarkerType;
-    using Window = tgui::ChildWindow;
-    using VBox = tgui::VerticalLayout;
     using Button = tgui::Button;
+    #if 0 // TODO: Reimplement markers (again)
+    // using MarkerType = ExpansionMarker::MarkerType;
+    // using Window = tgui::ChildWindow;
+    // using VBox = tgui::VerticalLayout;
 
     // UI helper lambdas
-
     auto add_new_plot =
     [&wmarker = mSelectedMarker,
      controller = mController,
@@ -93,7 +94,7 @@ GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
     auto update_markers =
     [&manager = mMarkerManager, show_window]
     { manager.UpdateMarkers(show_window); };
-
+    #endif
     // Escape menu UI
 
     auto quit_btn = Button::create("Quit");
@@ -111,6 +112,8 @@ GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
     mMenuVBox->setSize("20%", "10%");
 
     mWindow.AddWidget(mMenuVBox);
+    // TODO: Reimplement markers (again)
+    #if 0
     mWindow.AddWidget(expansion_win);
 
     auto confirm_btn = mExpansionWindow.GetConfirmButton();
@@ -125,6 +128,7 @@ GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
     expansion_win->onClose(close_confirm_window);
 
     mMarkerManager.UpdateMarkers(show_window);
+    #endif
     // TODO initialize mModel->mBuildGhost something...something...
 };
 
@@ -155,6 +159,8 @@ void GameView::HandleEvent(const sf::Event& evt)
         }
         case sf::Event::MouseButtonReleased:
         {
+            // TODO: reimplement in ECS 11.04.2022
+            #if 0
             if (evt.mouseButton.button == sf::Mouse::Left) {
                 auto begin = mModel->GetSelectableEntities().begin();
                 auto end = mModel->GetSelectableEntities().end();
@@ -177,9 +183,9 @@ void GameView::HandleEvent(const sf::Event& evt)
                     }
                 }
             }
+            #endif
 
-            // TODO fix build mode
-            #if 0
+            #if 0 // TODO: Reimplement Build Mode
             if (evt.mouseButton.button == sf::Mouse::Left && bBuildModeEnabled) {
                 auto pf_position = mPlayfields[Player1]->GetPosition();
 
@@ -199,6 +205,7 @@ void GameView::HandleEvent(const sf::Event& evt)
 
 void GameView::Update([[maybe_unused]]const float update_delta_seconds)
 {
+    #if 0 // TODO: Reimplement selectable
     if (!mMenuVBox->isVisible() && !mExpansionWindow.GetWindow()->isVisible())
     {
         auto mouse_world_pos =
@@ -216,9 +223,9 @@ void GameView::Update([[maybe_unused]]const float update_delta_seconds)
             }
         }
     }
+    #endif
 
-    // TODO fix build mode. Move this to GameView
-    #if 0
+    #if 0 // TODO: Reimplement Build Mode.
     assert(!mState.expired());
     auto position = sf::Vector2i(mMouseX, mMouseY);
     auto pf_position = mPlayfields[Player1]->GetPosition();

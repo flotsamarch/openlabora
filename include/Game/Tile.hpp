@@ -3,82 +3,57 @@
 
 #include <cassert>
 #include <cmath>
+#include <map>
+#include <string_view>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Sprite.hpp>
-#include <map>
-#include "Resource/IResourceManager.hpp"
-#include "Entity.hpp"
+#include "Misc/EnumMap.hpp"
 
 namespace OpenLabora
 {
 
-class Tile final : public Entity<sf::Sprite>
+namespace tile
 {
-public:
-    enum class TileType
-    {
-        None, Begin = None, Forest,
-        Hill, MountainUpper, MountainLower, Water, Coast,
-        Peat, End
-    };
 
-private:
-    TileType mType{ TileType::None };
-
-public:
-    struct TileInfo
-    {
-        sf::Vector2f coord{ 0.f, 0.f };
-        TileType type{ TileType::None };
-        bool valid{ false };
-    };
-
-    static constexpr uint32_t kTileHeight{ 150u };
-    static constexpr uint32_t kTileWidth{ 100u };
-
-    using TileToTextureNameMap = const std::map<TileType, std::string_view>;
-
-    inline static const TileToTextureNameMap kTileToTextureMap
-    {
-        { TileType::Forest, "forest" },
-        { TileType::Coast, "coast" },
-        { TileType::Water, "water" },
-        { TileType::Peat, "peat_empty" },
-        { TileType::Hill, "hill" },
-        { TileType::MountainUpper, "mountain_upper" },
-        { TileType::MountainLower, "mountain_lower" }
-    };
-
-    Tile(TileType type, IResourceManager::Ptr res_mgr)
-        : mType{ type }
-    {
-        if (type != TileType::None) {
-            auto iter = kTileToTextureMap.find(type);
-            assert(iter != kTileToTextureMap.end());
-            auto texture_name = iter->second;
-            mObject.setTexture(res_mgr->GetTextureByName(texture_name));
-            mObject.setTextureRect(sf::IntRect{ 0, 0, kTileWidth, kTileHeight });
-        }
-    };
-
-    TileInfo GetTileInfo() const
-    { return TileInfo{ mObject.getPosition(), mType, true }; }
-
-    bool IsValid() const noexcept { return mType != TileType::None; }
+enum class Type
+{
+    None, Begin = None, Forest,
+    Hill, MountainUpper, MountainLower,
+    Water, Coast, Peat, End
 };
 
+constexpr uint32_t kTileHeight{ 150u };
+constexpr uint32_t kTileWidth{ 100u };
 
-inline Tile::TileType operator++ (Tile::TileType& type) noexcept {
-    if (type == Tile::TileType::End) {
-        return type;
-    }
-    type = static_cast<Tile::TileType>(static_cast<int>(type) + 1);
-    return type;
-}
+struct TileInfo
+{
+    sf::Vector2f coord{ 0.f, 0.f };
+    Type type{ Type::None };
+    bool valid{ false };
+};
 
-bool operator==(const Tile::TileInfo& lhs, const Tile::TileInfo& rhs);
-Tile::TileType operator+(int lhs, const Tile::TileType& rhs) noexcept;
-Tile::TileType operator+(const Tile::TileType& lhs, int rhs) noexcept;
+bool IsValid(Type type) noexcept;
+
+Type operator++(Type& type) noexcept;
+bool operator==(const TileInfo& lhs, const TileInfo& rhs);
+Type operator+(int lhs, const Type& rhs) noexcept;
+Type operator+(const Type& lhs, int rhs) noexcept;
+
+// ------------------- ADD TEXTURE NAME FOR EACH TILE HERE ---------------------
+
+constexpr EnumMap<Type, std::string_view> kTileToTextureMap(
+{
+    { Type::None, "" },
+    { Type::Forest, "forest" },
+    { Type::Coast, "coast" },
+    { Type::Water, "water" },
+    { Type::Peat, "peat_empty" },
+    { Type::Hill, "hill" },
+    { Type::MountainUpper, "mountain_upper" },
+    { Type::MountainLower, "mountain_lower" },
+});
+
+} // namespace tile
 
 } // namespace OpenLabora
 

@@ -8,8 +8,8 @@ template<class TStateIdsVariant>
 class IApplication
 {
 public:
-    // No need for virtual destructor
-    // Application is never heap allocated
+    virtual ~IApplication() = default;
+
     virtual void ChangeState(TStateIdsVariant state_id) = 0;
 };
 

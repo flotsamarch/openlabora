@@ -1,7 +1,7 @@
 #ifndef APPSTATE_HPP_
 #define APPSTATE_HPP_
 
-#include "GameState/Model.hpp"
+#include "GameState/Model/Model.hpp"
 
 #include "GameState/Views/GVMainMenu.hpp"
 #include "GameState/Views/GVDuel.hpp"

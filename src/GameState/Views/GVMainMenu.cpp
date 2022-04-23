@@ -9,7 +9,7 @@ namespace OpenLabora
 GVMainMenu::GVMainMenu(PtrView<IApplication<StateIdsVariant>> app,
                        GameWindow<tgui::GuiSFML, sf::RenderWindow> window,
                        std::shared_ptr<GCMainMenu> controller,
-                       NoModel::CPtr model)
+                       NoModel::PtrConst model)
     : mApp{ app }, mWindow{ window }, mController{ controller }, mModel{ model }
 {
     auto win_size = static_cast<sf::Vector2f>(mWindow.GetSize());

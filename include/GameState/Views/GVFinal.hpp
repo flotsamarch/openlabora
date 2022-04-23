@@ -4,7 +4,7 @@
 #include <memory>
 #include <TGUI/Core.hpp>
 #include <TGUI/Backends/SFML.hpp>
-#include "GameState/Model.hpp"
+#include "GameState/Model/Model.hpp"
 #include "IApplication.hpp"
 #include "GameWindow.hpp"
 #include "AppState/StateIds.hpp"

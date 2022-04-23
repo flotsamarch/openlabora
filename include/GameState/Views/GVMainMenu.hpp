@@ -9,7 +9,7 @@
 #include "GameWindow.hpp"
 #include "Misc/PtrView.hpp"
 #include "AppState/StateIds.hpp"
-#include "GameState/NoModel.hpp"
+#include "GameState/Model/NoModel.hpp"
 
 namespace OpenLabora
 {
@@ -22,7 +22,7 @@ class GVMainMenu final
     PtrView<IApplication<StateIdsVariant>> mApp;
     GameWindow<tgui::GuiSFML, sf::RenderWindow> mWindow;
     std::shared_ptr<GCMainMenu> mController;
-    NoModel::CPtr mModel;
+    NoModel::PtrConst mModel;
 
 public:
     using Ptr = std::unique_ptr<GVMainMenu>;
@@ -30,7 +30,7 @@ public:
     GVMainMenu(PtrView<IApplication<StateIdsVariant>>,
                GameWindow<tgui::GuiSFML, sf::RenderWindow>,
                std::shared_ptr<GCMainMenu>,
-               NoModel::CPtr);
+               NoModel::PtrConst);
 
     void HandleEvent(const sf::Event&);
 

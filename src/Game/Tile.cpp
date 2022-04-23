@@ -3,29 +3,45 @@
 namespace OpenLabora
 {
 
-bool operator==(const Tile::TileInfo& lhs, const Tile::TileInfo& rhs)
+namespace tile
+{
+
+bool IsValid(Type type) noexcept { return type != Type::None; }
+
+Type operator++(Type& type) noexcept
+{
+    if (type == Type::End) {
+        return type;
+    }
+    type = static_cast<Type>(static_cast<int>(type) + 1);
+    return type;
+}
+
+bool operator==(const TileInfo& lhs, const TileInfo& rhs)
 {
     return !std::islessgreater(lhs.coord.x, rhs.coord.x) &&
         !std::islessgreater(lhs.coord.y, rhs.coord.y) &&
         lhs.type == rhs.type && lhs.valid == rhs.valid;
 }
 
-Tile::TileType operator+(int lhs, const Tile::TileType& rhs) noexcept
+Type operator+(int lhs, const Type& rhs) noexcept
 {
     const auto type_int = static_cast<int>(rhs) + lhs;
-    if (type_int >= static_cast<int>(Tile::TileType::End)) {
-        return Tile::TileType::End;
+    if (type_int >= static_cast<int>(Type::End)) {
+        return Type::End;
     }
-    return static_cast<Tile::TileType>(type_int);
+    return static_cast<Type>(type_int);
 }
 
-Tile::TileType operator+(const Tile::TileType& lhs, int rhs) noexcept
+Type operator+(const Type& lhs, int rhs) noexcept
 {
     const auto type_int = static_cast<int>(lhs) + rhs;
-    if (type_int >= static_cast<int>(Tile::TileType::End)) {
-        return Tile::TileType::End;
+    if (type_int >= static_cast<int>(Type::End)) {
+        return Type::End;
     }
-    return static_cast<Tile::TileType>(type_int);
+    return static_cast<Type>(type_int);
 }
+
+} // namespace tile
 
 } // namespace OpenLabora

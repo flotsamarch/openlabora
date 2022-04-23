@@ -22,7 +22,7 @@ public:
     GVDuel(PtrView<IApplication<StateIdsVariant>>,
            GameWindow<tgui::GuiSFML, sf::RenderWindow>,
            std::shared_ptr<GCDuel>,
-           Model::CPtr);
+           Model::PtrConst);
 };
 
 } // namespace OpenLabora
