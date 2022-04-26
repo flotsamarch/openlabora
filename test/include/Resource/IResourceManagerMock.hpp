@@ -8,13 +8,21 @@
 namespace Test
 {
 
-class IResourceManagerMock final : public OpenLabora::IResourceManager
+using OpenLabora::IResourceManager;
+
+class IResourceManagerMock final : public IResourceManager
 {
 public:
     using Ptr = std::shared_ptr<IResourceManagerMock>;
 
-    MOCK_METHOD(const sf::Texture&, GetTextureByName, (std::string_view),
+    MOCK_METHOD(const sf::Texture&, GetTextureOrDefault, (std::string_view),
                 (const, override));
+
+    MOCK_METHOD(IResourceManager::OptionalTextureRef, GetTexture,
+                (std::string_view), (const, override));
+
+    MOCK_METHOD(const sf::Texture&, RegisterTexture,
+                (std::string_view, const sf::Texture&), (override));
 };
 
 } // namespace Test

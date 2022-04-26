@@ -17,11 +17,26 @@ enum class Type
 
 inline Type operator++ (Type& type)
 {
-    if (type >= Type::End) {
-        return Type::End;
-    }
     type = static_cast<Type>(static_cast<int>(type) + 1);
     return type;
+}
+
+inline Type operator+(int lhs, const Type& rhs) noexcept
+{
+    const auto type_int = static_cast<int>(rhs) + lhs;
+    if (type_int >= static_cast<int>(Type::End)) {
+        return Type::End;
+    }
+    return static_cast<Type>(type_int);
+}
+
+inline Type operator+(const Type& lhs, int rhs) noexcept
+{
+    const auto type_int = static_cast<int>(lhs) + rhs;
+    if (type_int >= static_cast<int>(Type::End)) {
+        return Type::End;
+    }
+    return static_cast<Type>(type_int);
 }
 
 using TileSpan = std::span<const tile::Type>;

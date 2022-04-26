@@ -12,19 +12,20 @@ namespace OpenLabora
 
 class IResourceManager
 {
+    using TextureRef = std::reference_wrapper<const sf::Texture>;
 public:
     using Ptr = std::shared_ptr<IResourceManager>;
+    using OptionalTextureRef = std::optional<TextureRef>;
 
     virtual const sf::Texture&
     GetTextureOrDefault(std::string_view name) const = 0;
 
-    virtual std::optional<std::reference_wrapper<const sf::Texture>>
-    GetTexture(std::string_view name) const = 0;
+    virtual OptionalTextureRef GetTexture(std::string_view name) const = 0;
 
     virtual const sf::Texture&
     RegisterTexture(std::string_view name, const sf::Texture&) = 0;
 
-    virtual ~IResourceManager() {};
+    virtual ~IResourceManager() = default;
 };
 
 } // namespace OpenLabora
