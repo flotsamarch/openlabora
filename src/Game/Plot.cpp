@@ -28,7 +28,7 @@ Plot create(Type type, const sf::Vector2f& position,
             bool alternative)
 {
     const auto spans = kPlotTypeToSpans.Get(type);
-    return create(type, alternative ? spans.first : spans.second,
+    return create(type, alternative ? spans.second : spans.first,
                   position, alternative, res_manager);
 };
 
@@ -38,10 +38,10 @@ Plot createCentralInitial(const sf::Vector2f& position,
                           bool alternative)
 {
     const auto span =
-        alternative ? kInitialCentralPlotSpan : kInitialCentralPlotAltSpan;
+        alternative ? kInitialCentralPlotAltSpan : kInitialCentralPlotSpan;
 
     const auto id =
-        alternative ? kCentralInitTextureName : kCentralInitAltTextureName;
+        alternative ? kCentralInitAltTextureName : kCentralInitTextureName;
 
     return create(Type::Central, span, position, alternative, res_manager, id);
 };
@@ -55,10 +55,9 @@ void initializeSpriteComponent(Plot& plot, IResourceManager::Ptr res_manager,
 
     const auto type = plot_component.GetType();
 
-    const auto ids = kTextureIdMap.Get(type);
-
     if (id.empty()) {
-        id = plot_component.IsAlternative() ? ids.first : ids.second;
+        const auto ids = kTextureIdMap.Get(type);
+        id = plot_component.IsAlternative() ? ids.second : ids.first;
     }
 
     sprite_component.SetPosition(position.position);
@@ -85,6 +84,7 @@ void initializeSpriteComponent(Plot& plot, IResourceManager::Ptr res_manager,
             }
         }
 
+        render_texture.display();
         auto&& registered_texture =
             res_manager->RegisterTexture(id, render_texture.getTexture());
         sprite_component.SetTexture(registered_texture, true);

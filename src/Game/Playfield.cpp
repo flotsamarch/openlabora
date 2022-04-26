@@ -77,6 +77,7 @@ void entityUpdate(std::shared_ptr<Playfield> entity,
         rect.setOutlineColor(sf::Color::Yellow);
 
         texture.draw(rect);
+        texture.display();
 
         ground_texture.SetTexture(texture.getTexture());
         ground_texture.MarkUpdated(true);
