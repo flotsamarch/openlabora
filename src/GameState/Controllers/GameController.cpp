@@ -11,13 +11,13 @@ GameController::GameController(PtrView<IApplication<StateIdsVariant>> app,
 {
     auto pf_width = static_cast<float>(playfield::kMaxFieldWidth);
     auto pf_margin = pf_width * tile::kTileWidth + 3 * tile::kTileWidth;
-    auto view = PtrView(this);
 
     for (uint32_t player{0}; auto&& pf : mModel->GetPlayfields()) {
         auto position = sf::Vector2f{ 0.f, 0.f };
         pf.reset();
         if (player < player_count) {
-            pf = playfield::create(view, position);
+            pf = playfield::create(res_manager, position);
+            AddEntity(pf);
             position.x += pf_margin;
             player++;
         }

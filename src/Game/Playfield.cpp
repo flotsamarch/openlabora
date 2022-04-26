@@ -11,11 +11,10 @@ using TCC = TextureContainerComponent;
 namespace playfield
 {
 
-std::shared_ptr<Playfield> create(PtrView<GameController> controller,
+std::shared_ptr<Playfield> create(IResourceManager::Ptr res_manager,
                                   const sf::Vector2f& init_pos)
 {
     using PC = PlayfieldComponent;
-    auto&& res_manager = controller->GetResourceManager();
     auto playfield = std::make_shared<Playfield>(init_pos,
                                                  PC{ init_pos, res_manager },
                                                  TCC{},
@@ -24,13 +23,12 @@ std::shared_ptr<Playfield> create(PtrView<GameController> controller,
     auto&& sprite = ecs::getComponent<SpriteComponent>(*playfield);
     sprite.SetPosition(init_pos);
 
-    controller->AddEntity(playfield);
     return playfield;
 }
 
-std::shared_ptr<Playfield> create(PtrView<GameController> controller,
+std::shared_ptr<Playfield> create(IResourceManager::Ptr res_manager,
                                   float initial_x, float initial_y)
-{ return create(controller, { initial_x, initial_y }); }
+{ return create(res_manager, { initial_x, initial_y }); }
 
 } // namespace playfield
 

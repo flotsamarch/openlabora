@@ -8,7 +8,7 @@
 #include "Components/TextureContainerComponent.hpp"
 #include "Components/PlayfieldComponent.hpp"
 #include "Components/SpriteComponent.hpp"
-#include "Misc/PtrView.hpp"
+#include "Resource/IResourceManager.hpp"
 
 namespace OpenLabora
 {
@@ -23,10 +23,10 @@ using Playfield = ComponentContainer<ImmobileComponent,
                                      TextureContainerComponent,
                                      SpriteComponent>;
 
-std::shared_ptr<Playfield> create(PtrView<GameController>,
+std::shared_ptr<Playfield> create(IResourceManager::Ptr,
                                   const sf::Vector2f& initial_position);
 
-std::shared_ptr<Playfield> create(PtrView<GameController>,
+std::shared_ptr<Playfield> create(IResourceManager::Ptr,
                                   float initial_x, float initial_y);
 
 } // namespace playfield
