@@ -93,6 +93,8 @@ constexpr std::string_view kCentralTextureName = "central_plot";
 constexpr std::string_view kCentralAltTextureName = "central_plot_alt";
 constexpr std::string_view kMountainTextureName = "mountain_plot";
 constexpr std::string_view kMountainAltTextureName = "mountain_plot_alt";
+constexpr std::string_view kCentralInitTextureName = "central_init_plot";
+constexpr std::string_view kCentralInitAltTextureName = "central_init_plot_alt";
 
 using TextureIdMapValueType = std::pair<std::string_view, std::string_view>;
 constexpr EnumMap<Type, TextureIdMapValueType> kTextureIdMap

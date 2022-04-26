@@ -10,13 +10,15 @@ namespace OpenLabora
 namespace plot
 {
 
-void InitializeSpriteComponent(Plot&, IResourceManager::Ptr);
+void initializeSpriteComponent(Plot&, IResourceManager::Ptr,
+                               std::string_view id);
 
-Plot create(Type type, TileSpan span, sf::Vector2f position,
-            bool alternative, IResourceManager::Ptr res_manager)
+Plot create(Type type, TileSpan span, const sf::Vector2f& position,
+            bool alternative, IResourceManager::Ptr res_manager,
+            std::string_view id = "")
 {
     auto plot = Plot{ position, { span, type, alternative }, {} };
-    InitializeSpriteComponent(plot, res_manager);
+    initializeSpriteComponent(plot, res_manager, id);
     return plot;
 }
 
@@ -38,10 +40,14 @@ Plot createCentralInitial(const sf::Vector2f& position,
     const auto span =
         alternative ? kInitialCentralPlotSpan : kInitialCentralPlotAltSpan;
 
-    return create(Type::Central, span, position, alternative, res_manager);
+    const auto id =
+        alternative ? kCentralInitTextureName : kCentralInitAltTextureName;
+
+    return create(Type::Central, span, position, alternative, res_manager, id);
 };
 
-void InitializeSpriteComponent(Plot& plot, IResourceManager::Ptr res_manager)
+void initializeSpriteComponent(Plot& plot, IResourceManager::Ptr res_manager,
+                               std::string_view id)
 {
     auto&& plot_component = ecs::getComponent<PlotComponent>(plot);
     auto&& position = ecs::getComponent<PositionComponent>(plot);
@@ -50,7 +56,10 @@ void InitializeSpriteComponent(Plot& plot, IResourceManager::Ptr res_manager)
     const auto type = plot_component.GetType();
 
     const auto ids = kTextureIdMap.Get(type);
-    const auto id = plot_component.IsAlternative() ? ids.first : ids.second;
+
+    if (id.empty()) {
+        id = plot_component.IsAlternative() ? ids.first : ids.second;
+    }
 
     sprite_component.SetPosition(position.position);
 
