@@ -83,6 +83,7 @@ set(headers
 set(test_sources
     # Misc
     src/Misc/PtrViewTests.cpp
+    src/Misc/RangeWrapperTests.cpp
     # Game systems
     src/ApplicationTests.cpp
     # Components
