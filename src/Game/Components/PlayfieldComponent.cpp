@@ -69,7 +69,7 @@ void PlayfieldComponent::AddPlotToBottom(Plot&& plot)
 bool PlayfieldComponent::IsPlotsLimitReached(plot::Type type) const
 {
     assert(type >= plot::Type::Begin && type < plot::Type::End);
-    const auto&& plots = mPlots.find(type);
+    auto&& plots = mPlots.find(type);
     if (plots == mPlots.end()) {
         return false;
     }
