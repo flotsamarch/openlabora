@@ -2,7 +2,7 @@
 #define TESTAPPSTATE_HPP_
 
 #include "AppState/AppState.hpp"
-#include "GameState/NoModel.hpp"
+#include "GameState/Model/NoModel.hpp"
 #include "GameState/ControllerMocks.hpp"
 #include "GameState/ViewMocks.hpp"
 

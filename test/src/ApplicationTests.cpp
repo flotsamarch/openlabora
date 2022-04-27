@@ -67,44 +67,55 @@ using Ttd2 = TransitionToDefault<TestState2>::Impl<T, Y>;
 template<class T, class Y>
 using TtdFinal = TransitionToDefault<TestStateFinal>::Impl<T, Y>;
 
-TEST(ApplicationStatesTests, IsSameStateBasic)
+using State1 = std::variant<TestState1>;
+using State1Id = std::variant<TestState1Id>;
+
+TEST(ApplicationStatesTests, IsSameState_OnlyState)
 {
-    using State1 = std::variant<TestState1>;
-    using State2 = std::variant<TestState2>;
-    using StateFinal = std::variant<TestStateFinal>;
-
-    using State1Id = std::variant<TestState1Id>;
-    using State2Id = std::variant<TestState2Id>;
-    using StateFinalId = std::variant<TestStateFinalId>;
-
     TestApp<Ttd1, State1, State1Id> app_in_state_1;
-    TestApp<Ttd2, State2, State2Id> app_in_state_2;
-    TestApp<TtdFinal, StateFinal, StateFinalId> app_in_state_final;
+
+    ASSERT_TRUE(app_in_state_1.IsSameState<TestState1>());
+}
+
+TEST(ApplicationStatesTests, IsSameState_StateSuite)
+{
     TestApp<TestTransitions, TestState, TestStateIds> app_all_states;
 
-    EXPECT_TRUE(app_in_state_1.IsSameState<TestState1>());
-    EXPECT_TRUE(app_in_state_1.IsFinalState());
-    EXPECT_TRUE(app_in_state_2.IsSameState<TestState2>());
-    EXPECT_TRUE(app_in_state_2.IsFinalState());
-    EXPECT_TRUE(app_in_state_final.IsSameState<TestStateFinal>());
-    EXPECT_TRUE(app_in_state_final.IsFinalState());
     EXPECT_TRUE(app_all_states.IsSameState<TestState1>());
-    EXPECT_FALSE(app_all_states.IsFinalState());
     EXPECT_FALSE(app_all_states.IsSameState<TestState2>());
     ASSERT_FALSE(app_all_states.IsSameState<TestStateFinal>());
 }
 
-TEST(ApplicationStatesTests, ChangeState)
+TEST(ApplicationStatesTests, IsFinalState_OnlyState)
+{
+    TestApp<Ttd1, State1, State1Id> app_in_state_1;
+
+    ASSERT_TRUE(app_in_state_1.IsFinalState());
+}
+
+TEST(ApplicationStatesTests, IsFinalState_StateSuite)
+{
+    TestApp<TestTransitions, TestState, TestStateIds> app_all_states;
+
+    ASSERT_FALSE(app_all_states.IsFinalState());
+}
+
+TEST(ApplicationStatesTests, ChangeState_NonFinal)
 {
     TestApp<TestTransitions, TestState, TestStateIds> app;
-    EXPECT_TRUE(app.IsSameState<TestState1>());
-    EXPECT_FALSE(app.IsFinalState());
 
     app.ChangeState(TestState2Id{});
+
     EXPECT_TRUE(app.IsSameState<TestState2>());
     EXPECT_FALSE(app.IsFinalState());
+}
+
+TEST(ApplicationStatesTests, ChangeState_ToFinal)
+{
+    TestApp<TestTransitions, TestState, TestStateIds> app;
 
     app.ChangeState(TestStateFinalId{});
+
     EXPECT_TRUE(app.IsFinalState());
     ASSERT_TRUE(app.IsSameState<TestStateFinal>());
 }
@@ -185,7 +196,7 @@ TEST(ApplicationStatesTests, ChangeStateRemovesWidgets)
     ASSERT_NO_FATAL_FAILURE(app.ChangeState(TestStateFinalId{}));
 }
 
-TEST(ApplicationEventHandlingTests, HandleEventsBasic)
+TEST(ApplicationEventHandlingTests, HandleEvents_Basic)
 {
     TestApp<TestTransitions,
             TestState,
@@ -225,7 +236,7 @@ TEST(ApplicationEventHandlingTests, HandleEventsBasic)
     ASSERT_NO_FATAL_FAILURE(app.HandleEvents());
 }
 
-TEST(ApplicationEventHandlingTests, HandleEventsGuiConsumes)
+TEST(ApplicationEventHandlingTests, HandleEvents_GuiConsumes)
 {
     TestApp<TestTransitions,
             TestState,

@@ -81,13 +81,15 @@ set(headers
 )
 
 set(test_sources
-    # src/ApplicationTests.cpp
+    # Misc
+    src/Misc/PtrViewTests.cpp
+    # Game systems
+    src/ApplicationTests.cpp
     # Components
     src/Game/Components/PlotComponentTests.cpp
     src/Game/Components/PlayfieldComponentTests.cpp
     # Gameplay classes
     src/RendererTests.cpp
-    src/Misc/PtrViewTests.cpp
     src/Game/TileTests.cpp
     src/Game/PlotTests.cpp
     src/Game/PlayfieldTests.cpp
