@@ -10,11 +10,11 @@ namespace OpenLabora
 {
 
 /**
- * EnumMap - associative container that contains key-value pairs. Enum members
- * are used as keys.
+ * EnumMap - associative container for key-value pairs where keys are enumerator
+ * identifiers.
  *
  * @tparam TEnumKey - Enum to use as keys. Enum must be contiguous. Enum must
- * contain members ::Begin and ::End to help calculate its size.
+ * contain members ::Begin and ::End for size calculation
  *
  * @tparam TValue - Type of mapped values
  */
@@ -30,8 +30,11 @@ class EnumMap final
 {
     using Item = std::pair<TEnumKey, TValue>;
 
+    static constexpr auto Begin = TEnumKey::Begin;
+    static constexpr auto End = TEnumKey::End;
+
     static constexpr size_t kItemCount =
-        static_cast<size_t>(TEnumKey::End) - static_cast<size_t>(TEnumKey::Begin);
+        static_cast<size_t>(End) - static_cast<size_t>(Begin);
 
     std::array<TValue, kItemCount> mItems;
 
@@ -53,6 +56,8 @@ public:
 
         return mItems[static_cast<size_t>(key)];
     }
+
+    EnumMap() : mItems{} {};
 
     // @arg list - initializer that contains ALL keys of enum and maps all values
     constexpr EnumMap(const std::initializer_list<Item>& list)
