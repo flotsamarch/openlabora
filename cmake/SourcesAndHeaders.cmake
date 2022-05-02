@@ -85,6 +85,7 @@ set(test_sources
     src/Misc/PtrViewTests.cpp
     src/Misc/RangeWrapperTests.cpp
     src/Misc/EnumMapTests.cpp
+    src/Misc/UIDTests.cpp
     # Game systems
     src/ApplicationTests.cpp
     # Components
