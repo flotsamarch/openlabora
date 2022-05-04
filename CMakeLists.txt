@@ -43,10 +43,21 @@ if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
 endif()
 
 #
-# Enable package managers
+# Save user config
 #
+include(cmake/UserConfig.cmake OPTIONAL RESULT_VARIABLE USER_CONFIG_FOUND)
+if(USER_CONFIG_FOUND STREQUAL NOTFOUND)
+  file(TO_CMAKE_PATH ${CMAKE_TOOLCHAIN_FILE} CMAKE_TOOLCHAIN_FILE)
+  configure_file(
+    ${CMAKE_CURRENT_LIST_DIR}/cmake/UserConfig.cmake.in
+    ${CMAKE_CURRENT_LIST_DIR}/cmake/UserConfig.cmake
+    @ONLY
+  )
+endif()
 
-#include(cmake/Conan.cmake)
+#
+# Enable package manager
+#
 include(cmake/Vcpkg.cmake)
 
 #
@@ -112,7 +123,7 @@ verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}
 #    dependency2 ...
 #    ${PROJECT_NAME}_PROJECT_OPTIONS
 #    ${PROJECT_NAME}_PROJECT_WARNINGS
-#)
+# )
 #if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
 #  target_link_libraries(
 #    ${PROJECT_NAME}_LIB

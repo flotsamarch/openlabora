@@ -14,15 +14,12 @@ option(${PROJECT_NAME}_WARNINGS_AS_ERRORS "Treat compiler warnings as errors." O
 #
 # Package managers
 #
-# Currently supporting: Conan, Vcpkg.
 
-#option(${PROJECT_NAME}_ENABLE_CONAN "Enable the Conan package manager for this project." OFF)
 option(${PROJECT_NAME}_ENABLE_VCPKG "Enable the Vcpkg package manager for this project." ON)
 
 #
 # Unit testing
 #
-# Currently supporting: GoogleTest, Catch2.
 
 option(${PROJECT_NAME}_ENABLE_UNIT_TESTING "Enable unit tests for the projects (from the `test` subfolder)." ON)
 
