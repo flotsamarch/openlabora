@@ -2,6 +2,7 @@
 #define RESOURCEMANAGER_HPP_
 
 #include <unordered_map>
+#include <filesystem>
 #include "IResourceManager.hpp"
 
 namespace OpenLabora
@@ -12,10 +13,18 @@ class ResourceManager final : public IResourceManager
     std::unordered_map<std::string, sf::Texture> mTextures;
 
     static constexpr auto kLoadErrorFormat =
-        std::string_view{"Unable to load texture from file: {}"};
+        std::string_view{ "Unable to load texture from file: {}" };
+
+    static constexpr auto kMalformedCommandLine =
+        std::string_view{ "Malformed command line arguments" };
+
+    static constexpr auto kNoResourceDirectory =
+        std::string_view{ "Unable to find resource directory" };
+
+    static constexpr auto kResourceDirectoryName = std::string_view{ "res/" };
 
 public:
-    ResourceManager();
+    ResourceManager(const std::filesystem::path&);
 
     const sf::Texture&
     GetTextureOrDefault(std::string_view name) const override;

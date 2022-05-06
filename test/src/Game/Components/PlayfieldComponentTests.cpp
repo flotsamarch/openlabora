@@ -14,8 +14,9 @@ using ::testing::Return;
 
 class ResManagerConfig : public ::testing::Test
 {
+    using RMM = IResourceManagerMock;
 protected:
-    ResManagerPtr mResManager{ std::make_shared<IResourceManagerMock>() };
+    ResManagerPtr mResManager{ std::make_shared<RMM>(std::filesystem::path{}) };
     sf::Texture mTexture{};
 
 public:

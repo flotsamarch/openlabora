@@ -4,6 +4,7 @@
 #include <memory>
 #include <variant>
 #include <chrono>
+#include <filesystem>
 #include "IApplication.hpp"
 #include "GameState/Model/Model.hpp"
 #include "Misc/PtrView.hpp"
@@ -45,7 +46,9 @@ class Application final : public IApplication<TStateIdsVariant>
     TStatesVariant mState = *std::visit(mTransitions, TStateIdsVariant{});
 
 public:
-    Application() = default;
+    Application(const std::filesystem::path& path) :
+        mResManager{ std::make_shared<TResourceManager>(path) } {}
+
     Application(const Application&) = delete;
     Application(Application&&) = delete;
     Application& operator=(const Application&) = delete;

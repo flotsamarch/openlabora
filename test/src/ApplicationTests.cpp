@@ -72,14 +72,14 @@ using State1Id = std::variant<TestState1Id>;
 
 TEST(ApplicationStatesTests, IsSameState_OnlyState)
 {
-    TestApp<Ttd1, State1, State1Id> app_in_state_1;
+    TestApp<Ttd1, State1, State1Id> app_in_state_1{{}};
 
     ASSERT_TRUE(app_in_state_1.IsSameState<TestState1>());
 }
 
 TEST(ApplicationStatesTests, IsSameState_StateSuite)
 {
-    TestApp<TestTransitions, TestState, TestStateIds> app_all_states;
+    TestApp<TestTransitions, TestState, TestStateIds> app_all_states{{}};
 
     EXPECT_TRUE(app_all_states.IsSameState<TestState1>());
     EXPECT_FALSE(app_all_states.IsSameState<TestState2>());
@@ -88,21 +88,21 @@ TEST(ApplicationStatesTests, IsSameState_StateSuite)
 
 TEST(ApplicationStatesTests, IsFinalState_OnlyState)
 {
-    TestApp<Ttd1, State1, State1Id> app_in_state_1;
+    TestApp<Ttd1, State1, State1Id> app_in_state_1{{}};
 
     ASSERT_TRUE(app_in_state_1.IsFinalState());
 }
 
 TEST(ApplicationStatesTests, IsFinalState_StateSuite)
 {
-    TestApp<TestTransitions, TestState, TestStateIds> app_all_states;
+    TestApp<TestTransitions, TestState, TestStateIds> app_all_states{{}};
 
     ASSERT_FALSE(app_all_states.IsFinalState());
 }
 
 TEST(ApplicationStatesTests, ChangeState_NonFinal)
 {
-    TestApp<TestTransitions, TestState, TestStateIds> app;
+    TestApp<TestTransitions, TestState, TestStateIds> app{{}};
 
     app.ChangeState(TestState2Id{});
 
@@ -112,7 +112,7 @@ TEST(ApplicationStatesTests, ChangeState_NonFinal)
 
 TEST(ApplicationStatesTests, ChangeState_ToFinal)
 {
-    TestApp<TestTransitions, TestState, TestStateIds> app;
+    TestApp<TestTransitions, TestState, TestStateIds> app{{}};
 
     app.ChangeState(TestStateFinalId{});
 
@@ -130,7 +130,7 @@ TEST(ApplicationTests, MainLoop)
 
     TestApp<NiceTransitions,
             NiceState,
-            TestStateIds> app{};
+            TestStateIds> app{{}};
 
     auto&& renderer = app.GetRenderer();
     auto&& state = app.GetState();
@@ -167,7 +167,7 @@ TEST(ApplicationStatesTests, FinalStateStopsApp)
 {
     TestApp<NiceTransitions,
             NiceState,
-            TestStateIds> app{};
+            TestStateIds> app{{}};
 
     auto&& renderer = app.GetRenderer();
 
@@ -185,7 +185,7 @@ TEST(ApplicationStatesTests, ChangeStateRemovesWidgets)
 {
     TestApp<NiceTransitions,
             NiceState,
-            TestStateIds> app{};
+            TestStateIds> app{{}};
 
     auto&& renderer = app.GetRenderer();
 
@@ -200,7 +200,7 @@ TEST(ApplicationEventHandlingTests, HandleEvents_Basic)
 {
     TestApp<TestTransitions,
             TestState,
-            TestStateIds> app{};
+            TestStateIds> app{{}};
 
     constexpr auto poll_event_calls{ 5u };
 
@@ -240,7 +240,7 @@ TEST(ApplicationEventHandlingTests, HandleEvents_GuiConsumes)
 {
     TestApp<TestTransitions,
             TestState,
-            TestStateIds> app{};
+            TestStateIds> app{{}};
 
     constexpr auto poll_event_pack_size{ 3u };
     constexpr auto handle_event_calls{ 10u };

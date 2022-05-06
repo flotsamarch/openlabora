@@ -7,29 +7,50 @@
 namespace OpenLabora
 {
 
-ResourceManager::ResourceManager()
+ResourceManager::ResourceManager(const std::filesystem::path& current_path)
 {
-    auto dir = std::filesystem::directory_entry("res/");
+    if (!current_path.has_parent_path()) {
+        throw std::runtime_error(kMalformedCommandLine.data());
+    }
+
+    auto path = current_path.parent_path();
+    auto dir = std::filesystem::directory_entry();
+
+    for (size_t count{ 0u }; path.has_parent_path(); ++count) {
+        dir = std::filesystem::directory_entry(path / kResourceDirectoryName);
+        if (dir.is_directory()) {
+            break;
+        }
+
+        if (count > 3) {
+            throw std::runtime_error(kNoResourceDirectory.data());
+        }
+
+        path = path.parent_path();
+    }
+
     auto suffix = std::string_view(".png");
 
-    assert(dir.is_directory());
-
-    for (auto&& file : std::filesystem::directory_iterator{dir}) {
+    for (auto&& file : std::filesystem::directory_iterator{ dir }) {
         if (!file.is_regular_file()) {
             continue;
         }
-        const auto&& path = file.path().string();
-        if (path.substr(path.size() - suffix.size()) == suffix) {
-            const auto&& filename = file.path().filename().string();
+
+        auto filepath = file.path().string();
+
+        if (filepath.substr(filepath.size() - suffix.size()) == suffix) {
+            auto filename = file.path().filename().string();
             auto texture_name =
                 filename.substr(0, filename.size() - suffix.size());
             auto texture = sf::Texture{};
+
             if (!texture.loadFromFile(file.path().string())) {
                 // TODO: Exception safety pass
-                auto message = std::stringstream{kLoadErrorFormat.data()};
+                auto message = std::stringstream{ kLoadErrorFormat.data() };
                 message << filename;
                 throw std::runtime_error{ message.str() };
             }
+
             mTextures[texture_name] = texture;
         }
     }
