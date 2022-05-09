@@ -34,7 +34,7 @@ Dependencies are managed with Vcpkg, so this section just provides information o
 ### Build guide
 
 #### Windows and MSVC
-1. Download and install project dependencies. Ensure [path to CMake]/bin is in your PATH environment variable
+1. Download and install project dependencies. Ensure `[path to CMake]/bin` is in your `PATH` environment variable
 2. Use cmd, PowerShell or any other terminal of your choice to clone the repository:
 `git clone https://github.com/flotsamarch/openlabora` or download sources as zip
 3. Enter project directory `cd openlabora`
@@ -47,7 +47,7 @@ Dependencies are managed with Vcpkg, so this section just provides information o
 TBD
 
 ### Notes
-After initial configuration CMAKE_TOOLCHAIN_FILE and VCPKG_TARGET_TRIPLET variables are saved into cmake/UserConfig.cmake file. This is done to remove the need to manually provide these arguments every time you need to clear cache and reconfigure. These values generally should never change. If you provide different values in the subsequent runs they will be used but not saved. In order to save new default values delete cmake/UserConfig.cmake file and run cmake configure again with the desired values.
+After initial configuration `CMAKE_TOOLCHAIN_FILE` and `VCPKG_TARGET_TRIPLET` variables are saved into `cmake/UserConfig.cmake` file. This is done to remove the need to manually provide these arguments every time you need to clear cache and reconfigure. These values generally should never change. If you provide different values in the subsequent runs they will be used but not saved. In order to save new default values delete `cmake/UserConfig.cmake` file and run cmake configure again with the desired values.
 
 ## Tests
 Although unit testing is generally considered a bad practice in videogame industry I wanted my project to be done right in a classic software engineering way. To run tests execute the following command in the `build/` directory:
