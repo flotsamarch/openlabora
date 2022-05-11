@@ -34,14 +34,13 @@ set(headers
     include/Game/Components/SpriteComponent.hpp
     include/Game/Components/PlayfieldComponent.hpp
     include/Game/Components/PlotComponent.hpp
+    include/Game/Components/EffectiveInteractionAreaComponent.hpp
+    include/Game/Components/SelectableComponent.hpp
+    include/Game/Components/SignalComponent.hpp
     # Gameplay classes
     include/Game/Tile.hpp
     include/Game/Plot.hpp
     include/Game/Playfield.hpp
-    # include/Game/Selectable.hpp
-    # include/Game/IEntity.hpp
-    # include/Game/Entity.hpp
-    # include/Game/SelectableEntity.hpp
     # include/Game/ExpansionMarker.hpp
     # include/Game/MarkerManager.hpp
     # include/Game/Location.hpp
@@ -58,7 +57,6 @@ set(headers
     include/GameState/Controllers/GCMainMenu.hpp
     include/GameState/Controllers/GCDuel.hpp
     # GUI
-    # include/GUI/ClickableArea.hpp
     # include/GUI/ExpansionWindow.hpp
     # Misc
     include/Misc/RangeWrapper.hpp
@@ -91,6 +89,9 @@ set(test_sources
     # Components
     src/Game/Components/PlotComponentTests.cpp
     src/Game/Components/PlayfieldComponentTests.cpp
+    src/Game/Components/EffectiveInteractionAreaComponentTests.cpp
+    src/Game/Components/SelectableComponentTests.cpp
+    src/Game/Components/SignalComponentTests.cpp
     # Gameplay classes
     src/RendererTests.cpp
     src/Game/TileTests.cpp

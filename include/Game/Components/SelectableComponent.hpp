@@ -10,39 +10,31 @@
 //
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-#ifndef UID_HPP_
-#define UID_HPP_
-#include <cstdint>
-#include <limits>
-#include <stdexcept>
-#include "EnumMap.hpp"
+#ifndef SELECTABLECOMPONENT_HPP_
+#define SELECTABLECOMPONENT_HPP_
 
 namespace OpenLabora
 {
 
-namespace uid
+class SelectableComponent final
 {
+    bool bIsSelected{ false };
+    bool bHasBeenEntered{ false };
 
-using Uid = uint64_t;
+public:
+    bool IsSelected() const noexcept { return bIsSelected; }
 
-enum Type
-{
-    Begin, General = Begin, Serial, End
+    bool HasBeenEntered() const noexcept { return bHasBeenEntered; }
+
+    void Select() noexcept { bIsSelected = true; }
+
+    void Deselect() noexcept { bIsSelected = false; }
+
+    void Enter() noexcept { bHasBeenEntered = true; }
+
+    void Leave() noexcept { bHasBeenEntered = false; }
 };
-
-inline Uid getUid(Type type = Type::General)
-{
-    static EnumMap<Type, Uid> ids;
-
-    auto&& id = ids.Get(type);
-    if (id == std::numeric_limits<Uid>::max()) {
-        throw std::overflow_error("Unable to generate UID: type overflow");
-    }
-    return id++;
-}
-
-} // namespace uid
 
 } // namespace OpenLabora
 
-#endif // UID_HPP_
+#endif // SELECTABLECOMPONENT_HPP_
