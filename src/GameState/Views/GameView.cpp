@@ -171,32 +171,6 @@ void GameView::HandleEvent(const sf::Event& evt)
         }
         case sf::Event::MouseButtonReleased:
         {
-            // TODO: reimplement in ECS 11.04.2022
-            #if 0
-            if (evt.mouseButton.button == sf::Mouse::Left) {
-                auto begin = mModel->GetSelectableEntities().begin();
-                auto end = mModel->GetSelectableEntities().end();
-                for (auto it_entity = begin; it_entity != end; ++it_entity) {
-                    auto entity = *it_entity;
-                    if (entity->WasEntered()) {
-                        // This is not too bad but perhaps there is a better way
-                        using Marker = ExpansionMarker;
-                        auto marker = std::dynamic_pointer_cast<Marker>(entity);
-                        if (marker != nullptr) {
-                            mSelectedMarker = marker;
-                        }
-                        entity->Select();
-                    } else {
-                        entity->Deselect();
-                        auto selected_marker = mSelectedMarker.lock();
-                        if (entity == selected_marker) {
-                            selected_marker = nullptr;
-                        }
-                    }
-                }
-            }
-            #endif
-
             #if 0 // TODO: Reimplement Build Mode
             if (evt.mouseButton.button == sf::Mouse::Left && bBuildModeEnabled) {
                 auto pf_position = mPlayfields[Player1]->GetPosition();
@@ -217,26 +191,6 @@ void GameView::HandleEvent(const sf::Event& evt)
 
 void GameView::Update([[maybe_unused]]const float update_delta_seconds)
 {
-    #if 0 // TODO: Reimplement selectable
-    if (!mMenuVBox->isVisible() && !mExpansionWindow.GetWindow()->isVisible())
-    {
-        auto mouse_world_pos =
-            mWindow.MapScreenToWorldCoords(mMouseCoords);
-
-        // TODO Take Z-coordinate into account
-        auto begin = mModel->GetSelectableEntities().begin();
-        auto end = mModel->GetSelectableEntities().end();
-        for (auto it_entity = begin; it_entity != end; ++it_entity) {
-            auto entity = *it_entity;
-            if (entity->IsPointInRegisteringArea(mouse_world_pos)) {
-                entity->OnHover();
-            } else {
-                entity->OnOut();
-            }
-        }
-    }
-    #endif
-
     #if 0 // TODO: Reimplement Build Mode.
     assert(!mState.expired());
     auto position = sf::Vector2i(mMouseX, mMouseY);

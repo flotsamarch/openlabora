@@ -49,14 +49,14 @@ ExpansionWindow::ExpansionWindow(GameController::Ptr controller)
     mWindow->setVisible(false);
 }
 
-void ExpansionWindow::SetState(Plot::PlotType type)
+void ExpansionWindow::SetState(plot::Type type)
 {
     const auto vbox_padding_ratio = 3.f;
     const auto buttons_ratio = 30.f;
 
     mMainVBox->removeAllWidgets();
 
-    if (type != Plot::PlotType::Central) {
+    if (type != plot::Type::Central) {
         mWindow->setSize("15%", "10%");
         auto remaining_ratio = mWindow->getClientSize().y;
         remaining_ratio -= buttons_ratio + 3 * vbox_padding_ratio;

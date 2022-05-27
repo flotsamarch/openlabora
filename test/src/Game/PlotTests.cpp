@@ -18,7 +18,7 @@
 namespace Test
 {
 
-using OpenLabora::plot::Plot;
+using OpenLabora::Plot;
 using OpenLabora::plot::Type;
 using OpenLabora::plot::kTextureIdMap;
 using testing::Return;
@@ -29,79 +29,79 @@ using RMM = IResourceManagerMock;
 
 TEST(PlotTests, Create_TextureNotRegistered)
 {
-    auto&& res_manager = std::make_shared<RMM>(std::filesystem::path{});
+    auto&& resource_mgr = std::make_shared<RMM>(std::filesystem::path{});
     auto&& id = kTextureIdMap.Get(Type::Coastal).first;
     auto&& texture = sf::Texture{};
 
-    EXPECT_CALL(*res_manager, GetTexture(StrEq(id)))
+    EXPECT_CALL(*resource_mgr, GetTexture(StrEq(id)))
         .WillOnce(Return(RMM::OptionalTextureRef{}));
 
-    EXPECT_CALL(*res_manager, GetTextureOrDefault)
+    EXPECT_CALL(*resource_mgr, GetTextureOrDefault)
         .WillRepeatedly(ReturnRef(texture));
 
-    EXPECT_CALL(*res_manager, RegisterTexture(StrEq(id), _))
+    EXPECT_CALL(*resource_mgr, RegisterTexture(StrEq(id), _))
         .WillOnce(ReturnRef(texture));
 
     auto plot = OpenLabora::plot::create(Type::Coastal, sf::Vector2f{},
-                                         res_manager);
+                                         resource_mgr);
 }
 
 TEST(PlotTests, Create_TextureIsRegistered)
 {
-    auto&& res_manager = std::make_shared<RMM>(std::filesystem::path{});
+    auto&& resource_mgr = std::make_shared<RMM>(std::filesystem::path{});
     auto&& id = kTextureIdMap.Get(Type::Coastal).first;
     auto&& texture = sf::Texture{};
 
-    EXPECT_CALL(*res_manager, GetTexture(StrEq(id)))
+    EXPECT_CALL(*resource_mgr, GetTexture(StrEq(id)))
         .WillOnce(Return(RMM::OptionalTextureRef{ texture }));
 
-    EXPECT_CALL(*res_manager, GetTextureOrDefault)
+    EXPECT_CALL(*resource_mgr, GetTextureOrDefault)
         .Times(0);
 
-    EXPECT_CALL(*res_manager, RegisterTexture)
+    EXPECT_CALL(*resource_mgr, RegisterTexture)
         .Times(0);
 
     auto plot = OpenLabora::plot::create(Type::Coastal, sf::Vector2f{},
-                                         res_manager);
+                                         resource_mgr);
 }
 
 TEST(PlotTests, CreateCentralInitial_TextureNotRegistered)
 {
-    auto&& res_manager = std::make_shared<RMM>(std::filesystem::path{});
+    auto&& resource_mgr = std::make_shared<RMM>(std::filesystem::path{});
     auto&& id = OpenLabora::plot::kCentralInitAltTextureName;
     auto&& texture = sf::Texture{};
 
-    EXPECT_CALL(*res_manager, GetTexture(StrEq(id)))
+    EXPECT_CALL(*resource_mgr, GetTexture(StrEq(id)))
         .WillOnce(Return(RMM::OptionalTextureRef{}));
 
-    EXPECT_CALL(*res_manager, GetTextureOrDefault)
+    EXPECT_CALL(*resource_mgr, GetTextureOrDefault)
         .WillRepeatedly(ReturnRef(texture));
 
-    EXPECT_CALL(*res_manager, RegisterTexture(StrEq(id), _))
+    EXPECT_CALL(*resource_mgr, RegisterTexture(StrEq(id), _))
         .WillOnce(ReturnRef(texture));
 
     auto plot = OpenLabora::plot::createCentralInitial(sf::Vector2f{},
-                                                       res_manager,
+                                                       resource_mgr,
                                                        true);
 }
 
 TEST(PlotTests, CreateCentralInitial_TextureIsRegistered)
 {
-    auto&& res_manager = std::make_shared<RMM>(std::filesystem::path{});
+    auto&& resource_mgr = std::make_shared<RMM>(std::filesystem::path{});
     auto&& id = OpenLabora::plot::kCentralInitAltTextureName;
     auto&& texture = sf::Texture{};
 
-    EXPECT_CALL(*res_manager, GetTexture(StrEq(id)))
+    EXPECT_CALL(*resource_mgr, GetTexture(StrEq(id)))
         .WillOnce(Return(RMM::OptionalTextureRef{ texture }));
 
-    EXPECT_CALL(*res_manager, GetTextureOrDefault)
+    EXPECT_CALL(*resource_mgr, GetTextureOrDefault)
         .Times(0);
 
-    EXPECT_CALL(*res_manager, RegisterTexture)
+    EXPECT_CALL(*resource_mgr, RegisterTexture)
         .Times(0);
 
     auto plot = OpenLabora::plot::createCentralInitial(sf::Vector2f{},
-                                                       res_manager,
+                                                       resource_mgr,
                                                        true);
 }
 

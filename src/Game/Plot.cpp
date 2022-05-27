@@ -13,7 +13,6 @@
 #include <cassert>
 #include <array>
 #include <algorithm>
-#include <stdexcept>
 #include "Game/Plot.hpp"
 
 namespace OpenLabora
@@ -26,27 +25,27 @@ void initializeSpriteComponent(Plot&, IResourceManager::Ptr,
                                std::string_view id);
 
 Plot create(Type type, TileSpan span, const sf::Vector2f& position,
-            bool alternative, IResourceManager::Ptr res_manager,
+            bool alternative, IResourceManager::Ptr resource_mgr,
             std::string_view id = "")
 {
     auto plot = Plot{ position, { span, type, alternative }, {} };
-    initializeSpriteComponent(plot, res_manager, id);
+    initializeSpriteComponent(plot, resource_mgr, id);
     return plot;
 }
 
 // Use to create plots during gameplay
 Plot create(Type type, const sf::Vector2f& position,
-            IResourceManager::Ptr res_manager,
+            IResourceManager::Ptr resource_mgr,
             bool alternative)
 {
     const auto spans = kPlotTypeToSpans.Get(type);
     return create(type, alternative ? spans.second : spans.first,
-                  position, alternative, res_manager);
+                  position, alternative, resource_mgr);
 };
 
 // NOT the same as create(Type::Coastal, ...) - Uses special spans
 Plot createCentralInitial(const sf::Vector2f& position,
-                          IResourceManager::Ptr res_manager,
+                          IResourceManager::Ptr resource_mgr,
                           bool alternative)
 {
     const auto span =
@@ -55,14 +54,15 @@ Plot createCentralInitial(const sf::Vector2f& position,
     const auto id =
         alternative ? kCentralInitAltTextureName : kCentralInitTextureName;
 
-    return create(Type::Central, span, position, alternative, res_manager, id);
+    return create(Type::Central, span, position, alternative, resource_mgr, id);
 };
 
-void initializeSpriteComponent(Plot& plot, IResourceManager::Ptr res_manager,
+void initializeSpriteComponent(Plot& plot,
+                               IResourceManager::Ptr resource_mgr,
                                std::string_view id)
 {
     auto&& plot_component = ecs::getComponent<PlotComponent>(plot);
-    auto&& position = ecs::getComponent<PositionComponent>(plot);
+    auto&& pos_component = ecs::getComponent<PositionComponent>(plot);
     auto&& sprite_component = ecs::getComponent<SpriteComponent>(plot);
 
     const auto type = plot_component.GetType();
@@ -72,9 +72,9 @@ void initializeSpriteComponent(Plot& plot, IResourceManager::Ptr res_manager,
         id = plot_component.IsAlternative() ? ids.second : ids.first;
     }
 
-    sprite_component.SetPosition(position.position);
+    sprite_component.SetPosition(pos_component.position);
 
-    auto&& stored_texture = res_manager->GetTexture(id);
+    auto&& stored_texture = resource_mgr->GetTexture(id);
     if (!stored_texture) {
         const auto width = kPlotWidthTileCount.Get(type) * tile::kTileWidth;
 
@@ -89,7 +89,7 @@ void initializeSpriteComponent(Plot& plot, IResourceManager::Ptr res_manager,
 
             for (auto&& item : plot_component.GetTiles()) {
                 const auto texture_name = tile::kTileToTextureMap.Get(item);
-                auto&& texture = res_manager->GetTextureOrDefault(texture_name);
+                auto&& texture = resource_mgr->GetTextureOrDefault(texture_name);
                 sprite.setTexture(texture);
                 render_texture.draw(sprite);
                 sprite.move({tile::kTileWidth, 0.f});
@@ -98,7 +98,7 @@ void initializeSpriteComponent(Plot& plot, IResourceManager::Ptr res_manager,
 
         render_texture.display();
         auto&& registered_texture =
-            res_manager->RegisterTexture(id, render_texture.getTexture());
+            resource_mgr->RegisterTexture(id, render_texture.getTexture());
         sprite_component.SetTexture(registered_texture, true);
         return;
     }

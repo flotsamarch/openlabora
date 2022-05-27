@@ -10,6 +10,7 @@
 //
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+#include <cmath>
 #include "Game/Tile.hpp"
 
 namespace OpenLabora

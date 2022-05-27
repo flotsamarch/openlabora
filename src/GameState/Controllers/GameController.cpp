@@ -16,10 +16,10 @@ namespace OpenLabora
 {
 
 GameController::GameController(PtrView<IApplication<StateIdsVariant>> app,
-                               IResourceManager::Ptr res_manager,
+                               IResourceManager::Ptr resource_mgr,
                                Model::Ptr model,
                                uint32_t player_count)
-    : mApp { app }, mModel{ model }, mResManager{ res_manager }
+    : mApp{ app }, mModel{ model }, mResourceMgr{ resource_mgr }
 {
     auto pf_width = static_cast<float>(playfield::kMaxFieldWidth);
     auto pf_margin = pf_width * tile::kTileWidth + 3 * tile::kTileWidth;
@@ -28,7 +28,7 @@ GameController::GameController(PtrView<IApplication<StateIdsVariant>> app,
         auto position = sf::Vector2f{ 0.f, 0.f };
         pf.reset();
         if (player < player_count) {
-            pf = playfield::create(res_manager, position);
+            pf = playfield::create(resource_mgr, position);
             AddEntity(pf);
             position.x += pf_margin;
             player++;
@@ -53,6 +53,7 @@ void GameController::Update(const float update_delta_seconds)
     }
 
 }
+
 #if 0 // TODO: reimplement Build Mode
 void GameController::EnableBuildMode([[maybe_unused]]Location::LocationType type)
 {

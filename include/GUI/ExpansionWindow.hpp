@@ -70,7 +70,7 @@ public:
 
     Button::Ptr GetDeclineButton() { return mDeclineButton; }
 
-    void SetState(Plot::PlotType);
+    void SetState(plot::Type);
 
     void Show(bool show) { mWindow->setVisible(show); };
 

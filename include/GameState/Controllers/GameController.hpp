@@ -42,7 +42,7 @@ public:
 protected:
     PtrView<IApplication<StateIdsVariant>> mApp;
     Model::Ptr mModel;
-    IResourceManager::Ptr mResManager;
+    IResourceManager::Ptr mResourceMgr;
 
     #if 0 // TODO: multiplayer support
     std::shared_ptr<Playfield> GetActivePlayerPlayfieldInternal() noexcept
@@ -75,7 +75,7 @@ public:
     // TODO: Reimplement Build Mode
     // void EnableBuildMode(Location::LocationType);
 
-    std::shared_ptr<const playfield::Playfield>
+    const Playfield::PtrConst
     GetActivePlayerPlayfield() const noexcept
     { return mModel->GetPlayfield(Model::Player1); }
 
@@ -87,7 +87,10 @@ public:
     #endif
 
     IResourceManager::Ptr GetResourceManager() const noexcept
-    { return mResManager; }
+    { return mResourceMgr; }
+
+    void SetWorldMousePosition(const sf::Vector2f& position)
+    { mModel->SetWorldMousePosition(position); }
 };
 
 inline GameController::~GameController() {}

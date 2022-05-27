@@ -32,7 +32,7 @@ public:
 
     PtrView<IApplication<StateIdsVariant>> mApp;
     NoModel::Ptr mModel;
-    IResourceManager::Ptr mResManager;
+    IResourceManager::Ptr mResourceMgr;
 
     GCMainMenu(PtrView<IApplication<StateIdsVariant>>,
                IResourceManager::Ptr,

@@ -52,22 +52,22 @@ class Transitions final
         using MVCState = AppState<ModelT, ViewT, ControllerT>;
 
         auto model = std::make_shared<ModelT>();
-        auto ctlr = std::make_shared<ControllerT>(mApp, mResManager, model);
+        auto ctlr = std::make_shared<ControllerT>(mApp, mResourceMgr, model);
         auto view = std::make_unique<ViewT>(mApp, mWindow, ctlr, model);
         return MVCState{ model, std::move(view), ctlr };
     }
 
     PtrView<IApplication> mApp;
-    IResourceManager::Ptr mResManager;
+    IResourceManager::Ptr mResourceMgr;
     GameWindow<TGui, TWindow> mWindow;
 
 public:
     using StateOpt = std::optional<State>;
 
     Transitions(PtrView<IApplication> app,
-                IResourceManager::Ptr res_manager,
+                IResourceManager::Ptr resource_mgr,
                 GameWindow<TGui, TWindow> window)
-        : mApp{ app }, mResManager{ res_manager }, mWindow{ window }
+        : mApp{ app }, mResourceMgr{ resource_mgr }, mWindow{ window }
         {}
 
 // ----------------------- ADD ALL TRANSITIONS HERE -----------------------------

@@ -14,6 +14,7 @@
 #define COMPONENTCONTAINER_HPP_
 
 #include <tuple>
+#include <memory>
 #include "Misc/UID.hpp"
 
 namespace OpenLabora
@@ -25,6 +26,11 @@ class ComponentContainer final
     uid::Uid mId;
 
 public:
+    using Ptr = std::shared_ptr<ComponentContainer<TComponents...>>;
+    using PtrConst = std::shared_ptr<const ComponentContainer<TComponents...>>;
+    using WeakPtr = std::weak_ptr<ComponentContainer<TComponents...>>;
+    using WeakPtrConst = std::weak_ptr<const ComponentContainer<TComponents...>>;
+
     std::tuple<TComponents...> components;
 
     ComponentContainer(TComponents&&... args)

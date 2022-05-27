@@ -23,12 +23,12 @@ using TCC = TextureContainerComponent;
 namespace playfield
 {
 
-std::shared_ptr<Playfield> create(IResourceManager::Ptr res_manager,
+Playfield::Ptr create(IResourceManager::Ptr resource_mgr,
                                   const sf::Vector2f& init_pos)
 {
     using PC = PlayfieldComponent;
     auto playfield = std::make_shared<Playfield>(init_pos,
-                                                 PC{ init_pos, res_manager },
+                                                 PC{ init_pos, resource_mgr },
                                                  TCC{},
                                                  SpriteComponent{});
 
@@ -38,22 +38,20 @@ std::shared_ptr<Playfield> create(IResourceManager::Ptr res_manager,
     return playfield;
 }
 
-std::shared_ptr<Playfield> create(IResourceManager::Ptr res_manager,
+Playfield::Ptr create(IResourceManager::Ptr resource_mgr,
                                   float initial_x, float initial_y)
-{ return create(res_manager, { initial_x, initial_y }); }
+{ return create(resource_mgr, { initial_x, initial_y }); }
 
 } // namespace playfield
 
-using Playfield = playfield::Playfield;
-
-bool entityHandleEvent([[maybe_unused]]std::shared_ptr<Playfield> entity,
+bool entityHandleEvent([[maybe_unused]]Playfield::Ptr entity,
                        [[maybe_unused]]GameController::Ptr controller,
                        [[maybe_unused]]const sf::Event& event)
 {
     return false;
 }
 
-void entityUpdate(std::shared_ptr<Playfield> entity,
+void entityUpdate(Playfield::Ptr entity,
                   [[maybe_unused]]float update_delta_seconds,
                   GameController::Ptr controller)
 {

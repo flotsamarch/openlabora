@@ -16,8 +16,8 @@ namespace OpenLabora
 {
 
 GCDuel::GCDuel(PtrView<IApplication<StateIdsVariant>> app,
-               IResourceManager::Ptr res_manager,
+               IResourceManager::Ptr resource_mgr,
                Model::Ptr model)
-    : GameController(app, res_manager, model, 1) {} // TODO player_count = 2
+    : GameController(app, resource_mgr, model, 1) {} // TODO player_count = 2
 
 } // namespace OpenLabora

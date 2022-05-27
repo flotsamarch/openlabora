@@ -27,27 +27,27 @@ namespace OpenLabora
 
 class GameController;
 
-namespace playfield
-{
-
 using Playfield = ComponentContainer<ImmobileComponent,
                                      PlayfieldComponent,
                                      TextureContainerComponent,
                                      SpriteComponent>;
 
-std::shared_ptr<Playfield> create(IResourceManager::Ptr,
-                                  const sf::Vector2f& initial_position);
+namespace playfield
+{
 
-std::shared_ptr<Playfield> create(IResourceManager::Ptr,
-                                  float initial_x, float initial_y);
+Playfield::Ptr create(IResourceManager::Ptr,
+                      const sf::Vector2f& initial_position);
+
+Playfield::Ptr create(IResourceManager::Ptr,
+                      float initial_x, float initial_y);
 
 } // namespace playfield
 
-bool entityHandleEvent(std::shared_ptr<playfield::Playfield> entity,
+bool entityHandleEvent(Playfield::Ptr entity,
                        std::shared_ptr<GameController> controller,
                        const sf::Event& event);
 
-void entityUpdate(std::shared_ptr<playfield::Playfield> entity,
+void entityUpdate(Playfield::Ptr entity,
                   float update_delta_seconds,
                   std::shared_ptr<GameController> controller);
 

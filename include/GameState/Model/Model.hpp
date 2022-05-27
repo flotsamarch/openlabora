@@ -29,7 +29,6 @@ namespace OpenLabora
 class Model final
 {
     using EntityContainer = std::vector<Entity>;
-    using Playfield = playfield::Playfield;
 
     EntityContainer mEntities;
     model::DrawableContainer mDrawableObjects;

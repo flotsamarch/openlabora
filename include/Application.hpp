@@ -46,12 +46,12 @@ class Application final : public IApplication<TStateIdsVariant>
     TGui mGui{};
     TWindow mWindow{};
     TRenderer<TGui, TWindow> mRenderer{ PtrView(&mGui), PtrView(&mWindow) };
-    IResourceManager::Ptr mResManager = std::make_shared<TResourceManager>();
+    IResourceManager::Ptr mResourceMgr = std::make_shared<TResourceManager>();
 
     using IApplicationPtr = PtrView<IApplication<TStateIdsVariant>>;
     TTransitions<TGui, TWindow> mTransitions
     {
-        IApplicationPtr(this), mResManager,
+        IApplicationPtr(this), mResourceMgr,
         GameWindow<TGui, TWindow>{PtrView(&mGui), PtrView(&mWindow)}
     };
 
@@ -59,7 +59,7 @@ class Application final : public IApplication<TStateIdsVariant>
 
 public:
     Application(const std::filesystem::path& path) :
-        mResManager{ std::make_shared<TResourceManager>(path) } {}
+        mResourceMgr{ std::make_shared<TResourceManager>(path) } {}
 
     Application(const Application&) = delete;
     Application(Application&&) = delete;
@@ -79,7 +79,7 @@ public:
     bool IsFinalState() const noexcept
     { return mState.index() == std::variant_size_v<TStatesVariant> - 1; }
 
-    IResourceManager::Ptr GetResManager() const { return mResManager; }
+    IResourceManager::Ptr GetResourceMgr() const { return mResourceMgr; }
     TStatesVariant& GetState() noexcept { return mState; }
     TRenderer<TGui, TWindow>& GetRenderer() noexcept
     { return mRenderer; }

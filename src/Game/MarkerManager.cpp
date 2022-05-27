@@ -22,20 +22,20 @@ namespace OpenLabora
 MarkerManager::MarkerManager(GameController::Ptr controller)
     : mController{ controller }
 {
-    auto res_manager = controller->GetResourceManager();
+    auto resource_mgr = controller->GetResourceManager();
     // In case plot_type != PT::Central number of items in this map tells
     // if there are 2 or 1 plots in marker
-    auto coastal_plot = Plot{ Plot::kCoastalPlot, res_manager };
+    auto coastal_plot = Plot{ Plot::kCoastalPlot, resource_mgr };
     mPlotsForMarkerCreation.insert({PlotType::Coastal, coastal_plot});
     mPlotsForMarkerCreation.insert({PlotType::Coastal, coastal_plot});
 
-    auto central_plot = Plot{ Plot::kCentralPlot, res_manager };
-    auto central_plot_alt = Plot{ Plot::kCentralPlotAlt, res_manager };
+    auto central_plot = Plot{ Plot::kCentralPlot, resource_mgr };
+    auto central_plot_alt = Plot{ Plot::kCentralPlotAlt, resource_mgr };
     mPlotsForMarkerCreation.insert({PlotType::Central, central_plot});
     mPlotsForMarkerCreation.insert({PlotType::Central, central_plot_alt});
 
-    auto mountain_plot_bottom = Plot{ Plot::kMountainPlotBottom, res_manager };
-    auto mountain_plot_top = Plot{ Plot::kMountainPlotTop, res_manager };
+    auto mountain_plot_bottom = Plot{ Plot::kMountainPlotBottom, resource_mgr };
+    auto mountain_plot_top = Plot{ Plot::kMountainPlotTop, resource_mgr };
     mPlotsForMarkerCreation.insert({PlotType::Mountain, mountain_plot_bottom});
     mPlotsForMarkerCreation.insert({PlotType::Mountain, mountain_plot_top});
 }

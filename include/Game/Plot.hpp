@@ -22,15 +22,17 @@
 namespace OpenLabora
 {
 
+using Plot = ComponentContainer<PositionComponent,
+                                PlotComponent,
+                                SpriteComponent>;
+
+class GameController;
+
 namespace plot
 {
 
 constexpr size_t kPlotTypeCount
 { static_cast<size_t>(plot::Type::End) - static_cast<size_t>(plot::Type::Begin)};
-
-using Plot = ComponentContainer<PositionComponent,
-                                PlotComponent,
-                                SpriteComponent>;
 
 constexpr std::array kCoastalPlotTiles
 { tile::Type::Water, tile::Type::Coast };

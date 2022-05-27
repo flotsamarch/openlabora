@@ -12,6 +12,7 @@
 
 #include "Game/Components/PlayfieldComponent.hpp"
 #include "Game/Playfield.hpp"
+#include <cassert>
 
 namespace OpenLabora
 {
@@ -20,17 +21,17 @@ using TileInfo = tile::TileInfo;
 using PlotType = plot::Type;
 
 PlayfieldComponent::PlayfieldComponent(const sf::Vector2f& position,
-                                       IResourceManager::Ptr res_manager)
+                                       IResourceManager::Ptr resource_mgr)
 {
     const auto plot_width = plot::kPlotWidthTileCount.Get(PlotType::Coastal);
     const auto offset = sf::Vector2f{ plot_width * tile::kTileWidth,
                                       kInitialPlotOffsetY };
 
     auto init_pos = position + offset;
-    auto plot_top = plot::createCentralInitial(init_pos, res_manager);
+    auto plot_top = plot::createCentralInitial(init_pos, resource_mgr);
 
     init_pos.y += tile::kTileHeight;
-    auto plot_bottom = plot::createCentralInitial(init_pos, res_manager, true);
+    auto plot_bottom = plot::createCentralInitial(init_pos, resource_mgr, true);
 
     auto pos_component = ecs::getComponent<PositionComponent>(plot_top);
     pos_component.position = init_pos;

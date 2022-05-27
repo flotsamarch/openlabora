@@ -24,9 +24,9 @@
 namespace Test
 {
 
-using ResManagerPtr = IResourceManagerMock::Ptr;
+using ResourceMgrPtr = IResourceManagerMock::Ptr;
 using ::OpenLabora::playfield::create;
-using ::OpenLabora::playfield::Playfield;
+using ::OpenLabora::Playfield;
 using ::OpenLabora::ecs::getComponent;
 using ::OpenLabora::PtrView;
 using PlayfieldPtr = std::shared_ptr<Playfield>;
@@ -36,13 +36,13 @@ class PlayfieldTests : public ::testing::Test
 {
     using RMM = IResourceManagerMock;
 protected:
-    ResManagerPtr mResManager{ std::make_shared<RMM>(std::filesystem::path{}) };
+    RMM::Ptr mResourceMgr{ std::make_shared<RMM>(std::filesystem::path{}) };
     sf::Texture mTexture{};
 
 public:
     PlayfieldTests()
     {
-        ON_CALL(*mResManager, GetTexture)
+        ON_CALL(*mResourceMgr, GetTexture)
             .WillByDefault(Return(mTexture));
     }
 };
@@ -61,9 +61,9 @@ private:
 protected:
     Model::Ptr mModel{ std::make_shared<Model>() };
     ControllerPtr mController{ std::make_shared<GCDuel>(AppPtr(&mApp),
-                                                                mResManager,
+                                                                mResourceMgr,
                                                                 mModel) };
-    PlayfieldPtr mPlayfield = create(mResManager, {});
+    PlayfieldPtr mPlayfield = create(mResourceMgr, {});
 };
 
 static constexpr auto zero_init_x = 0.f;
@@ -73,7 +73,7 @@ static constexpr auto non_zero_init_y = 38.f;
 
 TEST_F(PlayfieldTests, FactoryFunctions_VectorDefault)
 {
-    auto pf = create(mResManager, {});
+    auto pf = create(mResourceMgr, {});
     auto&& sprite = getComponent<OpenLabora::SpriteComponent>(*pf);
     const auto position = sprite.GetPosition();
 
@@ -83,7 +83,7 @@ TEST_F(PlayfieldTests, FactoryFunctions_VectorDefault)
 
 TEST_F(PlayfieldTests, FactoryFunctions_VectorNonZero)
 {
-    auto pf = create(mResManager, {non_zero_init_x, non_zero_init_y});
+    auto pf = create(mResourceMgr, {non_zero_init_x, non_zero_init_y});
     auto&& sprite = getComponent<OpenLabora::SpriteComponent>(*pf);
     const auto position = sprite.GetPosition();
 
@@ -93,7 +93,7 @@ TEST_F(PlayfieldTests, FactoryFunctions_VectorNonZero)
 
 TEST_F(PlayfieldTests, FactoryFunctions_FloatsZero)
 {
-    auto pf = create(mResManager, zero_init_x, zero_init_y);
+    auto pf = create(mResourceMgr, zero_init_x, zero_init_y);
     auto&& sprite = getComponent<OpenLabora::SpriteComponent>(*pf);
     const auto position = sprite.GetPosition();
 
@@ -103,7 +103,7 @@ TEST_F(PlayfieldTests, FactoryFunctions_FloatsZero)
 
 TEST_F(PlayfieldTests, FactoryFunctions_FloatsNonZero)
 {
-    auto pf = create(mResManager, non_zero_init_x, non_zero_init_y);
+    auto pf = create(mResourceMgr, non_zero_init_x, non_zero_init_y);
     auto&& sprite = getComponent<OpenLabora::SpriteComponent>(*pf);
     const auto position = sprite.GetPosition();
 

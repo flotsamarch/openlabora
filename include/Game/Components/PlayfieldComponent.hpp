@@ -15,6 +15,7 @@
 
 #include <list>
 #include <optional>
+#include <map>
 #include "Game/Plot.hpp"
 #include "Misc/RangeWrapper.hpp"
 
@@ -31,7 +32,6 @@ constexpr uint32_t kMaxFieldWidth{ 9u };
 
 class PlayfieldComponent final
 {
-    using Plot = plot::Plot;
     using PlotList = std::list<Plot>;
     using PlotsMap = std::map<plot::Type, PlotList>;
 

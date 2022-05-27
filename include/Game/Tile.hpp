@@ -13,9 +13,6 @@
 #ifndef TILE_HPP_
 #define TILE_HPP_
 
-#include <cassert>
-#include <cmath>
-#include <map>
 #include <string_view>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Sprite.hpp>
