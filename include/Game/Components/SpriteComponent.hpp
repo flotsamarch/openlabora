@@ -36,6 +36,9 @@ public:
     void Move(const sf::Vector2f& offset)
     { mSprite.move(offset); }
 
+    void SetColor(const sf::Color& color)
+    { mSprite.setColor(color); }
+
     decltype(auto) GetLocalBounds() const
     { return mSprite.getLocalBounds(); }
 

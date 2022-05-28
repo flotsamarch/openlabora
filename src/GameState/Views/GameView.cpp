@@ -160,6 +160,9 @@ void GameView::HandleEvent(const sf::Event& evt)
             mMouseDelta.y = static_cast<float>(evt.mouseMove.y - mMouseCoords.y);
             mMouseCoords = { evt.mouseMove.x, evt.mouseMove.y };
 
+            auto&& world_mouse = mWindow.MapScreenToWorldCoords(mMouseCoords);
+            mController->SetWorldMousePosition(world_mouse);
+
             if (sf::Mouse::isButtonPressed(sf::Mouse::Right) &&
                 !mMenuVBox->isVisible())
             {

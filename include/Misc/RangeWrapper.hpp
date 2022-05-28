@@ -56,7 +56,7 @@ public:
     bool IsEmpty() const noexcept
     { return mBegin == mEnd; }
 
-    auto GetSize() const
+    size_t GetSize() const
     { return std::distance(mBegin, mEnd); }
 };
 

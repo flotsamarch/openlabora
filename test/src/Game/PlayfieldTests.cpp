@@ -30,6 +30,7 @@ using ::OpenLabora::Playfield;
 using ::OpenLabora::ecs::getComponent;
 using ::OpenLabora::PtrView;
 using PlayfieldPtr = std::shared_ptr<Playfield>;
+using PlotType = OpenLabora::plot::Type;
 using ::testing::Return;
 
 class PlayfieldTests : public ::testing::Test
@@ -126,6 +127,29 @@ TEST_F(PlayfieldEntityTests, Update)
 
     EXPECT_FALSE(texture_component.NeedsUpdate());
     EXPECT_EQ(mModel->GetDrawableObjects().GetSize(), 1);
+}
+
+TEST(PlayfieldFunctions, GetPlotStripXOffset_FirstZero)
+{
+    ASSERT_EQ(OpenLabora::playfield::getPlotStripXOffset(PlotType::Begin), 0);
+}
+
+TEST(PlayfieldFunctions, GetPlotStripXOffset_NonFirstNonZero)
+{
+    for (auto&& type = PlotType::Begin + 1; type != PlotType::End; ++type) {
+        ASSERT_GT(OpenLabora::playfield::getPlotStripXOffset(type), 0);
+    }
+}
+
+TEST(PlayfieldFunctions, GetPlotStripXOffset_NextAlwaysGreater)
+{
+    auto prev{ 0 };
+    for (auto&& type = PlotType::Begin + 1; type != PlotType::End; ++type) {
+        auto cur = OpenLabora::playfield::getPlotStripXOffset(type);
+        EXPECT_GT(cur, prev);
+        EXPECT_GE(cur - prev, OpenLabora::tile::kTileWidth);
+        prev = cur;
+    }
 }
 
 } // namespace Test

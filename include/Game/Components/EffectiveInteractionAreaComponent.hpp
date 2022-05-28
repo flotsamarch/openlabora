@@ -54,7 +54,12 @@ public:
 
     const sf::Vector2f& GetOffset() const
     { return mShapeOffset; }
+
+    void SetShape(TShape shape) { mShape = shape; }
 };
+
+using RectangleInteractionAreaComponent =
+    EffectiveInteractionAreaComponent<sf::RectangleShape>;
 
 }// namespace OpenLabora
 

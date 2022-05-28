@@ -44,17 +44,6 @@ PlayfieldComponent::PlayfieldComponent(const sf::Vector2f& position,
     AddPlotToBottom(std::move(plot_bottom));
 }
 
-PlayfieldComponent::PlotsRange
-PlayfieldComponent::GetPlots(plot::Type type) const
-{
-    assert(type >= PlotType::Begin && type < PlotType::End);
-    auto&& plots = mPlots.find(type);
-    if (plots == mPlots.end()) {
-        return {};
-    }
-    return { plots->second.begin(), plots->second.end() };
-}
-
 void PlayfieldComponent::AddPlotToTop(const Plot& plot)
 {
     const auto component = ecs::getComponent<PlotComponent>(plot);
@@ -82,11 +71,11 @@ void PlayfieldComponent::AddPlotToBottom(Plot&& plot)
 bool PlayfieldComponent::IsPlotsLimitReached(plot::Type type) const
 {
     assert(type >= plot::Type::Begin && type < plot::Type::End);
-    auto&& plots = mPlots.find(type);
-    if (plots == mPlots.end()) {
+    auto&& plots = mPlots.Get(type);
+    if (plots.empty()) {
         return false;
     }
-    return plots->second.size() >= plot::kPlotMaxCount.Get(type);
+    return plots.size() >= plot::kPlotMaxCount.Get(type);
 }
 
 } // namespace OpenLabora

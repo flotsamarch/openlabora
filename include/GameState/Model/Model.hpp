@@ -37,6 +37,8 @@ class Model final
     static constexpr uint32_t kMaxPlayers = 4;
     std::array<std::shared_ptr<Playfield>, kMaxPlayers> mPlayfields;
 
+    sf::Vector2f mWorldMousePosition{};
+
 public:
     enum PlayerAffiliation { Player1, Player2, Player3, Player4 };
 
@@ -65,8 +67,8 @@ public:
     { return { mEntities.cbegin(), mEntities.cend() }; }
 
     template<class T>
-    void AddEntity(std::shared_ptr<T> entity)
-    { mEntities.emplace_back(entity); }
+    uid::Uid AddEntity(std::shared_ptr<T> entity)
+    { return mEntities.emplace_back(entity).GetId(); }
 
     model::DrawableRangeConst GetDrawableObjects() const noexcept
     { return { mDrawableObjects.cbegin(), mDrawableObjects.cend() }; }
@@ -91,6 +93,12 @@ public:
 
     std::span<std::shared_ptr<Playfield>> GetPlayfields()
     { return mPlayfields; }
+
+    const sf::Vector2f& GetWorldMousePosition() const
+    { return mWorldMousePosition; }
+
+    void SetWorldMousePosition(const sf::Vector2f& position)
+    { mWorldMousePosition = position; }
 };
 
 } // namespace OpenLabora

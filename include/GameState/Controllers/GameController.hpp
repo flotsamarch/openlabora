@@ -23,8 +23,6 @@
 #include "GameState/Model/Model.hpp"
 #include "Game/Playfield.hpp"
 #include "ECS/Entity.hpp"
-// TODO: Reimplement selectable
-// #include "Game/Selectable.hpp"
 // TODO: Reimplement Build Mode
 // #include "Game/Location.hpp"
 
@@ -85,6 +83,8 @@ public:
 
     void RemoveMarker(ExpansionMarker::Ptr marker);
     #endif
+    Model::PtrConst GetModel() const
+    { return mModel; }
 
     IResourceManager::Ptr GetResourceManager() const noexcept
     { return mResourceMgr; }

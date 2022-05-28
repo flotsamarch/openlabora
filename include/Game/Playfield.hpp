@@ -14,6 +14,8 @@
 #define PLAYFIELD_HPP_
 
 #include <memory>
+#include <numeric>
+#include <algorithm>
 #include <SFML/Window/Event.hpp>
 #include "ECS/ComponentContainer.hpp"
 #include "Components/ImmobileComponent.hpp"
@@ -40,6 +42,17 @@ Playfield::Ptr create(IResourceManager::Ptr,
 
 Playfield::Ptr create(IResourceManager::Ptr,
                       float initial_x, float initial_y);
+
+constexpr float getPlotStripXOffset(plot::Type type)
+{
+    auto begin = plot::kPlotWidthTileCount.cbegin();
+    auto end = plot::kPlotWidthTileCount.cend();
+    auto pred = [type] (auto&& item) { return item.first == type; };
+    auto plus = [] (auto&& lhs, auto&& rhs) { return lhs + rhs.second; };
+
+    auto position = std::find_if(begin, end, pred);
+    return std::accumulate(begin, position, 0.f, plus) * tile::kTileWidth;
+}
 
 } // namespace playfield
 

@@ -30,7 +30,7 @@ using RMM = IResourceManagerMock;
 TEST(PlotTests, Create_TextureNotRegistered)
 {
     auto&& resource_mgr = std::make_shared<RMM>(std::filesystem::path{});
-    auto&& id = kTextureIdMap.Get(Type::Coastal).first;
+    auto&& id = kTextureIdMap.Get(Type::Coastal)[0];
     auto&& texture = sf::Texture{};
 
     EXPECT_CALL(*resource_mgr, GetTexture(StrEq(id)))
@@ -49,7 +49,7 @@ TEST(PlotTests, Create_TextureNotRegistered)
 TEST(PlotTests, Create_TextureIsRegistered)
 {
     auto&& resource_mgr = std::make_shared<RMM>(std::filesystem::path{});
-    auto&& id = kTextureIdMap.Get(Type::Coastal).first;
+    auto&& id = kTextureIdMap.Get(Type::Coastal)[0];
     auto&& texture = sf::Texture{};
 
     EXPECT_CALL(*resource_mgr, GetTexture(StrEq(id)))

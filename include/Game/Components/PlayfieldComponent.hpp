@@ -13,11 +13,12 @@
 #ifndef PLAYFIELDCOMPONENT_HPP_
 #define PLAYFIELDCOMPONENT_HPP_
 
-#include <list>
+#include <deque>
 #include <optional>
-#include <map>
+#include <utility>
 #include "Game/Plot.hpp"
 #include "Misc/RangeWrapper.hpp"
+#include "Misc/EnumMap.hpp"
 
 namespace OpenLabora
 {
@@ -32,8 +33,8 @@ constexpr uint32_t kMaxFieldWidth{ 9u };
 
 class PlayfieldComponent final
 {
-    using PlotList = std::list<Plot>;
-    using PlotsMap = std::map<plot::Type, PlotList>;
+    using PlotList = std::deque<Plot>;
+    using PlotsMap = EnumMap<plot::Type, PlotList>;
 
     PlotsMap mPlots;
 
@@ -53,7 +54,7 @@ public:
 
     void AddPlotToBottom(Plot&&);
 
-    PlotsRange GetPlots(plot::Type) const;
+    PlotsRange GetPlots(plot::Type type) const { return { mPlots[type] }; }
 
     bool IsPlotsLimitReached(plot::Type) const;
 

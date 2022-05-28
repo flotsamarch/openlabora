@@ -68,8 +68,12 @@ void initializeSpriteComponent(Plot& plot,
     const auto type = plot_component.GetType();
 
     if (id.empty()) {
-        const auto ids = kTextureIdMap.Get(type);
-        id = plot_component.IsAlternative() ? ids.second : ids.first;
+        const auto ids = kTextureIdMap[type];
+        if (ids.size() > 1) {
+            id = plot_component.IsAlternative() ? ids[1] : ids[0];
+        } else {
+            id = ids[0];
+        }
     }
 
     sprite_component.SetPosition(pos_component.position);
