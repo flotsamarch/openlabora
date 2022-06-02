@@ -13,102 +13,185 @@
 #include "Game/ExpansionMarker.hpp"
 #include "GameState/Controllers/GameController.hpp"
 #include "Resource/IResourceManager.hpp"
-#include "GUI/ClickableArea.hpp"
 
 namespace OpenLabora
 {
 
-ExpansionMarker::ExpansionMarker(MarkerType type,
-                                 const Plot& plot,
-                                 const Plot& plot_alt)
-    : mType{ type }, mPlot{ plot },
-      mPlotAlt{ plot_alt }
+namespace marker
 {
-    auto spritefy = [] (const sf::Drawable& item)
-    { return static_cast<const sf::Sprite&>(item); };
 
-    mPlot.SetPosition(0.f, 0.f);
-    if (mPlot.GetType() == Plot::PlotType::Central) {
-        mObject = spritefy(mPlot.GetDrawableObject());
-    } else {
-        mPlotAlt.SetPosition(0.f, Tile::kTileHeight);
-        auto top = spritefy(mPlot.GetDrawableObject());
-        auto bottom = spritefy(mPlotAlt.GetDrawableObject());
-        mTexture.create(mPlot.GetTileCount() * Tile::kTileWidth,
-                        2 * Tile::kTileHeight);
-        mTexture.clear();
-        mTexture.draw(top);
-        mTexture.draw(bottom);
-        mTexture.display();
-        mObject.setTexture(mTexture.getTexture(), true);
-    }
+void initilizeSpriteComponent(ExpansionMarker::Ptr,
+                              IResourceManager::Ptr,
+                              std::string_view id = "");
 
-    const auto bounds = mObject.getLocalBounds();
-    const bool is_lower = type == MarkerType::Lower;
-    if (type == MarkerType::Upper || is_lower) {
-        const auto offset = is_lower ? kMarkerOverlapFactor : 0.f;
-        const auto offset_vec = sf::Vector2f{ 0.f, bounds.height * offset };
-        const auto height = bounds.height * (1 - kMarkerOverlapFactor);
-        const auto rect_size = sf::Vector2f{ bounds.width, height };
+ExpansionMarker::Ptr create(Type marker_type,
+                            plot::Type plot_type,
+                            std::function<void()> on_left_released,
+                            IResourceManager::Ptr resource_mgr)
+{
+    auto plot = plot::create(plot_type, {}, resource_mgr);
+    auto plot_alt = plot::create(plot_type, {}, resource_mgr, true);
+    auto&& emc = ExpansionMarkerComponent{ marker_type, plot, plot_alt };
+    using RIAC = RectangleInteractionAreaComponent;
+    auto marker = std::make_shared<ExpansionMarker>(std::move(emc),
+                                                    PositionComponent{},
+                                                    SelectableComponent{},
+                                                    RIAC{},
+                                                    SignalComponent{},
+                                                    SpriteComponent{});
 
-        mClickableArea = RectangleArea{offset_vec, rect_size};
-    }
-    auto&& sprite = mObject;
-    auto on_out = [&sprite] {sprite.setColor(sf::Color::Transparent);};
+    auto&& sprite = ecs::getComponent<SpriteComponent>(*marker);
+    auto&& signals = ecs::getComponent<SignalComponent>(*marker);
+
+    auto on_out = [&sprite] { sprite.SetColor(sf::Color::Transparent); };
+    auto on_enter = [&sprite] { sprite.SetColor(marker::kHalfTransparent); };
+
+    signals.Connect(Signals::OnLeftReleased, on_left_released);
+    signals.Connect(Signals::OnMouseEnter, on_enter);
+    signals.Connect(Signals::OnMouseLeave, on_out);
+
+    initilizeSpriteComponent(marker, resource_mgr);
     on_out();
 
-    SetOnOutDelegate(on_out);
-    SetOnHoverDelegate([&sprite] {sprite.setColor(kHalfTransparent);});
+    return marker;
 }
 
-void ExpansionMarker::Move(float offset_x, float offset_y)
+void initilizeSpriteComponent(ExpansionMarker::Ptr entity,
+                              IResourceManager::Ptr resource_mgr,
+                              std::string_view id)
 {
-    mObject.move(offset_x, offset_y);
-    mClickableArea.Move(offset_x, offset_y);
-    mPlot.Move(offset_x, offset_y);
-    mPlotAlt.Move(offset_x, offset_y);
+    auto&& marker = ecs::getComponent<ExpansionMarkerComponent>(*entity);
+    auto&& sprite_component = ecs::getComponent<SpriteComponent>(*entity);
+    auto&& position_component = ecs::getComponent<PositionComponent>(*entity);
+
+    const auto type = marker.GetPlotType();
+
+    if (id.empty()) {
+        const auto& ids = kTextureIdMap[type];
+        id = ids[0]; // TODO Handle central plot type case with 2 textures
+    }
+
+    auto&& plot = marker.GetPlots().first.get();
+    auto&& plot_component = ecs::getComponent<PlotComponent>(plot);
+
+    const bool isCentral = plot_component.GetType() == plot::Type::Central;
+    const auto tile_count = plot_component.GetTileCount();
+
+    const auto marker_width = tile_count * tile::kTileWidth;
+    const auto marker_height = tile::kTileHeight * (isCentral ? 1u : 2u);
+
+    sprite_component.SetPosition(position_component.position);
+    sprite_component.SetRect(sf::IntRect(0, 0, marker_width, marker_height));
+
+    auto&& stored_texture = resource_mgr->GetTexture(id);
+    if (!stored_texture) {
+        auto&& plot_alt = marker.GetPlots().second.get();
+        auto&& plot_sprite = ecs::getComponent<SpriteComponent>(plot);
+        auto plot_alt_sprite = ecs::getComponent<SpriteComponent>(plot_alt);
+
+        auto render_texture = sf::RenderTexture{};
+        render_texture.create(marker_width, marker_height);
+        render_texture.draw(plot_sprite.GetDrawableObject());
+        if (!isCentral) {
+            plot_alt_sprite.SetPosition({ 0.f, tile::kTileHeight });
+            render_texture.draw(plot_alt_sprite.GetDrawableObject());
+        }
+        render_texture.display();
+
+        auto&& registered_texture =
+            resource_mgr->RegisterTexture(id, render_texture.getTexture());
+        sprite_component.SetTexture(registered_texture);
+        return;
+    }
+    sprite_component.SetTexture(stored_texture.value());
 }
 
-void ExpansionMarker::Move(const sf::Vector2f& offset)
+MarkerPositions GetBoundaryMarkerPositions(plot::Type type,
+                                           Playfield::PtrConst playfield)
 {
-    mObject.move(offset);
-    mClickableArea.Move(offset);
-    mPlot.Move(offset);
-    mPlotAlt.Move(offset);
+    auto&& pf_component = ecs::getComponent<PlayfieldComponent>(*playfield);
+    bool shift_lower = false;
+
+    auto plots = [&pf_component, &shift_lower, type] {
+        auto plots = pf_component.GetPlots(type);
+        if (plots.IsEmpty()) {
+            return pf_component.GetPlots(plot::Type::Central);
+        }
+        shift_lower = true;
+        return plots;
+    } ();
+
+    using PosComp = PositionComponent;
+    auto position_upper = ecs::getComponent<PosComp>(*plots.begin()).position;
+    position_upper.x = playfield::getPlotStripXOffset(type);
+    position_upper.y -= tile::kTileHeight;
+
+    auto position_lower = ecs::getComponent<PosComp>(*--plots.end()).position;
+    position_lower.x = position_upper.x;
+    position_lower.y += shift_lower ? tile::kTileHeight : 0.f;
+    return { position_upper, position_lower };
 }
 
-void ExpansionMarker::SetPosition(float position_x, float position_y)
+bool handleEvent(ExpansionMarker::Ptr marker,
+                 const sf::Vector2f& mouse_world_pos,
+                 const sf::Event& event)
 {
-    auto delta_pos = mPlotAlt.GetPosition() - mPlot.GetPosition();
-    mObject.setPosition(position_x, position_y);
-    mClickableArea.SetPosition(position_x, position_y);
-    mPlot.SetPosition(position_x, position_y);
-    mPlotAlt.SetPosition(position_x + delta_pos.x,
-                         position_y + delta_pos.y);
+    using RectAreaComponent = RectangleInteractionAreaComponent;
+    auto&& selectable = ecs::getComponent<SelectableComponent>(*marker);
+    auto&& signals = ecs::getComponent<SignalComponent>(*marker);
+    auto&& position_cmpnt = ecs::getComponent<PositionComponent>(*marker);
+    auto&& interaction_area = ecs::getComponent<RectAreaComponent>(*marker);
+
+    const auto local_mouse_pos = mouse_world_pos - position_cmpnt.position;
+    const bool is_mouse_over = interaction_area.IsPointInArea(local_mouse_pos);
+    const bool has_been_entered = selectable.HasBeenEntered();
+    const bool is_selected = selectable.IsSelected();
+
+    switch (event.type) {
+    case sf::Event::MouseMoved: {
+        if (is_mouse_over && !has_been_entered) {
+            selectable.Enter();
+            signals.Emit(Signals::OnMouseEnter);
+        } else if (!is_mouse_over && has_been_entered) {
+            selectable.Leave();
+            signals.Emit(Signals::OnMouseLeave);
+        }
+        return false;
+    }
+    case sf::Event::MouseButtonPressed: {
+        if (event.mouseButton.button != sf::Mouse::Left) {
+            return false;
+        }
+
+        if (has_been_entered && !is_selected) {
+            selectable.Select();
+            signals.Emit(Signals::OnLeftPressed);
+            return true;
+        }
+
+        if (!has_been_entered && is_selected) {
+            selectable.Deselect();
+            return false;
+        }
+        return false;
+    }
+    case sf::Event::MouseButtonReleased: {
+        if (event.mouseButton.button != sf::Mouse::Left) {
+            return false;
+        }
+
+        if (has_been_entered && is_selected) {
+            signals.Emit(Signals::OnLeftReleased);
+            return true;
+        }
+        return false;
+    }
+    default: {}
+    }
+
+    return false;
 }
 
-void ExpansionMarker::SetPosition(const sf::Vector2f& position)
-{
-    auto delta_pos = mPlotAlt.GetPosition() - mPlot.GetPosition();
-    mObject.setPosition(position);
-    mClickableArea.SetPosition(position);
-    mPlot.SetPosition(position);
-    mPlotAlt.SetPosition(position + delta_pos);
-}
-
-void ExpansionMarker::ResetClickableArea()
-{
-    const auto bounds = mObject.getLocalBounds();
-    const auto rect_size = sf::Vector2f{ bounds.width, bounds.height };
-    mClickableArea = RectangleArea{ sf::Vector2f(), rect_size };
-    mClickableArea.SetPosition(GetPosition());
-}
-
-void ExpansionMarker::SetClickableArea(const sf::Vector2f &offset,
-                                       const sf::Vector2f &rect_size)
-{
-    mClickableArea = RectangleArea{ offset, rect_size };
-    mClickableArea.SetPosition(GetPosition());
-}
+} // namespace marker
 
 } // namespace OpenLabora

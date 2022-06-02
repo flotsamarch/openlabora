@@ -1,12 +1,13 @@
 set(sources
     # Components
     src/Game/Components/PlayfieldComponent.cpp
+    src/Game/Components/MarkerControllerComponent.cpp
     # Gameplay classes
     src/Game/Tile.cpp
     src/Game/Plot.cpp
     src/Game/Playfield.cpp
-    # src/Game/ExpansionMarker.cpp
-    # src/Game/MarkerManager.cpp
+    src/Game/ExpansionMarker.cpp
+    src/Game/MarkerController.cpp
     # src/Game/Location.cpp
     # Game states
     src/GameState/Views/GameView.cpp
@@ -37,12 +38,14 @@ set(headers
     include/Game/Components/EffectiveInteractionAreaComponent.hpp
     include/Game/Components/SelectableComponent.hpp
     include/Game/Components/SignalComponent.hpp
+    include/Game/Components/ExpansionMarkerComponent.hpp
+    include/Game/Components/MarkerControllerComponent.hpp
     # Gameplay classes
     include/Game/Tile.hpp
     include/Game/Plot.hpp
     include/Game/Playfield.hpp
-    # include/Game/ExpansionMarker.hpp
-    # include/Game/MarkerManager.hpp
+    include/Game/ExpansionMarker.hpp
+    include/Game/MarkerController.hpp
     # include/Game/Location.hpp
     # Game states
     include/GameState/Model/Common.hpp
@@ -92,9 +95,12 @@ set(test_sources
     src/Game/Components/EffectiveInteractionAreaComponentTests.cpp
     src/Game/Components/SelectableComponentTests.cpp
     src/Game/Components/SignalComponentTests.cpp
+    src/Game/Components/ExpansionMarkerComponentTests.cpp
+    src/Game/Components/MarkerControllerComponentTests.cpp
     # Gameplay classes
     src/RendererTests.cpp
     src/Game/TileTests.cpp
     src/Game/PlotTests.cpp
     src/Game/PlayfieldTests.cpp
+    src/Game/ExpansionMarkerTests.cpp
 )

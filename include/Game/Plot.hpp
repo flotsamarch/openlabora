@@ -142,6 +142,9 @@ Plot createCentralInitial(const sf::Vector2f& position,
                           IResourceManager::Ptr,
                           bool alternative = false);
 
+using PlotRef = std::reference_wrapper<const Plot>;
+using PlotsPair = std::pair<PlotRef, PlotRef>;
+
 } // namespace plot
 
 } // namespace OpenLabora

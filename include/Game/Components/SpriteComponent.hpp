@@ -30,6 +30,9 @@ public:
     void SetPosition(const sf::Vector2f& position)
     { mSprite.setPosition(position); }
 
+    void SetRect(const sf::IntRect& rectangle)
+    { mSprite.setTextureRect(rectangle); }
+
     const sf::Vector2f& GetPosition() const
     { return mSprite.getPosition(); }
 

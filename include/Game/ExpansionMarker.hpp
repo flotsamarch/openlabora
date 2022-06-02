@@ -13,67 +13,66 @@
 #ifndef EXPANSIONMARKER_HPP_
 #define EXPANSIONMARKER_HPP_
 
-#include <optional>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include "SelectableEntity.hpp"
-#include "Plot.hpp"
+#include <SFML/Window/Event.hpp>
+#include "Components/ExpansionMarkerComponent.hpp"
+#include "Components/PositionComponent.hpp"
+#include "Components/SelectableComponent.hpp"
+#include "Components/SignalComponent.hpp"
+#include "Components/EffectiveInteractionAreaComponent.hpp"
+#include "Components/SpriteComponent.hpp"
+#include "Game/Playfield.hpp"
+#include "Resource/IResourceManager.hpp"
 
 namespace OpenLabora
 {
 
 class GameController;
 
-class ExpansionMarker final
-    : public SelectableEntity<sf::RectangleShape, sf::Sprite>
+using ExpansionMarker = ComponentContainer<ExpansionMarkerComponent,
+                                           PositionComponent,
+                                           SelectableComponent,
+                                           RectangleInteractionAreaComponent,
+                                           SignalComponent,
+                                           SpriteComponent>;
+
+namespace marker
 {
-public:
-    enum class MarkerType
-    { Begin, Upper = Begin, Lower, Disposable, End, Max = End };
 
-    using Ptr = std::shared_ptr<ExpansionMarker>;
-    using WPtr = std::weak_ptr<ExpansionMarker>;
+//------------------- ADD TEXTURE ID FOR EACH MARKER HERE ----------------------
 
-    static constexpr float kMarkerOverlapFactor = 1.f / 3.f;
+constexpr std::string_view kCoastalMarkerTextureName = "coastal_marker";
+constexpr std::string_view kCentralMarkerTextureName = "central_marker";
+constexpr std::string_view kCentralMarkerAltTextureName = "central_marker_alt";
+constexpr std::string_view kMountainMarkerTextureName = "mountain_marker";
 
-private:
-    using PlotRef = std::reference_wrapper<const Plot>;
-    using RectangleArea = ClickableArea<sf::RectangleShape>;
-    using GameControllerPtr = std::shared_ptr<GameController>;
+using TextureIdMapValueType = std::vector<std::string_view>;
 
-    inline static const sf::Color kHalfTransparent{ 255, 255, 255, 200 };
-    Plot mPlot;
-    Plot mPlotAlt;
-    MarkerType mType;
-    sf::RenderTexture mTexture;
+static const TextureIdMapValueType kCentralMarkerTextureNames
+{ kCentralMarkerTextureName, kCentralMarkerAltTextureName };
 
-public:
-    ExpansionMarker(MarkerType,
-                    const Plot& plot,
-                    const Plot& plot_alt);
-
-    bool IsPointInRegisteringArea(const sf::Vector2f& point) const override
-    { return mClickableArea.GetGlobalBounds().contains(point); }
-
-    Plot::PlotType GetPlotType() const noexcept { return mPlot.GetType(); }
-
-    MarkerType GetType() const noexcept { return mType; }
-
-    void Move(float offset_x, float offset_y) override;
-
-    void Move(const sf::Vector2f& offset) override;
-
-    void SetPosition(float position_x, float position_y) override;
-
-    void SetPosition(const sf::Vector2f& position) override;
-
-    void SetClickableArea(const sf::Vector2f& offset,
-                          const sf::Vector2f& rect_size);
-
-    void ResetClickableArea();
-
-    std::pair<PlotRef, PlotRef> GetPlots() const
-    { return { mPlot, mPlotAlt }; };
+static const EnumMap<plot::Type, TextureIdMapValueType> kTextureIdMap
+{
+    { plot::Type::Coastal, { kCoastalMarkerTextureName } },
+    { plot::Type::Central, kCentralMarkerTextureNames },
+    { plot::Type::Mountain, { kMountainMarkerTextureName } },
 };
+
+ExpansionMarker::Ptr create(Type marker_type,
+                            plot::Type plot_type,
+                            std::function<void()> on_left_released,
+                            IResourceManager::Ptr);
+
+using MarkerPositions = std::pair<sf::Vector2f, sf::Vector2f>;
+MarkerPositions GetBoundaryMarkerPositions(plot::Type, Playfield::PtrConst);
+
+static constexpr float kMarkerOverlapFactor = 1.f / 3.f;
+
+bool handleEvent(ExpansionMarker::Ptr,
+                 const sf::Vector2f& mouse_world_pos,
+                 const sf::Event&);
+
+} // namespace marker
+
 
 } // namespace OpenLabora
 

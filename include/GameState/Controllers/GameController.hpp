@@ -23,6 +23,7 @@
 #include "GameState/Model/Model.hpp"
 #include "Game/Playfield.hpp"
 #include "ECS/Entity.hpp"
+#include "Game/MarkerController.hpp"
 // TODO: Reimplement Build Mode
 // #include "Game/Location.hpp"
 
@@ -77,14 +78,11 @@ public:
     GetActivePlayerPlayfield() const noexcept
     { return mModel->GetPlayfield(Model::Player1); }
 
-    #if 0 // TODO: Reimplement markers (again)
-    template<typename... Args>
-    std::shared_ptr<ExpansionMarker> CreateMarker(Args&&... args);
-
-    void RemoveMarker(ExpansionMarker::Ptr marker);
-    #endif
     Model::PtrConst GetModel() const
     { return mModel; }
+
+    void AddMarkerControllerToModel(MarkerController::Ptr marker_controller)
+    { mModel->AddEntity(marker_controller); }
 
     IResourceManager::Ptr GetResourceManager() const noexcept
     { return mResourceMgr; }
@@ -94,14 +92,6 @@ public:
 };
 
 inline GameController::~GameController() {}
-
-#if 0
-template<typename... Args>
-std::shared_ptr<ExpansionMarker> GameController::CreateMarker(Args&&... args)
-{
-    return mModel->CreateEntity<ExpansionMarker>(std::forward<Args>(args)...);
-}
-#endif
 
 } // namespace OpenLabora
 

@@ -66,15 +66,6 @@ public:
     std::optional<sf::Vector2u>
     GetTileIndicesUnderPoint(const sf::Vector2f&) const noexcept;
     #endif
-
-    #if 0 // TODO: Reimplement markers (again)
-    // @return positions for top and bottom expansion markers respectively for a
-    // given plot type
-    std::tuple<sf::Vector2f, sf::Vector2f>
-    GetExpansionMarkerPositions(plot::Type) const;
-
-    uint32_t GetDisposableMarkerCount(plot::Type) const;
-    #endif
 };
 
 } // namespace OpenLabora
