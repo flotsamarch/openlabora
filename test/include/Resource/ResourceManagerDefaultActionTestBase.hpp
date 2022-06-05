@@ -8,12 +8,13 @@ namespace Test
 
 class ResourceManagerDefaultActionTestBase : public ::testing::Test
 {
-    using ResourceMgr = IResourceManagerMock;
+    using ResourceMgr = testing::NiceMock<IResourceManagerMock>;
+    using ResourceMgrPtr = std::shared_ptr<ResourceMgr>;
     std::filesystem::path mPath{};
     sf::Texture mTexture{};
 
 protected:
-    ResourceMgr::Ptr mResourceMgr{ std::make_shared<ResourceMgr>(mPath) };
+    ResourceMgrPtr mResourceMgr{ std::make_shared<ResourceMgr>(mPath) };
 
 public:
     ResourceManagerDefaultActionTestBase(const sf::Texture& texture)

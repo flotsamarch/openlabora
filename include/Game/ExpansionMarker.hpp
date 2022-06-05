@@ -22,6 +22,7 @@
 #include "Components/SpriteComponent.hpp"
 #include "Game/Playfield.hpp"
 #include "Resource/IResourceManager.hpp"
+#include "Signal.hpp"
 
 namespace OpenLabora
 {
@@ -59,7 +60,6 @@ static const EnumMap<plot::Type, TextureIdMapValueType> kTextureIdMap
 
 ExpansionMarker::Ptr create(Type marker_type,
                             plot::Type plot_type,
-                            std::function<void()> on_left_released,
                             IResourceManager::Ptr);
 
 using MarkerPositions = std::pair<sf::Vector2f, sf::Vector2f>;

@@ -17,8 +17,7 @@ namespace Test
 {
 
 using OpenLabora::SignalComponent;
-using OpenLabora::Signals;
-
+using OpenLabora::signals::kOnLeftPress;
 
 class SignalComponentTests : public ::testing::Test
 {
@@ -29,9 +28,9 @@ protected:
 TEST_F(SignalComponentTests, Connect)
 {
     auto delegate = [] {};
-    auto serial_1 = mComponent.Connect(Signals::OnLeftClick, delegate);
-    auto serial_2 = mComponent.Connect(Signals::OnLeftClick, delegate);
-    auto serial_3 = mComponent.Connect(Signals::OnLeftClick, delegate);
+    auto serial_1 = mComponent.Connect(kOnLeftPress, delegate);
+    auto serial_2 = mComponent.Connect(kOnLeftPress, delegate);
+    auto serial_3 = mComponent.Connect(kOnLeftPress, delegate);
 
     EXPECT_EQ(serial_1, 0u);
     EXPECT_EQ(serial_2, 1u);
@@ -43,8 +42,8 @@ TEST_F(SignalComponentTests, Emit)
     bool changed = false;
     auto delegate = [&changed] { changed = true; };
 
-    mComponent.Connect(Signals::OnLeftClick, delegate);
-    mComponent.Emit(Signals::OnLeftClick);
+    mComponent.Connect(kOnLeftPress, delegate);
+    mComponent.Emit(kOnLeftPress);
 
     ASSERT_EQ(changed, true);
 }
@@ -54,9 +53,9 @@ TEST_F(SignalComponentTests, Disconnect)
     bool changed = false;
     auto delegate = [&changed] { changed = true; };
 
-    auto serial = mComponent.Connect(Signals::OnLeftClick, delegate);
-    mComponent.Disconnect(Signals::OnLeftClick, serial);
-    mComponent.Emit(Signals::OnLeftClick);
+    auto serial = mComponent.Connect(kOnLeftPress, delegate);
+    mComponent.Disconnect(kOnLeftPress, serial);
+    mComponent.Emit(kOnLeftPress);
 
     ASSERT_EQ(changed, false);
 }
@@ -66,9 +65,9 @@ TEST_F(SignalComponentTests, DisconnectAll)
     bool changed = false;
     auto delegate = [&changed] { changed = true; };
 
-    mComponent.Connect(Signals::OnLeftClick, delegate);
-    mComponent.DisconnectAll(Signals::OnLeftClick);
-    mComponent.Emit(Signals::OnLeftClick);
+    mComponent.Connect(kOnLeftPress, delegate);
+    mComponent.DisconnectAll(kOnLeftPress);
+    mComponent.Emit(kOnLeftPress);
 
     ASSERT_EQ(changed, false);
 }

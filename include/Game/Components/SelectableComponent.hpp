@@ -13,8 +13,20 @@
 #ifndef SELECTABLECOMPONENT_HPP_
 #define SELECTABLECOMPONENT_HPP_
 
+#include "Game/Signal.hpp"
+
 namespace OpenLabora
 {
+
+namespace signals
+{
+
+inline const Signal kOnSelect{};
+inline const Signal kOnDeselect{};
+inline const Signal kOnEnter{};
+inline const Signal kOnLeave{};
+
+} // namespace signal
 
 class SelectableComponent final
 {

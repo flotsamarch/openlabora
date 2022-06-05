@@ -44,6 +44,7 @@ set(headers
     include/Game/Tile.hpp
     include/Game/Plot.hpp
     include/Game/Playfield.hpp
+    include/Game/Signal.hpp
     include/Game/ExpansionMarker.hpp
     include/Game/MarkerController.hpp
     # include/Game/Location.hpp

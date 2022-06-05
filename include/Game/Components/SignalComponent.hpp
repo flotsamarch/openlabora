@@ -13,48 +13,48 @@
 #ifndef SIGNALCOMPONENT_HPP_
 #define SIGNALCOMPONENT_HPP_
 
+#include <map>
 #include <unordered_map>
 #include <functional>
+#include "Game/Signal.hpp"
 #include "Misc/EnumMap.hpp"
 #include "Misc/UID.hpp"
 
 namespace OpenLabora
 {
 
-enum class Signals
-{
-    Begin,
-    OnMouseEnter = Begin, OnMouseLeave,
-    OnLeftClick, OnLeftPressed, OnLeftReleased,
-    OnRightClicked, OnRightPressed, OnRightReleased,
-    End
-};
-
 class SignalComponent final
 {
     using Serial = uint64_t;
-    using DelegateMap = std::unordered_map<Serial, std::function<void()>>;
-    EnumMap<Signals, DelegateMap> mSignals;
+    using DelegateMap = std::map<Serial, std::function<void()>>; // Needs order
+    using SignalMap = std::unordered_map<Signal, DelegateMap, SignalHash>;
+    SignalMap mSignals;
 
 public:
-    Serial Connect(Signals signal, std::function<void()> delegate)
+    Serial Connect(const Signal& signal, std::function<void()> delegate)
     {
-        auto id = uid::getUid(uid::Type::Serial);
-        mSignals.Get(signal).insert(std::make_pair(id, delegate));
+        const auto id = uid::getUid(uid::Type::Serial);
+        // mSignals[signal].insert(std::make_pair(id, delegate));
+        mSignals[signal][id] = delegate;
         return id;
     }
 
-    void Emit(Signals signal)
-    { for (auto&& [id, delegate] : mSignals.Get(signal)) { delegate(); } }
+    void Emit(const Signal& signal)
+    {
+        for (auto&& [_, delegate] : mSignals[signal]) {
+            delegate();
+        }
+    }
 
-    void Disconnect(Signals signal, Serial serial)
-    { mSignals.Get(signal).erase(serial); }
+    void Disconnect(const Signal& signal, Serial serial)
+    { mSignals[signal].erase(serial); }
 
     // Warning! This might break certain behavior, prefer disconnecting by serial
-    void DisconnectAll(Signals signal)
-    { mSignals.Get(signal).clear(); }
+    void DisconnectAll(const Signal& signal)
+    { mSignals[signal].clear(); }
 };
 
 } // namespace OpenLabora
+
 
 #endif // SIGNALCOMPONENT_HPP_

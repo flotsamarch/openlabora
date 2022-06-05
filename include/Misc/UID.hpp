@@ -27,7 +27,7 @@ using Uid = uint64_t;
 
 enum Type
 {
-    Begin, General = Begin, Serial, End
+    Begin, General = Begin, Signal, Serial, End
 };
 
 inline Uid getUid(Type type = Type::General)

@@ -64,12 +64,12 @@ MarkerControllerComponent::CreateMarker(marker::Type marker_type,
         };
     };
 
-    auto marker = create(marker_type, plot_type, on_left_released, resource_mgr);
+    auto marker = marker::create(marker_type, plot_type, resource_mgr);
 
     auto&& signals = ecs::getComponent<SignalComponent>(*marker);
     // Order is important! Marker should be selected before it is acted upon
-    signals.Connect(Signals::OnLeftReleased, select_on_left_released(marker));
-    signals.Connect(Signals::OnLeftReleased, on_left_released);
+    signals.Connect(signals::kOnSelect, select_on_left_released(marker));
+    signals.Connect(signals::kOnSelect, on_left_released);
 
     return marker;
 }
@@ -77,9 +77,9 @@ MarkerControllerComponent::CreateMarker(marker::Type marker_type,
 void MarkerControllerComponent::DeselectMarker()
 {
     if (mSelectedMarker != nullptr) {
-        using SelComp = SelectableComponent;
-        auto&& component = ecs::getComponent<SelComp>(*mSelectedMarker);
-        component.Deselect();
+        using SignalCmpnt = SignalComponent;
+        auto&& signal_cmpnt = ecs::getComponent<SignalCmpnt>(*mSelectedMarker);
+        signal_cmpnt.Emit(signals::kOnDeselect);
         mSelectedMarker = nullptr;
     }
 }

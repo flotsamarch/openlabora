@@ -26,7 +26,6 @@ void initilizeSpriteComponent(ExpansionMarker::Ptr,
 
 ExpansionMarker::Ptr create(Type marker_type,
                             plot::Type plot_type,
-                            std::function<void()> on_left_released,
                             IResourceManager::Ptr resource_mgr)
 {
     auto plot = plot::create(plot_type, {}, resource_mgr);
@@ -42,13 +41,34 @@ ExpansionMarker::Ptr create(Type marker_type,
 
     auto&& sprite = ecs::getComponent<SpriteComponent>(*marker);
     auto&& signals = ecs::getComponent<SignalComponent>(*marker);
+    auto&& selectable_cmpnt = ecs::getComponent<SelectableComponent>(*marker);
 
-    auto on_out = [&sprite] { sprite.SetColor(sf::Color::Transparent); };
-    auto on_enter = [&sprite] { sprite.SetColor(marker::kHalfTransparent); };
+    auto on_enter = [&sprite, &selectable_cmpnt]
+    {
+        selectable_cmpnt.Enter();
+        sprite.SetColor(marker::kHalfTransparent);
+    };
 
-    signals.Connect(Signals::OnLeftReleased, on_left_released);
-    signals.Connect(Signals::OnMouseEnter, on_enter);
-    signals.Connect(Signals::OnMouseLeave, on_out);
+    auto on_out = [&sprite, &selectable_cmpnt]
+    {
+        selectable_cmpnt.Leave();
+        if (!selectable_cmpnt.IsSelected()) {
+            sprite.SetColor(sf::Color::Transparent);
+        }
+    };
+
+    auto on_selected = [&selectable_cmpnt] { selectable_cmpnt.Select(); };
+
+    auto on_deselected = [&selectable_cmpnt, on_out]
+    {
+        selectable_cmpnt.Deselect();
+        on_out();
+    };
+
+    signals.Connect(signals::kOnSelect, on_selected);
+    signals.Connect(signals::kOnDeselect, on_deselected);
+    signals.Connect(signals::kOnEnter, on_enter);
+    signals.Connect(signals::kOnLeave, on_out);
 
     initilizeSpriteComponent(marker, resource_mgr);
     on_out();
@@ -150,11 +170,9 @@ bool handleEvent(ExpansionMarker::Ptr marker,
     switch (event.type) {
     case sf::Event::MouseMoved: {
         if (is_mouse_over && !has_been_entered) {
-            selectable.Enter();
-            signals.Emit(Signals::OnMouseEnter);
+            signals.Emit(signals::kOnEnter);
         } else if (!is_mouse_over && has_been_entered) {
-            selectable.Leave();
-            signals.Emit(Signals::OnMouseLeave);
+            signals.Emit(signals::kOnLeave);
         }
         return false;
     }
@@ -163,14 +181,8 @@ bool handleEvent(ExpansionMarker::Ptr marker,
             return false;
         }
 
-        if (has_been_entered && !is_selected) {
-            selectable.Select();
-            signals.Emit(Signals::OnLeftPressed);
-            return true;
-        }
-
         if (!has_been_entered && is_selected) {
-            selectable.Deselect();
+            signals.Emit(signals::kOnDeselect);
             return false;
         }
         return false;
@@ -180,10 +192,11 @@ bool handleEvent(ExpansionMarker::Ptr marker,
             return false;
         }
 
-        if (has_been_entered && is_selected) {
-            signals.Emit(Signals::OnLeftReleased);
+        if (has_been_entered && !is_selected) {
+            signals.Emit(signals::kOnSelect);
             return true;
         }
+
         return false;
     }
     default: {}

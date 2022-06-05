@@ -21,7 +21,7 @@
 namespace Test
 {
 
-class IResourceManagerMock final : public OpenLabora::IResourceManager
+class IResourceManagerMock : public OpenLabora::IResourceManager
 {
 public:
     using Ptr = std::shared_ptr<IResourceManagerMock>;

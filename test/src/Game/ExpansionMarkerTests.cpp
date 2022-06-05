@@ -125,7 +125,7 @@ TEST_F(ExpansionMarkerTests, HasNotBeenEnteredByDefault)
 {
     using OpenLabora::marker::create;
     using OpenLabora::ecs::getComponent;
-    auto marker = create(MarkerType::Begin, PlotType::Begin, []{}, mResourceMgr);
+    auto marker = create(MarkerType::Begin, PlotType::Begin, mResourceMgr);
     auto&& selectable = getComponent<SelectableComponent>(*marker);
 
     ASSERT_FALSE(selectable.HasBeenEntered());
@@ -139,7 +139,7 @@ TEST_F(ExpansionMarkerTests, EventHandling_Enter)
     using RectIACmpnt = OpenLabora::RectangleInteractionAreaComponent;
 
     const auto mouse_pos = sf::Vector2f{ 1.f, 1.f };
-    auto marker = create(MarkerType::Begin, PlotType::Begin, []{}, mResourceMgr);
+    auto marker = create(MarkerType::Begin, PlotType::Begin, mResourceMgr);
     auto&& selectable = getComponent<SelectableComponent>(*marker);
     auto&& interactive_area = getComponent<RectIACmpnt>(*marker);
 
@@ -162,7 +162,7 @@ TEST_F(ExpansionMarkerTests, EventHandling_EnterThenLeave)
 
     const auto mouse_pos_in = sf::Vector2f{ 1.f, 1.f };
     const auto mouse_pos_out = sf::Vector2f{ -999.f, -999.f };
-    auto marker = create(MarkerType::Begin, PlotType::Begin, []{}, mResourceMgr);
+    auto marker = create(MarkerType::Begin, PlotType::Begin, mResourceMgr);
     auto&& selectable = getComponent<SelectableComponent>(*marker);
     auto&& interactive_area = getComponent<RectIACmpnt>(*marker);
 
@@ -189,7 +189,7 @@ TEST_F(ExpansionMarkerTests, EventHandling_Select)
     using RectIACmpnt = OpenLabora::RectangleInteractionAreaComponent;
 
     const auto mouse_pos = sf::Vector2f{ 1.f, 1.f };
-    auto marker = create(MarkerType::Begin, PlotType::Begin, []{}, mResourceMgr);
+    auto marker = create(MarkerType::Begin, PlotType::Begin, mResourceMgr);
     auto&& selectable = getComponent<SelectableComponent>(*marker);
     auto&& interactive_area = getComponent<RectIACmpnt>(*marker);
 
@@ -200,7 +200,7 @@ TEST_F(ExpansionMarkerTests, EventHandling_Select)
     event.type = sf::Event::MouseMoved;
     handleEvent(marker, mouse_pos, event); // Enter
 
-    event.type = sf::Event::MouseButtonPressed;
+    event.type = sf::Event::MouseButtonReleased;
     event.mouseButton.button = sf::Mouse::Left;
     bool event_consumed = handleEvent(marker, mouse_pos, event); // Click
 
@@ -216,7 +216,7 @@ TEST_F(ExpansionMarkerTests, EventHandling_Deselect)
     using RectIACmpnt = OpenLabora::RectangleInteractionAreaComponent;
     const auto mouse_pos_in = sf::Vector2f{ 1.f, 1.f };
     const auto mouse_pos_out = sf::Vector2f{ -999.f, -999.f };
-    auto marker = create(MarkerType::Begin, PlotType::Begin, []{}, mResourceMgr);
+    auto marker = create(MarkerType::Begin, PlotType::Begin, mResourceMgr);
     auto&& selectable = getComponent<SelectableComponent>(*marker);
     auto&& interactive_area = getComponent<RectIACmpnt>(*marker);
 
@@ -227,7 +227,7 @@ TEST_F(ExpansionMarkerTests, EventHandling_Deselect)
     event.type = sf::Event::MouseMoved;
     handleEvent(marker, mouse_pos_in, event); // Enter
 
-    event.type = sf::Event::MouseButtonPressed;
+    event.type = sf::Event::MouseButtonReleased;
     event.mouseButton.button = sf::Mouse::Left;
     handleEvent(marker, mouse_pos_in, event); // Click - Select
 
@@ -246,19 +246,24 @@ TEST_F(ExpansionMarkerTests, EventHandling_Deselect)
     ASSERT_TRUE(no_longer_selected);
 }
 
-TEST_F(ExpansionMarkerTests, EventHandling_Click)
+TEST_F(ExpansionMarkerTests, EventHandling_CustomSelect)
 {
     using OpenLabora::marker::create;
     using OpenLabora::marker::handleEvent;
     using OpenLabora::ecs::getComponent;
+    using OpenLabora::signals::kOnSelect;
     using RectIACmpnt = OpenLabora::RectangleInteractionAreaComponent;
+    using SignalComponent = OpenLabora::SignalComponent;
 
     const auto mouse_pos = sf::Vector2f{ 1.f, 1.f };
     bool acted_upon = false;
     auto act = [&acted_upon] { acted_upon = true; };
 
-    auto marker = create(MarkerType::Begin, PlotType::Begin, act, mResourceMgr);
+    auto marker = create(MarkerType::Begin, PlotType::Begin, mResourceMgr);
     auto&& interactive_area = getComponent<RectIACmpnt>(*marker);
+    auto&& signal_cmpnt = getComponent<SignalComponent>(*marker);
+
+    signal_cmpnt.Connect(kOnSelect, act);
 
     auto shape = sf::RectangleShape{{ 5.f, 5.f }};
     interactive_area.SetShape({ shape });
@@ -266,10 +271,6 @@ TEST_F(ExpansionMarkerTests, EventHandling_Click)
     sf::Event event;
     event.type = sf::Event::MouseMoved;
     handleEvent(marker, mouse_pos, event); // Enter
-
-    event.type = sf::Event::MouseButtonPressed;
-    event.mouseButton.button = sf::Mouse::Left;
-    handleEvent(marker, mouse_pos, event); // Click - Select
 
     event.type = sf::Event::MouseButtonReleased;
     event.mouseButton.button = sf::Mouse::Left;
