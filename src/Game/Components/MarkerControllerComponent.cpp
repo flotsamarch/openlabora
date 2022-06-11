@@ -11,7 +11,6 @@
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 #include "Game/Components/MarkerControllerComponent.hpp"
-#include "GameState/Controllers/GameController.hpp"
 
 namespace OpenLabora
 {
@@ -128,11 +127,6 @@ void MarkerControllerComponent
 
 void MarkerControllerComponent::TranslateMarkers(Playfield::PtrConst playfield)
 {
-    using RectAreaCmpnt = RectangleInteractionAreaComponent;
-    using PositionCmpnt = PositionComponent;
-    using SpriteCmpnt = SpriteComponent;
-    using Rect = sf::RectangleShape;
-
     for (auto&& [plot_type, markers] : mMarkers) {
         if (markers.empty()) {
             continue;
@@ -147,35 +141,26 @@ void MarkerControllerComponent::TranslateMarkers(Playfield::PtrConst playfield)
         auto&& upper_marker = *markers.front();
         auto&& lower_marker = *markers.back();
 
-        auto&& upper_pos_cmpnt = ecs::getComponent<PositionCmpnt>(upper_marker);
-        auto&& lower_pos_cmpnt = ecs::getComponent<PositionCmpnt>(lower_marker);
-        upper_pos_cmpnt.position = upper_pos;
-        lower_pos_cmpnt.position = lower_pos;
+        marker::setPosition(upper_marker, upper_pos);
+        marker::setPosition(lower_marker, lower_pos);
 
-        auto&& upper_sprite = ecs::getComponent<SpriteCmpnt>(upper_marker);
-        auto&& lower_sprite = ecs::getComponent<SpriteCmpnt>(lower_marker);
-        upper_sprite.SetPosition(upper_pos);
-        lower_sprite.SetPosition(lower_pos);
-
-        auto&& upper_area_comp = ecs::getComponent<RectAreaCmpnt>(upper_marker);
-        auto&& lower_area_comp = ecs::getComponent<RectAreaCmpnt>(lower_marker);
-        upper_area_comp.SetOffset({ 0.f, 0.f });
-        lower_area_comp.SetOffset({ 0.f, 0.f });
-
+        auto&& upper_sprite = ecs::getComponent<SpriteComponent>(upper_marker);
         const auto bounds = upper_sprite.GetLocalBounds();
         constexpr auto factor = marker::kMarkerOverlapFactor;
         constexpr auto factor_rev = (1 - marker::kMarkerOverlapFactor);
         const auto boundary_clickable_height = bounds.height * factor_rev;
+        const auto boundary_offset = sf::Vector2f{ 0.f, 0.f };
 
         if (!plots.IsEmpty()) {
-            const auto shape = Rect{{ bounds.width, bounds.height }};
-            upper_area_comp.SetShape(shape);
-            lower_area_comp.SetShape(shape);
+            const auto size = sf::Vector2f{ bounds.width, bounds.height };
+            marker::setInteractiveRect(upper_marker, boundary_offset, size);
+            marker::setInteractiveRect(lower_marker, boundary_offset, size);
         } else {
-            const auto shape = Rect{{ bounds.width, boundary_clickable_height }};
-            upper_area_comp.SetShape(shape);
-            lower_area_comp.SetShape(shape);
-            lower_area_comp.SetOffset({ 0.f, factor * bounds.height });
+            using V2f = sf::Vector2f;
+            const auto size = V2f{ bounds.width, boundary_clickable_height };
+            const auto lower_marker_offset = V2f{ 0.f, factor * bounds.height };
+            marker::setInteractiveRect(upper_marker, boundary_offset, size);
+            marker::setInteractiveRect(lower_marker, lower_marker_offset, size);
         }
 
         plots = pf_component.GetPlots(plot::Type::Central);
@@ -185,26 +170,18 @@ void MarkerControllerComponent::TranslateMarkers(Playfield::PtrConst playfield)
         const auto gap_between_markers = lower_pos.y - upper_marker_bottom_edge;
         const auto total_available_space = gap_between_markers + overlap_space;
         const auto rect_height = total_available_space / (plots.GetSize() - 1);
-        const auto interaction_rect = Rect{{ bounds.width, rect_height }};
+        const auto rect_size = sf::Vector2f{ bounds.width, rect_height };
 
         const auto offset_y = boundary_clickable_height - tile::kTileHeight;
         const auto offset_delta = rect_height - tile::kTileHeight;
         auto offset = sf::Vector2f{ 0.f , offset_y };
 
-        auto update = [pos = upper_pos, &offset, interaction_rect, offset_delta]
+        auto update = [pos = upper_pos, &offset, rect_size, offset_delta]
         (auto&& marker) mutable
         {
             pos.y += tile::kTileHeight;
-            auto&& area_cmpnt = ecs::getComponent<RectAreaCmpnt>(*marker);
-            area_cmpnt.SetOffset(offset);
-            area_cmpnt.SetShape(interaction_rect);
-
-            auto&& position_cmpnt = ecs::getComponent<PositionCmpnt>(*marker);
-            position_cmpnt.position = pos;
-
-            auto&& sprite_cmpnt = ecs::getComponent<SpriteComponent>(*marker);
-            sprite_cmpnt.SetPosition(pos);
-
+            marker::setInteractiveRect(*marker, offset, rect_size);
+            marker::setPosition(*marker, pos);
             offset.y += offset_delta;
         };
 

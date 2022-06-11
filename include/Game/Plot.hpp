@@ -13,6 +13,7 @@
 #ifndef PLOT_HPP_
 #define PLOT_HPP_
 
+#include <functional>
 #include "ECS/ComponentContainer.hpp"
 #include "Game/Components/PositionComponent.hpp"
 #include "Game/Components/SpriteComponent.hpp"
@@ -26,10 +27,11 @@ using Plot = ComponentContainer<PositionComponent,
                                 PlotComponent,
                                 SpriteComponent>;
 
-class GameController;
 
 namespace plot
 {
+
+void setPosition(Plot&, const sf::Vector2f&, bool needs_shift = false);
 
 constexpr size_t kPlotTypeCount
 { static_cast<size_t>(plot::Type::End) - static_cast<size_t>(plot::Type::Begin)};

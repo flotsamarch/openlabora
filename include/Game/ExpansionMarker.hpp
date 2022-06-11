@@ -27,8 +27,6 @@
 namespace OpenLabora
 {
 
-class GameController;
-
 using ExpansionMarker = ComponentContainer<ExpansionMarkerComponent,
                                            PositionComponent,
                                            SelectableComponent,
@@ -38,6 +36,12 @@ using ExpansionMarker = ComponentContainer<ExpansionMarkerComponent,
 
 namespace marker
 {
+
+void setPosition(ExpansionMarker&, const sf::Vector2f&);
+
+void setInteractiveRect(ExpansionMarker&,
+                        const sf::Vector2f& offset,
+                        const sf::Vector2f& size);
 
 //------------------- ADD TEXTURE ID FOR EACH MARKER HERE ----------------------
 

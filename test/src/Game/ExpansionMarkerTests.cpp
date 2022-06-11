@@ -279,6 +279,47 @@ TEST_F(ExpansionMarkerTests, EventHandling_CustomSelect)
     ASSERT_TRUE(acted_upon);
 }
 
+TEST_F(ExpansionMarkerTests, SetPosition)
+{
+    using OpenLabora::marker::create;
+    using OpenLabora::marker::setPosition;
+    using OpenLabora::ecs::getComponent;
+    using OpenLabora::ExpansionMarkerComponent;
+    using PosCmpnt = OpenLabora::PositionComponent;
+
+    constexpr auto x = 31.12345f;
+    constexpr auto y = 144.905f;
+    auto marker = create(MarkerType::Begin, PlotType::Begin, mResourceMgr);
+    auto&& position_cmpnt = getComponent<PosCmpnt>(*marker);
+    auto&& sprite_cmpnt = getComponent<OpenLabora::SpriteComponent>(*marker);
+    auto&& marker_cmpnt = getComponent<ExpansionMarkerComponent>(*marker);
+    auto&& plots = marker_cmpnt.GetPlots();
+    auto&& plot_position = getComponent<PosCmpnt>(plots.first.get());
+    auto&& plot_alt_position = getComponent<PosCmpnt>(plots.second.get());
+
+    setPosition(*marker, {x, y});
+
+    EXPECT_FLOAT_EQ(position_cmpnt.position.x, x);
+    EXPECT_FLOAT_EQ(position_cmpnt.position.y, y);
+    EXPECT_FLOAT_EQ(sprite_cmpnt.GetPosition().x, x);
+    EXPECT_FLOAT_EQ(sprite_cmpnt.GetPosition().y, y);
+    EXPECT_GT(plot_position.position.x, 0.f);
+    EXPECT_GT(plot_position.position.y, 0.f);
+    EXPECT_GT(plot_alt_position.position.x, 0.f);
+    ASSERT_GT(plot_alt_position.position.y, 0.f);
+}
+
+TEST_F(ExpansionMarkerTests, SetInteractiveRect)
+{
+    using OpenLabora::marker::create;
+    using OpenLabora::ecs::getComponent;
+    auto marker = create(MarkerType::Begin, PlotType::Begin, mResourceMgr);
+    auto&& selectable = getComponent<SelectableComponent>(*marker);
+
+    ASSERT_FALSE(selectable.HasBeenEntered());
+}
+
+
 } // namespace Test
 
 int main(int argc, char** argv)

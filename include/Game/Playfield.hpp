@@ -37,6 +37,17 @@ using Playfield = ComponentContainer<ImmobileComponent,
 namespace playfield
 {
 
+struct PlotCreationParams
+{
+    plot::PlotsPair plots;
+    bool add_to_top;
+    bool alt_required;
+};
+
+std::function<void()>
+MakePlotCreationDelegate(Playfield::Ptr,
+                         std::function<PlotCreationParams()> get_params);
+
 Playfield::Ptr create(IResourceManager::Ptr,
                       const sf::Vector2f& initial_position);
 

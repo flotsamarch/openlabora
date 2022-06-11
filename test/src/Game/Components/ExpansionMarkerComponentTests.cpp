@@ -69,6 +69,26 @@ TEST_F(ExpansionMarkerComponentTests, GetPlotType)
     ASSERT_EQ(component.GetPlotType(), type);
 }
 
+TEST_F(ExpansionMarkerComponentTests, SetPlotPositions)
+{
+    using OpenLabora::ecs::getComponent;
+    using OpenLabora::PositionComponent;
+
+    constexpr auto x = 15.887f;
+    constexpr auto y = 92.345f;
+    auto plot = OpenLabora::plot::create(PlotType::Begin, {}, mResourceMgr);
+    auto component = ExpansionMarkerComponent(MarkerType::Begin, plot, plot);
+    auto plots = component.GetPlots();
+    auto&& plot_cmpnt = getComponent<PositionComponent>(plots.first.get());
+    auto&& plot_alt_cmpnt = getComponent<PositionComponent>(plots.second.get());
+
+    component.SetPlotPositions({x, y});
+    EXPECT_FLOAT_EQ(plot_cmpnt.position.x, x);
+    EXPECT_FLOAT_EQ(plot_cmpnt.position.y, y);
+    EXPECT_GE(plot_alt_cmpnt.position.x, x);
+    ASSERT_GE(plot_alt_cmpnt.position.y, y);
+}
+
 } // namespace Test
 
 int main(int argc, char** argv)

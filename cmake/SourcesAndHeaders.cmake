@@ -17,7 +17,8 @@ set(sources
     src/GameState/Controllers/GCMainMenu.cpp
     src/GameState/Controllers/GCDuel.cpp
     # GUI
-    # src/GUI/ExpansionWindow.cpp
+    # src/GUI/ExpansionInterface.cpp
+    src/GUI/ExpansionWindow.cpp
     # Game systems
     src/Resource/ResourceManager.cpp
 )
@@ -61,7 +62,8 @@ set(headers
     include/GameState/Controllers/GCMainMenu.hpp
     include/GameState/Controllers/GCDuel.hpp
     # GUI
-    # include/GUI/ExpansionWindow.hpp
+    include/GUI/ExpansionInterface.hpp
+    include/GUI/ExpansionWindow.hpp
     # Misc
     include/Misc/RangeWrapper.hpp
     include/Misc/PtrView.hpp
@@ -83,6 +85,8 @@ set(headers
 )
 
 set(test_sources
+    # GUI
+    src/GUI/ExpansionWindowTests.cpp
     # Misc
     src/Misc/PtrViewTests.cpp
     src/Misc/RangeWrapperTests.cpp

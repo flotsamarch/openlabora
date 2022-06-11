@@ -57,6 +57,11 @@ public:
     PlotType GetPlotType() const noexcept
     { return ecs::getComponent<PlotComponent>(mPlot).GetType(); }
 
+    void SetPlotPositions(const sf::Vector2f& position) noexcept {
+        plot::setPosition(mPlot, position);
+        plot::setPosition(mPlotAlt, position, true);
+    }
+
 };
 
 } // namespace OpenLabora

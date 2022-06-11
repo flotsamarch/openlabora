@@ -23,6 +23,46 @@ using TCC = TextureContainerComponent;
 namespace playfield
 {
 
+std::function<void()>
+MakePlotCreationDelegate(Playfield::Ptr playfield,
+                         std::function<PlotCreationParams()> get_params)
+{
+    return [playfield, get_params]
+    {
+        using TCC = TextureContainerComponent;
+        using PfCmpnt = PlayfieldComponent;
+
+        constexpr auto central = plot::Type::Central;
+        auto&& playfield_cmpnt = ecs::getComponent<PfCmpnt>(*playfield);
+        auto&& texture_cmpnt = ecs::getComponent<TCC>(*playfield);
+        auto&& params = get_params();
+        auto&& plot = params.plots.first.get();
+        auto&& plot_alt = params.plots.second.get();
+        auto&& chosen_plot = params.alt_required ? plot_alt : plot;
+
+        const bool is_central =
+            ecs::getComponent<PlotComponent>(plot).GetType() == central;
+
+        texture_cmpnt.MarkUpdated(false);
+
+        auto add_plot =
+        [&pf = playfield_cmpnt, to_top = params.add_to_top] (const Plot& plot)
+        { to_top ? pf.AddPlotToTop(plot) : pf.AddPlotToBottom(plot); };
+
+        auto add_single = [add_plot] (const Plot& plot)
+        { add_plot(plot); };
+
+        auto add_double = [add_plot] (const Plot& first, const Plot& second)
+        { add_plot(first); add_plot(second); };
+
+        if (params.add_to_top) {
+            is_central ? add_single(chosen_plot) : add_double(plot_alt, plot);
+        } else {
+            is_central ? add_single(chosen_plot) : add_double(plot, plot_alt);
+        }
+    };
+}
+
 Playfield::Ptr create(IResourceManager::Ptr resource_mgr,
                                   const sf::Vector2f& init_pos)
 {
@@ -58,13 +98,19 @@ void entityUpdate(Playfield::Ptr entity,
     auto&& playfield = ecs::getComponent<PlayfieldComponent>(*entity);
     auto&& ground_texture = ecs::getComponent<TCC>(*entity);
     auto&& sprite = ecs::getComponent<SpriteComponent>(*entity);
+    auto position = ecs::getComponent<ImmobileComponent>(*entity).GetPosition();
 
     if (ground_texture.NeedsUpdate()) {
         auto texture = sf::RenderTexture{};
         const auto pf_width = tile::kTileWidth * playfield::kMaxFieldWidth;
         const auto pf_height = tile::kTileHeight * playfield::kMaxFieldHeight;
 
+        const auto size = sf::Vector2f{ static_cast<float>(pf_width),
+                                        static_cast<float>(pf_height) };
+        const auto view_rect = sf::FloatRect{ position, size };
+
         texture.create(pf_width, pf_height);
+        texture.setView(sf::View{ view_rect });
 
         for (auto type = plot::Type::Begin; type < plot::Type::End; ++type) {
             auto plots = playfield.GetPlots(type);

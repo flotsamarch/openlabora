@@ -26,11 +26,8 @@ GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
       mWindow{ window },
       mController{ controller },
       mModel{ model },
-      mMouseCoords{ sf::Mouse::getPosition() }//,
-      #if 0 // TODO: Reimplement markers (again)
-      mExpansionWindow{ controller },
-      mMarkerManager{ controller }
-      #endif
+      mMouseCoords{ sf::Mouse::getPosition() },
+      mExpansionInterface{ window, controller }
 {
     const auto win_size = static_cast<sf::Vector2f>(mWindow.GetSize());
     auto position = sf::Vector2f{ -1 * win_size.x / 2, -1 * win_size.y / 2 };
@@ -42,73 +39,8 @@ GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
     mWindow.SetView(sf::View{ sf::FloatRect{ position, win_size } });
 
     using Button = tgui::Button;
-    #if 0 // TODO: Reimplement markers (again)
-    // using MarkerType = ExpansionMarker::MarkerType;
-    // using Window = tgui::ChildWindow;
-    // using VBox = tgui::VerticalLayout;
 
-    // UI helper lambdas
-    auto add_new_plot =
-    [&wmarker = mSelectedMarker,
-     controller = mController,
-     exp_window = mExpansionWindow]
-    {
-        assert(!wmarker.expired());
-        auto marker = wmarker.lock();
-        assert(marker != nullptr);
-
-        auto [plot, plot_alt] = marker->GetPlots();
-
-        if (marker->GetPlotType() == Plot::PlotType::Central) {
-            const auto toggle_value = exp_window.GetToggleValue();
-            assert(toggle_value != 0);
-            if (marker->GetType() == MarkerType::Upper) {
-                controller->AddPlotToTop(toggle_value < 2 ? plot : plot_alt);
-            } else {
-                controller->AddPlotToBottom(toggle_value < 2 ? plot : plot_alt);
-            }
-            return;
-        }
-
-        if (marker->GetType() == MarkerType::Upper) {
-            controller->AddPlotToTop(plot_alt);
-            controller->AddPlotToTop(plot);
-        } else {
-            controller->AddPlotToBottom(plot);
-            controller->AddPlotToBottom(plot_alt);
-        }
-    };
-
-    auto expansion_win = mExpansionWindow.GetWindow();
-
-    auto close_confirm_window =
-    [&window = mExpansionWindow, &wmarker = mSelectedMarker]
-    {
-        assert(!wmarker.expired());
-        auto marker = wmarker.lock();
-        if (marker != nullptr) {
-            marker->Deselect();
-            marker = nullptr;
-        }
-        window.Show(false);
-    };
-
-    auto show_window =
-    [&window = mExpansionWindow, &wmarker = this->mSelectedMarker]
-    {
-        assert(!wmarker.expired());
-        auto marker = wmarker.lock();
-        assert(marker != nullptr);
-        window.SetState(marker->GetPlotType());
-        window.Show(true);
-    };
-
-    auto update_markers =
-    [&manager = mMarkerManager, show_window]
-    { manager.UpdateMarkers(show_window); };
-    #endif
     // Escape menu UI
-
     auto quit_btn = Button::create("Quit");
     auto resume_btn = Button::create("Resume");
 
@@ -124,23 +56,7 @@ GameView::GameView(PtrView<IApplication<StateIdsVariant>> app,
     mMenuVBox->setSize("20%", "10%");
 
     mWindow.AddWidget(mMenuVBox);
-    // TODO: Reimplement markers (again)
-    #if 0
-    mWindow.AddWidget(expansion_win);
 
-    auto confirm_btn = mExpansionWindow.GetConfirmButton();
-    auto decline_btn = mExpansionWindow.GetDeclineButton();
-
-    // Order is important
-    confirm_btn->onPress(add_new_plot);
-    confirm_btn->onPress(close_confirm_window);
-    confirm_btn->onPress(update_markers);
-
-    decline_btn->onPress(close_confirm_window);
-    expansion_win->onClose(close_confirm_window);
-
-    mMarkerManager.UpdateMarkers(show_window);
-    #endif
     // TODO initialize mModel->mBuildGhost something...something...
 };
 

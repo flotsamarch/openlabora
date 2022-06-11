@@ -62,11 +62,4 @@ void GameController::EnableBuildMode([[maybe_unused]]Location::LocationType type
 }
 #endif
 
-#if 0 // TODO: Reimplement markers (again)
-void GameController::RemoveMarker(ExpansionMarker::Ptr marker)
-{
-    mModel->RemoveEntity(marker);
-}
-#endif
-
 } // namespace OpenLabora

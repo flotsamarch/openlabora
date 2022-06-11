@@ -11,7 +11,6 @@
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 #include "Game/ExpansionMarker.hpp"
-#include "GameState/Controllers/GameController.hpp"
 #include "Resource/IResourceManager.hpp"
 
 namespace OpenLabora
@@ -19,6 +18,29 @@ namespace OpenLabora
 
 namespace marker
 {
+
+void setPosition(ExpansionMarker& marker, const sf::Vector2f& position)
+{
+    auto&& position_cmpnt = ecs::getComponent<PositionComponent>(marker);
+    auto&& marker_cmpnt = ecs::getComponent<ExpansionMarkerComponent>(marker);
+    auto&& sprite_cmpnt = ecs::getComponent<SpriteComponent>(marker);
+
+    position_cmpnt.position = position;
+    marker_cmpnt.SetPlotPositions(position);
+    sprite_cmpnt.SetPosition(position);
+}
+
+void setInteractiveRect(ExpansionMarker& marker,
+                        const sf::Vector2f& offset,
+                        const sf::Vector2f& size)
+{
+    using RectAreaCmpnt = RectangleInteractionAreaComponent;
+    auto&& area_cmpnt = ecs::getComponent<RectAreaCmpnt>(marker);
+    const auto rect = sf::RectangleShape{ size };
+
+    area_cmpnt.SetOffset(offset);
+    area_cmpnt.SetShape(rect);
+}
 
 void initilizeSpriteComponent(ExpansionMarker::Ptr,
                               IResourceManager::Ptr,
@@ -70,6 +92,7 @@ ExpansionMarker::Ptr create(Type marker_type,
     signals.Connect(signals::kOnEnter, on_enter);
     signals.Connect(signals::kOnLeave, on_out);
 
+    marker::setPosition(*marker, {});
     initilizeSpriteComponent(marker, resource_mgr);
     on_out();
 
@@ -100,7 +123,8 @@ void initilizeSpriteComponent(ExpansionMarker::Ptr entity,
     const auto marker_width = tile_count * tile::kTileWidth;
     const auto marker_height = tile::kTileHeight * (isCentral ? 1u : 2u);
 
-    sprite_component.SetPosition(position_component.position);
+    const auto position = position_component.position;
+    sprite_component.SetPosition(position);
     sprite_component.SetRect(sf::IntRect(0, 0, marker_width, marker_height));
 
     auto&& stored_texture = resource_mgr->GetTexture(id);
@@ -110,10 +134,14 @@ void initilizeSpriteComponent(ExpansionMarker::Ptr entity,
         auto plot_alt_sprite = ecs::getComponent<SpriteComponent>(plot_alt);
 
         auto render_texture = sf::RenderTexture{};
+        const auto size = sf::Vector2f{ static_cast<float>(marker_width),
+                                        static_cast<float>(marker_height) };
+        const auto view_rect = sf::FloatRect{ position, size };
+
         render_texture.create(marker_width, marker_height);
+        render_texture.setView(sf::View{ view_rect });
         render_texture.draw(plot_sprite.GetDrawableObject());
         if (!isCentral) {
-            plot_alt_sprite.SetPosition({ 0.f, tile::kTileHeight });
             render_texture.draw(plot_alt_sprite.GetDrawableObject());
         }
         render_texture.display();
@@ -130,12 +158,17 @@ MarkerPositions GetBoundaryMarkerPositions(plot::Type type,
                                            Playfield::PtrConst playfield)
 {
     auto&& pf_component = ecs::getComponent<PlayfieldComponent>(*playfield);
+    bool shift_upper = false;
     bool shift_lower = false;
 
-    auto plots = [&pf_component, &shift_lower, type] {
+    auto plots = [&pf_component, &shift_upper, &shift_lower, type] {
         auto plots = pf_component.GetPlots(type);
         if (plots.IsEmpty()) {
             return pf_component.GetPlots(plot::Type::Central);
+        }
+
+        if (type != plot::Type::Central) {
+            shift_upper = true;
         }
         shift_lower = true;
         return plots;
@@ -144,7 +177,7 @@ MarkerPositions GetBoundaryMarkerPositions(plot::Type type,
     using PosComp = PositionComponent;
     auto position_upper = ecs::getComponent<PosComp>(*plots.begin()).position;
     position_upper.x = playfield::getPlotStripXOffset(type);
-    position_upper.y -= tile::kTileHeight;
+    position_upper.y -= shift_upper ? 2 * tile::kTileHeight : tile::kTileHeight;
 
     auto position_lower = ecs::getComponent<PosComp>(*--plots.end()).position;
     position_lower.x = position_upper.x;

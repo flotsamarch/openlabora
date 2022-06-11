@@ -22,10 +22,7 @@
 #include "GameState/Controllers/GameController.hpp"
 #include "IApplication.hpp"
 #include "AppState/StateIds.hpp"
-#if 0 // TODO: Reimplement markers (again)
-#include "Game/MarkerManager.hpp"
-#include "GUI/ExpansionWindow.hpp"
-#endif
+#include "GUI/ExpansionInterface.hpp"
 
 namespace OpenLabora
 {
@@ -48,12 +45,7 @@ protected:
     // std::shared_ptr<Location> mBuildGhost;
 
     VBox::Ptr mMenuVBox = VBox::create();
-    #if 0 // TODO: Reimplement markers (again)
-    MarkerManager mMarkerManager;
-    ExpansionWindow mExpansionWindow;
-
-    std::weak_ptr<ExpansionMarker> mSelectedMarker; // Owned by Model
-    #endif
+    ExpansionInterface mExpansionInterface;
 
 public:
     using Ptr = std::unique_ptr<GameView>;

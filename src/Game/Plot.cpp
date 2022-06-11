@@ -21,6 +21,24 @@ namespace OpenLabora
 namespace plot
 {
 
+void setPosition(Plot& plot, const sf::Vector2f& position, bool needs_shift)
+{
+    auto&& plot_cmpnt = ecs::getComponent<PlotComponent>(plot);
+    auto&& position_cmpnt = ecs::getComponent<PositionComponent>(plot);
+    auto&& sprite_cmpnt = ecs::getComponent<SpriteComponent>(plot);
+
+    auto final_position = [type = plot_cmpnt.GetType(), &position, needs_shift]
+    {
+        if (needs_shift && type != plot::Type::Central) {
+            return position + sf::Vector2f{0.f, tile::kTileHeight};
+        }
+            return position;
+    } ();
+
+    position_cmpnt.position = final_position;
+    sprite_cmpnt.SetPosition(final_position);
+}
+
 void initializeSpriteComponent(Plot&, IResourceManager::Ptr,
                                std::string_view id);
 

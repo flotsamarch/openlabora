@@ -13,11 +13,12 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "Game/Plot.hpp"
-#include "Resource/IResourceManagerMock.hpp"
+#include "Resource/ResourceManagerDefaultActionTestBase.hpp"
 
 namespace Test
 {
 
+using PlotTests = ResourceManagerDefaultActionTestBase;
 using OpenLabora::Plot;
 using OpenLabora::plot::Type;
 using OpenLabora::plot::kTextureIdMap;
@@ -27,82 +28,135 @@ using testing::StrEq;
 using testing::_;
 using RMM = IResourceManagerMock;
 
-TEST(PlotTests, Create_TextureNotRegistered)
+TEST_F(PlotTests, Create_TextureNotRegistered)
 {
-    auto&& resource_mgr = std::make_shared<RMM>(std::filesystem::path{});
+    auto&& id = kTextureIdMap.Get(Type::Coastal)[0];
+
+    EXPECT_CALL(*mResourceMgr, GetTexture(StrEq(id)))
+        .WillOnce(Return(RMM::OptionalTextureRef{}));
+
+    EXPECT_CALL(*mResourceMgr, GetTextureOrDefault)
+        .WillRepeatedly(ReturnRef(mTexture));
+
+    EXPECT_CALL(*mResourceMgr, RegisterTexture(StrEq(id), _))
+        .WillOnce(ReturnRef(mTexture));
+
+    auto plot = OpenLabora::plot::create(Type::Coastal, sf::Vector2f{},
+                                         mResourceMgr);
+}
+
+TEST_F(PlotTests, Create_TextureIsRegistered)
+{
     auto&& id = kTextureIdMap.Get(Type::Coastal)[0];
     auto&& texture = sf::Texture{};
 
-    EXPECT_CALL(*resource_mgr, GetTexture(StrEq(id)))
-        .WillOnce(Return(RMM::OptionalTextureRef{}));
-
-    EXPECT_CALL(*resource_mgr, GetTextureOrDefault)
-        .WillRepeatedly(ReturnRef(texture));
-
-    EXPECT_CALL(*resource_mgr, RegisterTexture(StrEq(id), _))
-        .WillOnce(ReturnRef(texture));
-
-    auto plot = OpenLabora::plot::create(Type::Coastal, sf::Vector2f{},
-                                         resource_mgr);
-}
-
-TEST(PlotTests, Create_TextureIsRegistered)
-{
-    auto&& resource_mgr = std::make_shared<RMM>(std::filesystem::path{});
-    auto&& id = kTextureIdMap.Get(Type::Coastal)[0];
-    auto&& texture = sf::Texture{};
-
-    EXPECT_CALL(*resource_mgr, GetTexture(StrEq(id)))
+    EXPECT_CALL(*mResourceMgr, GetTexture(StrEq(id)))
         .WillOnce(Return(RMM::OptionalTextureRef{ texture }));
 
-    EXPECT_CALL(*resource_mgr, GetTextureOrDefault)
+    EXPECT_CALL(*mResourceMgr, GetTextureOrDefault)
         .Times(0);
 
-    EXPECT_CALL(*resource_mgr, RegisterTexture)
+    EXPECT_CALL(*mResourceMgr, RegisterTexture)
         .Times(0);
 
     auto plot = OpenLabora::plot::create(Type::Coastal, sf::Vector2f{},
-                                         resource_mgr);
+                                         mResourceMgr);
 }
 
-TEST(PlotTests, CreateCentralInitial_TextureNotRegistered)
+TEST_F(PlotTests, CreateCentralInitial_TextureNotRegistered)
 {
-    auto&& resource_mgr = std::make_shared<RMM>(std::filesystem::path{});
     auto&& id = OpenLabora::plot::kCentralInitAltTextureName;
-    auto&& texture = sf::Texture{};
 
-    EXPECT_CALL(*resource_mgr, GetTexture(StrEq(id)))
+    EXPECT_CALL(*mResourceMgr, GetTexture(StrEq(id)))
         .WillOnce(Return(RMM::OptionalTextureRef{}));
 
-    EXPECT_CALL(*resource_mgr, GetTextureOrDefault)
-        .WillRepeatedly(ReturnRef(texture));
+    EXPECT_CALL(*mResourceMgr, GetTextureOrDefault)
+        .WillRepeatedly(ReturnRef(mTexture));
 
-    EXPECT_CALL(*resource_mgr, RegisterTexture(StrEq(id), _))
-        .WillOnce(ReturnRef(texture));
+    EXPECT_CALL(*mResourceMgr, RegisterTexture(StrEq(id), _))
+        .WillOnce(ReturnRef(mTexture));
 
     auto plot = OpenLabora::plot::createCentralInitial(sf::Vector2f{},
-                                                       resource_mgr,
+                                                       mResourceMgr,
                                                        true);
 }
 
-TEST(PlotTests, CreateCentralInitial_TextureIsRegistered)
+TEST_F(PlotTests, CreateCentralInitial_TextureIsRegistered)
 {
-    auto&& resource_mgr = std::make_shared<RMM>(std::filesystem::path{});
     auto&& id = OpenLabora::plot::kCentralInitAltTextureName;
-    auto&& texture = sf::Texture{};
 
-    EXPECT_CALL(*resource_mgr, GetTexture(StrEq(id)))
-        .WillOnce(Return(RMM::OptionalTextureRef{ texture }));
+    EXPECT_CALL(*mResourceMgr, GetTexture(StrEq(id)))
+        .WillOnce(Return(RMM::OptionalTextureRef{ mTexture }));
 
-    EXPECT_CALL(*resource_mgr, GetTextureOrDefault)
+    EXPECT_CALL(*mResourceMgr, GetTextureOrDefault)
         .Times(0);
 
-    EXPECT_CALL(*resource_mgr, RegisterTexture)
+    EXPECT_CALL(*mResourceMgr, RegisterTexture)
         .Times(0);
 
     auto plot = OpenLabora::plot::createCentralInitial(sf::Vector2f{},
-                                                       resource_mgr,
+                                                       mResourceMgr,
                                                        true);
+}
+
+TEST_F(PlotTests, SetPosition)
+{
+    using OpenLabora::ecs::getComponent;
+    using OpenLabora::PositionComponent;
+    using OpenLabora::SpriteComponent;
+    constexpr auto x = 932.5723f;
+    constexpr auto y = 894.3002f;
+    auto plot = OpenLabora::plot::create(Type::Begin, sf::Vector2f{},
+                                         mResourceMgr);
+    auto&& position_cmpnt = getComponent<PositionComponent>(plot);
+    auto&& sprite_cmpnt = getComponent<SpriteComponent>(plot);
+
+    OpenLabora::plot::setPosition(plot, {x, y});
+
+    EXPECT_FLOAT_EQ(position_cmpnt.position.x, x);
+    EXPECT_FLOAT_EQ(position_cmpnt.position.y, y);
+    EXPECT_FLOAT_EQ(sprite_cmpnt.GetPosition().x, x);
+    ASSERT_FLOAT_EQ(sprite_cmpnt.GetPosition().y, y);
+}
+
+TEST_F(PlotTests, SetPosition_ShiftCentral)
+{
+    using OpenLabora::ecs::getComponent;
+    using OpenLabora::PositionComponent;
+    using OpenLabora::SpriteComponent;
+    constexpr auto x = 932.5723f;
+    constexpr auto y = 894.3002f;
+    auto plot = OpenLabora::plot::create(Type::Central, sf::Vector2f{},
+                                         mResourceMgr);
+    auto&& position_cmpnt = getComponent<PositionComponent>(plot);
+    auto&& sprite_cmpnt = getComponent<SpriteComponent>(plot);
+
+    OpenLabora::plot::setPosition(plot, {x, y}, true);
+
+    EXPECT_FLOAT_EQ(position_cmpnt.position.x, x);
+    EXPECT_FLOAT_EQ(position_cmpnt.position.y, y);
+    EXPECT_FLOAT_EQ(sprite_cmpnt.GetPosition().x, x);
+    ASSERT_FLOAT_EQ(sprite_cmpnt.GetPosition().y, y);
+}
+
+TEST_F(PlotTests, SetPosition_ShiftNonCetral)
+{
+    using OpenLabora::ecs::getComponent;
+    using OpenLabora::PositionComponent;
+    using OpenLabora::SpriteComponent;
+    constexpr auto x = 932.5723f;
+    constexpr auto y = 894.3002f;
+    constexpr auto tile_h = OpenLabora::tile::kTileHeight;
+    auto plot = OpenLabora::plot::create(Type::Begin, sf::Vector2f{},
+                                         mResourceMgr);
+    auto&& position_cmpnt = getComponent<PositionComponent>(plot);
+    auto&& sprite_cmpnt = getComponent<SpriteComponent>(plot);
+
+    OpenLabora::plot::setPosition(plot, {x, y}, true);
+    EXPECT_FLOAT_EQ(position_cmpnt.position.x, x);
+    EXPECT_FLOAT_EQ(position_cmpnt.position.y, y + tile_h);
+    EXPECT_FLOAT_EQ(sprite_cmpnt.GetPosition().x, x);
+    ASSERT_FLOAT_EQ(sprite_cmpnt.GetPosition().y, y + tile_h);
 }
 
 } // namespace Test

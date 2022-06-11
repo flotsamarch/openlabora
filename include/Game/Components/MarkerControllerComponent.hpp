@@ -18,13 +18,10 @@
 #include "Game/Plot.hpp"
 #include "Game/Playfield.hpp"
 #include "Game/ExpansionMarker.hpp"
-#include "Misc/PtrView.hpp"
 #include "Misc/EnumMap.hpp"
 
 namespace OpenLabora
 {
-
-class GameController;
 
 class MarkerControllerComponent final
 {

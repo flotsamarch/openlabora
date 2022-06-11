@@ -33,20 +33,26 @@ namespace OpenLabora
 // General game logic base class
 class GameController : public std::enable_shared_from_this<GameController>
 {
+    using PlotCreationParams = playfield::PlotCreationParams;
+
 public:
     using Ptr = std::shared_ptr<GameController>;
     using WPtr = std::weak_ptr<GameController>;
     using CPtr = std::shared_ptr<const GameController>;
+
+    using GetPlotCreationParamsDelegate = std::function<PlotCreationParams()>;
 
 protected:
     PtrView<IApplication<StateIdsVariant>> mApp;
     Model::Ptr mModel;
     IResourceManager::Ptr mResourceMgr;
 
-    #if 0 // TODO: multiplayer support
-    std::shared_ptr<Playfield> GetActivePlayerPlayfieldInternal() noexcept
+    // TODO: multiplayer support
+    Playfield::Ptr GetActivePlayerPlayfieldInternal() noexcept
     { return mModel->GetPlayfield(Model::Player1); }
-    #endif
+
+    Playfield::PtrConst GetActivePlayerPlayfieldInternal() const noexcept
+    { return mModel->GetPlayfield(Model::Player1); }
 
 public:
     GameController(PtrView<IApplication<StateIdsVariant>>,
@@ -76,7 +82,7 @@ public:
 
     const Playfield::PtrConst
     GetActivePlayerPlayfield() const noexcept
-    { return mModel->GetPlayfield(Model::Player1); }
+    { return GetActivePlayerPlayfieldInternal(); }
 
     Model::PtrConst GetModel() const
     { return mModel; }
@@ -89,6 +95,14 @@ public:
 
     void SetWorldMousePosition(const sf::Vector2f& position)
     { mModel->SetWorldMousePosition(position); }
+
+    std::function<void()>
+    MakePlotCreationDelegate(GetPlotCreationParamsDelegate get_params)
+    {
+        using playfield::MakePlotCreationDelegate;
+        return MakePlotCreationDelegate(GetActivePlayerPlayfieldInternal(),
+                                        get_params);
+    }
 };
 
 inline GameController::~GameController() {}
