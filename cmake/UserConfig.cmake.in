@@ -4,11 +4,11 @@
 # If you wish to overwrite these - delete cmake/UserConfig.cmake file
 # and call cmake with new values.
 #
-if(${PROJECT_NAME}_ENABLE_VCPKG)
-  if (NOT CMAKE_TOOLCHAIN_FILE)
-    set(CMAKE_TOOLCHAIN_FILE "@CMAKE_TOOLCHAIN_FILE@")
-  endif()
-  if (NOT VCPKG_TARGET_TRIPLET)
-    set(VCPKG_TARGET_TRIPLET "@VCPKG_TARGET_TRIPLET@")
-  endif()
+if(NOT CMAKE_TOOLCHAIN_FILE)
+  message(STATUS "CMAKE_TOOLCHAIN_FILE value not provided. Using default value from user config. Delete UserConfig.cmake if you wish to set new value as default")
+  set(CMAKE_TOOLCHAIN_FILE "@CMAKE_TOOLCHAIN_FILE@")
+endif()
+if(NOT VCPKG_TARGET_TRIPLET)
+  message(STATUS "VCPKG_TARGET_TRIPLET value not provided. Using default value from user config. Delete UserConfig.cmake if you wish to set new value as default")
+  set(VCPKG_TARGET_TRIPLET "@VCPKG_TARGET_TRIPLET@")
 endif()

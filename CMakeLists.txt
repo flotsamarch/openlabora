@@ -1,6 +1,22 @@
 cmake_minimum_required(VERSION 3.15)
 
 #
+# Save/Load user config
+#
+include(cmake/UserConfig.cmake OPTIONAL RESULT_VARIABLE USER_CONFIG_FOUND)
+if(USER_CONFIG_FOUND STREQUAL NOTFOUND)
+  message(STATUS "User config file not found, creating new one.")
+  file(TO_CMAKE_PATH ${CMAKE_TOOLCHAIN_FILE} CMAKE_TOOLCHAIN_FILE)
+  configure_file(
+    ${CMAKE_CURRENT_LIST_DIR}/cmake/UserConfig.cmake.in
+    ${CMAKE_CURRENT_LIST_DIR}/cmake/UserConfig.cmake
+    @ONLY
+  )
+else()
+  message(STATUS "User config file found in cmake/UserConfig.cmake.")
+endif()
+
+#
 # Project details
 #
 
@@ -40,19 +56,6 @@ endif()
 
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there.\n")
-endif()
-
-#
-# Save user config
-#
-include(cmake/UserConfig.cmake OPTIONAL RESULT_VARIABLE USER_CONFIG_FOUND)
-if(USER_CONFIG_FOUND STREQUAL NOTFOUND)
-  file(TO_CMAKE_PATH ${CMAKE_TOOLCHAIN_FILE} CMAKE_TOOLCHAIN_FILE)
-  configure_file(
-    ${CMAKE_CURRENT_LIST_DIR}/cmake/UserConfig.cmake.in
-    ${CMAKE_CURRENT_LIST_DIR}/cmake/UserConfig.cmake
-    @ONLY
-  )
 endif()
 
 #
