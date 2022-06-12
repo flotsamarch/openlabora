@@ -46,11 +46,15 @@ void setState(const StateChooseOne&,
     auto toggle_buttons_hbox = tgui::HorizontalLayout::create();
 
     auto button_on_toggle =
-    [alt_toggle_1, alt_toggle_2, confirm_button]
-    (tgui::ToggleButton::Ptr other)
+    [alt_toggle_1 = std::weak_ptr{ alt_toggle_1 },
+     alt_toggle_2 = std::weak_ptr{ alt_toggle_2 },
+     confirm_button]
+    (std::weak_ptr<tgui::ToggleButton> other)
     {
-        other->setDown(false);
-        if (alt_toggle_1->isDown() || alt_toggle_2->isDown()) {
+        assert(!alt_toggle_1.expired() && !alt_toggle_2.expired());
+        assert(!other.expired());
+        other.lock()->setDown(false);
+        if (alt_toggle_1.lock()->isDown() || alt_toggle_2.lock()->isDown()) {
             confirm_button->setEnabled(true);
             return;
         }
