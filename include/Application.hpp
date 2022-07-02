@@ -144,10 +144,8 @@ void Application<TGui,
                  TResourceManager>
 ::ChangeState(TStateIdsVariant state_id)
 {
-    using OptStates = std::optional<TStatesVariant>;
     mRenderer.RemoveAllWidgets();
-    OptStates new_state = std::move(std::visit(mTransitions, state_id));
-    mState = *std::move(new_state);
+    mState = *std::visit(mTransitions, state_id);
 }
 
 template<class TGui, class TWindow, template<class...> class TRenderer,
