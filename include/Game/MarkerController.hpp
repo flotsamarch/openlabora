@@ -39,8 +39,8 @@ bool entityHandleEvent(MarkerController::Ptr,
                        const sf::Event&);
 
 void entityUpdate(MarkerController::Ptr,
-                  float update_delta_seconds,
-                  std::shared_ptr<GameController>);
+                  std::shared_ptr<GameController>,
+                  float update_delta_seconds);
 
 } // namespace OpenLabora
 

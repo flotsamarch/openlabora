@@ -47,7 +47,7 @@ class Entity final
 
         void Update(std::shared_ptr<GameController> controller,
                     float update_delta_seconds) override
-        { entityUpdate(mEntity, update_delta_seconds, controller); }
+        { entityUpdate(mEntity, controller, update_delta_seconds); }
 
         bool HandleEvent(std::shared_ptr<GameController> controller,
                          const sf::Event& event) override
@@ -66,8 +66,8 @@ public:
     uid::Uid GetId() const { return mSelf->GetId(); }
 
     friend void entityUpdate(Entity& entity,
-                             float update_delta_seconds,
-                             std::shared_ptr<GameController> controller)
+                             std::shared_ptr<GameController> controller,
+                             float update_delta_seconds)
     { entity.mSelf->Update(controller, update_delta_seconds); }
 
     friend bool entityHandleEvent(Entity& entity,

@@ -72,8 +72,8 @@ bool entityHandleEvent(Playfield::Ptr entity,
                        const sf::Event& event);
 
 void entityUpdate(Playfield::Ptr entity,
-                  float update_delta_seconds,
-                  std::shared_ptr<GameController> controller);
+                  std::shared_ptr<GameController> controller,
+                  float update_delta_seconds);
 
 } // namespace OpenLabora
 

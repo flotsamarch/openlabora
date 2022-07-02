@@ -121,7 +121,7 @@ TEST_F(PlayfieldEntityTests, EventHandling)
 TEST_F(PlayfieldEntityTests, Update)
 {
     using TCC = OpenLabora::TextureContainerComponent;
-    entityUpdate(mPlayfield, 0.f, mController);
+    entityUpdate(mPlayfield, mController, 0.f);
 
     auto&& texture_component = getComponent<TCC>(*mPlayfield);
 

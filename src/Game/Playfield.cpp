@@ -92,8 +92,8 @@ bool entityHandleEvent([[maybe_unused]]Playfield::Ptr entity,
 }
 
 void entityUpdate(Playfield::Ptr entity,
-                  [[maybe_unused]]float update_delta_seconds,
-                  GameController::Ptr controller)
+                  GameController::Ptr controller,
+                  [[maybe_unused]]float update_delta_seconds)
 {
     auto&& playfield = ecs::getComponent<PlayfieldComponent>(*entity);
     auto&& ground_texture = ecs::getComponent<TCC>(*entity);

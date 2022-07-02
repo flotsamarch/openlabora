@@ -41,8 +41,8 @@ bool entityHandleEvent(MarkerController::Ptr entity,
 }
 
 void entityUpdate(MarkerController::Ptr entity,
-                  [[maybe_unused]]float update_delta_seconds,
-                  GameController::Ptr controller)
+                  GameController::Ptr controller,
+                  [[maybe_unused]]float update_delta_seconds)
 {
     auto&& component = ecs::getComponent<MarkerControllerComponent>(*entity);
     auto markers = component.GetMarkers();

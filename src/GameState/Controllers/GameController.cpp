@@ -49,7 +49,7 @@ void GameController::Update(const float update_delta_seconds)
 {
     mModel->ClearDrawableObjects();
     for (auto&& entity : mModel->GetEntities()) {
-        entityUpdate(entity, update_delta_seconds, shared_from_this());
+        entityUpdate(entity, shared_from_this(), update_delta_seconds);
     }
 
 }
