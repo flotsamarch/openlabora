@@ -27,7 +27,7 @@ class SignalComponent final
 {
     using Serial = uint64_t;
     using DelegateMap = std::map<Serial, std::function<void()>>; // Needs order
-    using SignalMap = std::unordered_map<Signal, DelegateMap, SignalHash>;
+    using SignalMap = std::unordered_map<Signal, DelegateMap>;
     SignalMap mSignals;
 
 public:

@@ -17,14 +17,6 @@ public:
     auto operator<=>(const Signal&) const noexcept = default;
 };
 
-struct SignalHash
-{
-    std::size_t operator()(const OpenLabora::Signal& signal) const noexcept
-    {
-        return static_cast<std::size_t>(signal.GetId());
-    }
-};
-
 namespace signals
 {
 
@@ -40,5 +32,13 @@ inline const Signal kOnMiddleRelease{};
 } // namespace signals
 
 } // namespace OpenLabora
+
+template<>
+struct std::hash<OpenLabora::Signal>
+{
+    std::size_t operator()(const OpenLabora::Signal& signal) const noexcept
+    { return std::hash<decltype(signal.GetId())>{}(signal.GetId()); }
+};
+
 
 #endif // SIGNAL_HPP_
