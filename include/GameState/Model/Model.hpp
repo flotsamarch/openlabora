@@ -1,4 +1,4 @@
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //
 // OpenLabora (c) by Flotsamarch (https://github.com/flotsamarch)
 //
@@ -13,7 +13,7 @@
 #ifndef MODEL_HPP_
 #define MODEL_HPP_
 
-#include <vector>
+#include <unordered_set>
 #include <memory>
 #include <concepts>
 #include <SFML/Graphics/Drawable.hpp>
@@ -27,7 +27,8 @@ namespace OpenLabora
 
 class Model final
 {
-    using EntityContainer = std::vector<Entity>;
+    // Entities are unique and we want to find them quickly by id
+    using EntityContainer = std::unordered_map<uid::Uid, Entity>;
 
     EntityContainer mEntities;
     model::DrawableContainer mDrawableObjects;
@@ -66,8 +67,46 @@ public:
     { return { mEntities.cbegin(), mEntities.cend() }; }
 
     template<class T>
-    uid::Uid AddEntity(std::shared_ptr<T> entity)
-    { return mEntities.emplace_back(entity).GetId(); }
+    uid::Uid AddEntity(std::shared_ptr<T> object)
+    {
+        auto&& entity = Entity{ object };
+        const auto id = entity.GetId();
+        mEntities.emplace(id, std::move(entity)); // Maybe check for success
+        return id;
+    }
+
+    void RemoveEntity(const uid::Uid& id)
+    {
+        auto it = mEntities.find(id);
+        if (it != mEntities.end()) {
+            mEntities.erase(it);
+        }
+    }
+
+    void RemoveEntityBulk(std::span<uid::Uid> ids)
+    {
+        auto remaining_ids = std::vector<uid::Uid>{ ids.begin(), ids.end() };
+
+        auto pred = [&ids = remaining_ids] (auto&& ent)
+        {
+            const auto& it = std::find(ids.begin(), ids.end(), ent.GetId());
+            const bool result = it != ids.end();
+
+            if (result) {
+                ids.erase(it);
+            }
+
+            return result;
+        };
+
+        auto end = mEntities.end();
+        for (auto it = mEntities.begin(); it != end;) {
+            auto tmp = it++;
+            if (pred(tmp->second)) {
+                mEntities.erase(tmp);
+            }
+        }
+    }
 
     model::DrawableRangeConst GetDrawableObjects() const noexcept
     { return { mDrawableObjects.cbegin(), mDrawableObjects.cend() }; }

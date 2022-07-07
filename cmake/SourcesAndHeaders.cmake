@@ -1,7 +1,6 @@
 set(sources
     # Components
     src/Game/Components/PlayfieldComponent.cpp
-    src/Game/Components/MarkerControllerComponent.cpp
     # Gameplay classes
     src/Game/Tile.cpp
     src/Game/Plot.cpp
@@ -10,7 +9,6 @@ set(sources
     src/Game/MarkerController.cpp
     # src/Game/Location.cpp
     # Game states
-    src/GameState/Views/GameView.cpp
     src/GameState/Views/GVMainMenu.cpp
     src/GameState/Views/GVDuel.cpp
     src/GameState/Controllers/GameController.cpp
@@ -40,7 +38,6 @@ set(headers
     include/Game/Components/SelectableComponent.hpp
     include/Game/Components/SignalComponent.hpp
     include/Game/Components/ExpansionMarkerComponent.hpp
-    include/Game/Components/MarkerControllerComponent.hpp
     # Gameplay classes
     include/Game/Tile.hpp
     include/Game/Plot.hpp
@@ -62,7 +59,8 @@ set(headers
     include/GameState/Controllers/GCMainMenu.hpp
     include/GameState/Controllers/GCDuel.hpp
     # GUI
-    include/GUI/ExpansionInterface.hpp
+    include/GUI/Subviews/SubviewInitializer.hpp
+    include/GUI/Subviews/ExpansionSubview.hpp
     include/GUI/ExpansionWindow.hpp
     # Misc
     include/Misc/RangeWrapper.hpp
@@ -92,6 +90,7 @@ set(test_sources
     src/Misc/RangeWrapperTests.cpp
     src/Misc/EnumMapTests.cpp
     src/Misc/UIDTests.cpp
+    src/Misc/TupleUtilsTests.cpp
     # Game systems
     src/ApplicationTests.cpp
     # Components
@@ -101,7 +100,6 @@ set(test_sources
     src/Game/Components/SelectableComponentTests.cpp
     src/Game/Components/SignalComponentTests.cpp
     src/Game/Components/ExpansionMarkerComponentTests.cpp
-    src/Game/Components/MarkerControllerComponentTests.cpp
     # Gameplay classes
     src/RendererTests.cpp
     src/Game/TileTests.cpp

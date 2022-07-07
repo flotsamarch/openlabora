@@ -71,12 +71,15 @@ MarkerPositions GetBoundaryMarkerPositions(plot::Type, Playfield::PtrConst);
 
 static constexpr float kMarkerOverlapFactor = 1.f / 3.f;
 
-bool handleEvent(ExpansionMarker::Ptr,
-                 const sf::Vector2f& mouse_world_pos,
-                 const sf::Event&);
-
 } // namespace marker
 
+bool entityHandleEvent(ExpansionMarker::Ptr,
+                       std::shared_ptr<GameController>,
+                       const sf::Event&);
+
+void entityUpdate(ExpansionMarker::Ptr,
+                  std::shared_ptr<GameController>,
+                  float update_delta_seconds);
 
 } // namespace OpenLabora
 

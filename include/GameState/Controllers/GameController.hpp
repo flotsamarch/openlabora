@@ -15,6 +15,7 @@
 
 #include <cassert>
 #include <memory>
+#include <span>
 #include <SFML/Window/Event.hpp>
 #include "IApplication.hpp"
 #include "Misc/PtrView.hpp"
@@ -74,8 +75,14 @@ public:
     { mModel->AddDrawableObject(std::forward<T>(drawable)); }
 
     template<class T>
-    void AddEntity(T&& entity)
-    { mModel->AddEntity(std::forward<T>(entity)); }
+    uid::Uid AddEntity(T&& entity)
+    { return mModel->AddEntity(std::forward<T>(entity)); }
+
+    void RemoveEntity(const uid::Uid& id)
+    { mModel->RemoveEntity(id); }
+
+    void RemoveEntityBulk(std::span<uid::Uid> ids)
+    { mModel->RemoveEntityBulk(ids); }
 
     // TODO: Reimplement Build Mode
     // void EnableBuildMode(Location::LocationType);
@@ -86,9 +93,6 @@ public:
 
     Model::PtrConst GetModel() const
     { return mModel; }
-
-    void AddMarkerControllerToModel(MarkerController::Ptr marker_controller)
-    { mModel->AddEntity(marker_controller); }
 
     IResourceManager::Ptr GetResourceManager() const noexcept
     { return mResourceMgr; }

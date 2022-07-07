@@ -10,8 +10,8 @@
 //
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-#ifndef EXPANSIONINTERFACE_HPP_
-#define EXPANSIONINTERFACE_HPP_
+#ifndef EXPANSIONSUBVIEW_HPP_
+#define EXPANSIONSUBVIEW_HPP_
 
 #include <functional>
 #include "Game/ExpansionMarker.hpp"
@@ -21,6 +21,7 @@
 #include "GUI/ExpansionWindow.hpp"
 #include "Game/MarkerController.hpp"
 #include "Misc/EnumMap.hpp"
+#include "SubviewInitializer.hpp"
 
 namespace OpenLabora
 {
@@ -38,12 +39,15 @@ inline const EnumMap<plot::Type, WindowStatesVariant> kWindowStatesMap
 
 } // namespace expansionWindow
 
-// Class responsible for interactive elements that allow expansion of playfield
-class ExpansionInterface final
+// Subview that handles user interface for playfield expansion
+class ExpansionSubview final
 {
     using MarkerType = marker::Type;
     using PlotType = plot::Type;
     using Delegate = std::function<void()>;
+
+    template<class TGui, class TWindow, class TGameController>
+    using Initializer = SubviewInitializer<TGui, TWindow, TGameController>;
 
     ExpansionWindow mExpansionWindow;
     MarkerController::Ptr mMarkerController;
@@ -51,37 +55,31 @@ class ExpansionInterface final
     void CreateMarker(PlotType, MarkerType, Delegate);
 
 public:
-    template<class TGui, class TWindow>
-    ExpansionInterface(GameWindow<TGui, TWindow>, GameController::Ptr);
+    template<class TGui, class TWindow, class TGameController>
+    ExpansionSubview(Initializer<TGui, TWindow, TGameController>);
 };
 
-template<class TGui, class TWindow>
-ExpansionInterface::ExpansionInterface(GameWindow<TGui, TWindow> game_window,
-                                       GameController::Ptr controller)
-    : mExpansionWindow(game_window)
-
+template<class TGui, class TWindow, class TGameController>
+ExpansionSubview
+::ExpansionSubview(Initializer<TGui, TWindow, TGameController> initializer)
+    : mExpansionWindow{ initializer.game_window },
+      mMarkerController{ std::make_shared<MarkerController>() }
 {
+    auto controller = initializer.game_controller;
     auto&& playfield = controller->GetActivePlayerPlayfield();
-    auto&& immobile_cmpnt = ecs::getComponent<ImmobileComponent>(*playfield);
 
-    mMarkerController = marker::createController(immobile_cmpnt.GetPosition());
-    controller->AddMarkerControllerToModel(mMarkerController);
     auto&& resource_mgr = controller->GetResourceManager();
 
     auto close_confirm_window =
-    [&window = mExpansionWindow, controller = mMarkerController]
+    [&window = mExpansionWindow, marker_controller = mMarkerController]
     {
-        using MCC = MarkerControllerComponent;
-        auto&& component = ecs::getComponent<MCC>(*controller);
-        component.DeselectMarker();
+        marker_controller->DeselectMarker();
         window.Show(false);
     };
 
-    auto get_selected_marker = [controller = mMarkerController]
+    auto get_selected_marker = [marker_controller = mMarkerController]
     {
-        using MCC = MarkerControllerComponent;
-        auto&& component = ecs::getComponent<MCC>(*controller);
-        return component.GetSelecterMarker();
+        return marker_controller->GetSelecterMarker();
 
     };
 
@@ -117,17 +115,22 @@ ExpansionInterface::ExpansionInterface(GameWindow<TGui, TWindow> game_window,
 
     auto add_new_plot = controller->MakePlotCreationDelegate(get_params);
 
+    auto&& marker_ctlr = mMarkerController;
     auto update_markers =
-    [playfield, show_window, resource_mgr, marker_controller = mMarkerController]
+    [playfield, show_window, resource_mgr, controller, marker_ctlr]
     {
-        using MCC = MarkerControllerComponent;
-        auto&& controller_component = ecs::getComponent<MCC>(*marker_controller);
+        auto marker_registrar = [controller] (ExpansionMarker::Ptr marker)
+        { return controller->AddEntity(marker); };
 
-        controller_component.RemoveExcessMarkers(playfield);
-        controller_component.CreateMissingMarkers(playfield,
-                                                  show_window,
-                                                  resource_mgr);
-        controller_component.TranslateMarkers(playfield);
+        auto marker_bulk_deleter = [controller] (std::span<uid::Uid> ids)
+        { controller->RemoveEntityBulk(ids); };
+
+        marker_ctlr->RemoveExcessMarkers(playfield, marker_bulk_deleter);
+        marker_ctlr->CreateMissingMarkers(playfield,
+                                          marker_registrar,
+                                          show_window,
+                                          resource_mgr);
+        marker_ctlr->TranslateMarkers(playfield);
     };
     update_markers();
 
@@ -144,6 +147,19 @@ ExpansionInterface::ExpansionInterface(GameWindow<TGui, TWindow> game_window,
     expansion_win->onClose(close_confirm_window);
 }
 
+inline bool subviewHandleEvent([[maybe_unused]]ExpansionSubview& subview,
+                               [[maybe_unused]]GameController::Ptr controller,
+                               [[maybe_unused]]const sf::Event& event)
+{
+    return false;
+}
+
+inline void subviewUpdate([[maybe_unused]]ExpansionSubview& subview,
+                          [[maybe_unused]]GameController::Ptr controller,
+                          [[maybe_unused]]float update_delta_seconds)
+{
+}
+
 } // namespace OpenLabora
 
-#endif // EXPANSIONINTERFACE_HPP_
+#endif // EXPANSIONSUBVIEW_HPP_

@@ -38,7 +38,7 @@ GameController::GameController(PtrView<IApplication<StateIdsVariant>> app,
 
 void GameController::HandleEvent(const sf::Event& event)
 {
-    for (auto&& entity : mModel->GetEntities()) {
+    for (auto&& [_, entity] : mModel->GetEntities()) {
         if (entityHandleEvent(entity, shared_from_this(), event)) {
             break;
         }
@@ -48,7 +48,7 @@ void GameController::HandleEvent(const sf::Event& event)
 void GameController::Update(const float update_delta_seconds)
 {
     mModel->ClearDrawableObjects();
-    for (auto&& entity : mModel->GetEntities()) {
+    for (auto&& [_, entity] : mModel->GetEntities()) {
         entityUpdate(entity, shared_from_this(), update_delta_seconds);
     }
 

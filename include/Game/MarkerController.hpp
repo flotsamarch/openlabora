@@ -13,34 +13,65 @@
 #ifndef MARKERCONTROLLER_HPP_
 #define MARKERCONTROLLER_HPP_
 
-#include "ECS/ComponentContainer.hpp"
-#include "Components/MarkerControllerComponent.hpp"
-#include "Components/ImmobileComponent.hpp"
-#include "Components/TextureContainerComponent.hpp"
-#include "Components/SpriteComponent.hpp"
+#include <iterator>
+#include <concepts>
+#include "Game/Plot.hpp"
+#include "Game/Playfield.hpp"
+#include "Game/ExpansionMarker.hpp"
+#include "Misc/EnumMap.hpp"
 
 namespace OpenLabora
 {
 
-class GameController;
-
-using MarkerController = ComponentContainer<MarkerControllerComponent,
-                                            ImmobileComponent>;
-
-namespace marker
+class MarkerController final
 {
+    using Marker = ExpansionMarker;
+    using OnLeftReleaseDelegate = std::function<void()>;
+    using MarkerAndId = std::pair<uid::Uid, Marker::Ptr>;
 
-MarkerController::Ptr createController(sf::Vector2f pf_position);
+    // Less memory footprint than vector in this case most of the time.
+    // Also I would prefer to just insert new elements right before last element
+    // instead of doing weird tricks with keeping persistent elements in the
+    // beginning and pushing new ones to the back.
+    using MarkerContainer = std::list<MarkerAndId>;
+    using MarkerMap = EnumMap<plot::Type, MarkerContainer>;
 
-} // namespace marker
+    MarkerMap mMarkers;
+    Marker::Ptr mSelectedMarker{};
 
-bool entityHandleEvent(MarkerController::Ptr,
-                       std::shared_ptr<GameController>,
-                       const sf::Event&);
+public:
+    using MarkerRegistrar = std::function<uid::Uid(Marker::Ptr)>;
+    using MarkerBulkDeleter = std::function<void(std::span<uid::Uid>)>;
 
-void entityUpdate(MarkerController::Ptr,
-                  std::shared_ptr<GameController>,
-                  float update_delta_seconds);
+private:
+    MarkerAndId CreateMarker(MarkerRegistrar,
+                             marker::Type,
+                             plot::Type,
+                             OnLeftReleaseDelegate,
+                             IResourceManager::Ptr);
+
+public:
+    using Ptr = std::shared_ptr<MarkerController>;
+
+    void RemoveExcessMarkers(Playfield::PtrConst,
+                             MarkerBulkDeleter bulk_deleter);
+
+    void CreateMissingMarkers(Playfield::PtrConst,
+                              MarkerRegistrar,
+                              OnLeftReleaseDelegate,
+                              IResourceManager::Ptr);
+
+    void TranslateMarkers(Playfield::PtrConst);
+
+    auto GetMarkers() const
+    { return RangeWrapper{ mMarkers.cbegin(), mMarkers.cend() }; }
+
+    // @return Shared ptr to selected marker or nullptr if none is selected
+    Marker::Ptr GetSelecterMarker() const noexcept
+    { return mSelectedMarker; }
+
+    void DeselectMarker();
+};
 
 } // namespace OpenLabora
 

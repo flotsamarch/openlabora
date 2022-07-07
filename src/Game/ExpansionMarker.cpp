@@ -12,6 +12,7 @@
 
 #include "Game/ExpansionMarker.hpp"
 #include "Resource/IResourceManager.hpp"
+#include "GameState/Controllers/GameController.hpp"
 
 namespace OpenLabora
 {
@@ -185,9 +186,11 @@ MarkerPositions GetBoundaryMarkerPositions(plot::Type type,
     return { position_upper, position_lower };
 }
 
-bool handleEvent(ExpansionMarker::Ptr marker,
-                 const sf::Vector2f& mouse_world_pos,
-                 const sf::Event& event)
+} // namespace marker
+
+bool entityHandleEvent(ExpansionMarker::Ptr marker,
+                       GameController::Ptr controller,
+                       const sf::Event& event)
 {
     using RectAreaComponent = RectangleInteractionAreaComponent;
     auto&& selectable = ecs::getComponent<SelectableComponent>(*marker);
@@ -195,6 +198,7 @@ bool handleEvent(ExpansionMarker::Ptr marker,
     auto&& position_cmpnt = ecs::getComponent<PositionComponent>(*marker);
     auto&& interaction_area = ecs::getComponent<RectAreaComponent>(*marker);
 
+    const auto mouse_world_pos = controller->GetModel()->GetWorldMousePosition();
     const auto local_mouse_pos = mouse_world_pos - position_cmpnt.position;
     const bool is_mouse_over = interaction_area.IsPointInArea(local_mouse_pos);
     const bool has_been_entered = selectable.HasBeenEntered();
@@ -238,6 +242,12 @@ bool handleEvent(ExpansionMarker::Ptr marker,
     return false;
 }
 
-} // namespace marker
+void entityUpdate(ExpansionMarker::Ptr marker,
+                  GameController::Ptr controller,
+                  [[maybe_unused]]float update_delta_seconds)
+{
+    const auto& sprite_cmpnt = ecs::getComponent<SpriteComponent>(*marker);
+    controller->AddDrawableObject(sprite_cmpnt.GetDrawableObject());
+}
 
 } // namespace OpenLabora

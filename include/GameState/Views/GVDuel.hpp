@@ -19,6 +19,7 @@
 #include "GameState/Controllers/GCDuel.hpp"
 #include "IApplication.hpp"
 #include "AppState/StateIds.hpp"
+#include "GUI/Subviews/ExpansionSubview.hpp"
 
 namespace OpenLabora
 {
@@ -26,7 +27,11 @@ namespace OpenLabora
 class GameController;
 class Model;
 
-class GVDuel final : public GameView
+class GVDuel final : public GameView<tgui::GuiSFML,
+                                     sf::RenderWindow,
+                                     StateIdsVariant,
+                                     GameController,
+                                     ExpansionSubview>
 {
 public:
     using Ptr = std::unique_ptr<GVDuel>;
