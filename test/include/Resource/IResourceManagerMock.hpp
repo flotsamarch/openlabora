@@ -18,10 +18,10 @@
 #include <filesystem>
 #include "Resource/IResourceManager.hpp"
 
-namespace Test
+namespace test
 {
 
-class IResourceManagerMock : public OpenLabora::IResourceManager
+class IResourceManagerMock : public open_labora::IResourceManager
 {
 public:
     using Ptr = std::shared_ptr<IResourceManagerMock>;
@@ -38,6 +38,6 @@ public:
                 (std::string_view, const sf::Texture&), (override));
 };
 
-} // namespace Test
+} // namespace test
 
 #endif // IRESOURCEMANAGERMOCK_HPP_

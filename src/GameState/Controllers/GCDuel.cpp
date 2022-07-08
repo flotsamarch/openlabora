@@ -12,7 +12,7 @@
 
 #include "GameState/Controllers/GCDuel.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 GCDuel::GCDuel(PtrView<IApplication<StateIdsVariant>> app,
@@ -20,4 +20,4 @@ GCDuel::GCDuel(PtrView<IApplication<StateIdsVariant>> app,
                Model::Ptr model)
     : GameController(app, resource_mgr, model, 1) {} // TODO player_count = 2
 
-} // namespace OpenLabora
+} // namespace open_labora

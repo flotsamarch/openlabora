@@ -15,7 +15,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class ImmobileComponent final
@@ -29,6 +29,6 @@ public:
     auto GetPosition() const { return mPosition; }
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // IMMOBILECOMPONENT_HPP_

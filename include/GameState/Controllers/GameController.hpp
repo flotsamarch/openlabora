@@ -28,7 +28,7 @@
 // TODO: Reimplement Build Mode
 // #include "Game/Location.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 // General game logic base class
@@ -111,6 +111,6 @@ public:
 
 inline GameController::~GameController() {}
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // GAMESTATE_HPP_

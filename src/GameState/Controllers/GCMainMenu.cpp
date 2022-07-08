@@ -13,7 +13,7 @@
 #include <cassert>
 #include "GameState/Controllers/GCMainMenu.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 GCMainMenu::GCMainMenu(PtrView<IApplication<StateIdsVariant>> app,
@@ -38,4 +38,4 @@ void GCMainMenu::HandleEvent(const sf::Event& evt)
 
 void GCMainMenu::Update([[maybe_unused]]const float update_delta_seconds) {};
 
-} // namespace OpenLabora
+} // namespace open_labora

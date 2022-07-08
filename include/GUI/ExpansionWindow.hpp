@@ -23,7 +23,7 @@
 #include <string>
 #include "GameWindow.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 namespace expansionWindow {
@@ -121,7 +121,7 @@ void ExpansionWindow::SetState(const auto& state) {
 }
 
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 
 #endif // EXPANSIONWINDOW_HPP_

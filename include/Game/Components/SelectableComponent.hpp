@@ -15,7 +15,7 @@
 
 #include "Game/Signal.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 namespace signals
@@ -47,6 +47,6 @@ public:
     void Leave() noexcept { bHasBeenEntered = false; }
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // SELECTABLECOMPONENT_HPP_

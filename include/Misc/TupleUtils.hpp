@@ -17,7 +17,7 @@
 #include <stdexcept>
 #include <functional>
 
-namespace OpenLabora
+namespace open_labora
 {
 
 namespace tuple_utils
@@ -63,6 +63,6 @@ constexpr void applyUntilFalse(std::tuple<Types...>& t,
 
 } // namespace tuple_utils
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // TUPLEUTILS_HPP_

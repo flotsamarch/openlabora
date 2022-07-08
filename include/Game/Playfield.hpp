@@ -24,7 +24,7 @@
 #include "Components/SpriteComponent.hpp"
 #include "Resource/IResourceManager.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class GameController;
@@ -75,6 +75,6 @@ void entityUpdate(Playfield::Ptr entity,
                   std::shared_ptr<GameController> controller,
                   float update_delta_seconds);
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // PLAYFIELD_HPP_

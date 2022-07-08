@@ -16,7 +16,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include "TextureContainerComponent.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class SpriteComponent final
@@ -52,6 +52,6 @@ public:
     { return mSprite; }
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // SPRITECOMPONENT_HPP_

@@ -12,7 +12,7 @@
 
 #include "GUI/ExpansionWindow.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 namespace expansionWindow
@@ -137,4 +137,4 @@ void ExpansionWindow::Show(bool show)
     mWindow->setVisible(show);
 };
 
-} // namespace OpenLabora
+} // namespace open_labora

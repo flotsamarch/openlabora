@@ -14,57 +14,37 @@
 #include <gmock/gmock.h>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include "Resource/IResourceManagerMock.hpp"
+#include "Resource/ResourceManagerDefaultActionTestBase.hpp"
 #include "Game/Playfield.hpp"
 #include "Game/Components/SpriteComponent.hpp"
 #include "GameState/Model/Model.hpp"
 #include "GameState/Controllers/GCDuel.hpp"
 #include "IApplicationMock.hpp"
 
-namespace Test
+namespace test
 {
 
-using ResourceMgrPtr = IResourceManagerMock::Ptr;
-using ::OpenLabora::playfield::create;
-using ::OpenLabora::Playfield;
-using ::OpenLabora::ecs::getComponent;
-using ::OpenLabora::PtrView;
-using PlayfieldPtr = std::shared_ptr<Playfield>;
-using PlotType = OpenLabora::plot::Type;
-using ::testing::Return;
+namespace ol = open_labora;
 
-class PlayfieldTests : public ::testing::Test
-{
-    using RMM = IResourceManagerMock;
-protected:
-    RMM::Ptr mResourceMgr{ std::make_shared<RMM>(std::filesystem::path{}) };
-    sf::Texture mTexture{};
-
-public:
-    PlayfieldTests()
-    {
-        ON_CALL(*mResourceMgr, GetTexture)
-            .WillByDefault(Return(mTexture));
-    }
-};
+using PlayfieldTests = ResourceManagerDefaultActionTestBase;
 
 class PlayfieldEntityTests : public PlayfieldTests
 {
-    using Model = ::OpenLabora::Model;
-    using ControllerPtr = ::OpenLabora::GameController::Ptr;
-    using GCDuel = ::OpenLabora::GCDuel;
+    using Model = ol::Model;
+    using ControllerPtr = ol::GameController::Ptr;
+    using GCDuel = ol::GCDuel;
 protected:
-    IApplicationMock<OpenLabora::StateIdsVariant> mApp;
+    IApplicationMock<ol::StateIdsVariant> mApp;
 
 private:
-    using AppPtr = PtrView<OpenLabora::IApplication<OpenLabora::StateIdsVariant>>;
+    using AppPtr = ol::PtrView<ol::IApplication<ol::StateIdsVariant>>;
 
 protected:
     Model::Ptr mModel{ std::make_shared<Model>() };
     ControllerPtr mController{ std::make_shared<GCDuel>(AppPtr(&mApp),
                                                                 mResourceMgr,
                                                                 mModel) };
-    PlayfieldPtr mPlayfield = create(mResourceMgr, {});
+    ol::Playfield::Ptr mPlayfield = ol::playfield::create(mResourceMgr, {});
 };
 
 static constexpr auto zero_init_x = 0.f;
@@ -74,8 +54,8 @@ static constexpr auto non_zero_init_y = 38.f;
 
 TEST_F(PlayfieldTests, FactoryFunctions_VectorDefault)
 {
-    auto pf = create(mResourceMgr, {});
-    auto&& sprite = getComponent<OpenLabora::SpriteComponent>(*pf);
+    auto pf = ol::playfield::create(mResourceMgr, {});
+    auto&& sprite = ol::ecs::getComponent<ol::SpriteComponent>(*pf);
     const auto position = sprite.GetPosition();
 
     EXPECT_FLOAT_EQ(0.f, position.x);
@@ -84,8 +64,9 @@ TEST_F(PlayfieldTests, FactoryFunctions_VectorDefault)
 
 TEST_F(PlayfieldTests, FactoryFunctions_VectorNonZero)
 {
-    auto pf = create(mResourceMgr, {non_zero_init_x, non_zero_init_y});
-    auto&& sprite = getComponent<OpenLabora::SpriteComponent>(*pf);
+    auto pf = ol::playfield::create(mResourceMgr,
+                                    {non_zero_init_x, non_zero_init_y});
+    auto&& sprite = ol::ecs::getComponent<ol::SpriteComponent>(*pf);
     const auto position = sprite.GetPosition();
 
     EXPECT_FLOAT_EQ(non_zero_init_x, position.x);
@@ -94,8 +75,8 @@ TEST_F(PlayfieldTests, FactoryFunctions_VectorNonZero)
 
 TEST_F(PlayfieldTests, FactoryFunctions_FloatsZero)
 {
-    auto pf = create(mResourceMgr, zero_init_x, zero_init_y);
-    auto&& sprite = getComponent<OpenLabora::SpriteComponent>(*pf);
+    auto pf = ol::playfield::create(mResourceMgr, zero_init_x, zero_init_y);
+    auto&& sprite = ol::ecs::getComponent<ol::SpriteComponent>(*pf);
     const auto position = sprite.GetPosition();
 
     EXPECT_FLOAT_EQ(zero_init_x, position.x);
@@ -104,8 +85,10 @@ TEST_F(PlayfieldTests, FactoryFunctions_FloatsZero)
 
 TEST_F(PlayfieldTests, FactoryFunctions_FloatsNonZero)
 {
-    auto pf = create(mResourceMgr, non_zero_init_x, non_zero_init_y);
-    auto&& sprite = getComponent<OpenLabora::SpriteComponent>(*pf);
+    auto pf = ol::playfield::create(mResourceMgr,
+                                    non_zero_init_x,
+                                    non_zero_init_y);
+    auto&& sprite = ol::ecs::getComponent<ol::SpriteComponent>(*pf);
     const auto position = sprite.GetPosition();
 
     EXPECT_FLOAT_EQ(non_zero_init_x, position.x);
@@ -120,10 +103,10 @@ TEST_F(PlayfieldEntityTests, EventHandling)
 
 TEST_F(PlayfieldEntityTests, Update)
 {
-    using TCC = OpenLabora::TextureContainerComponent;
+    using TCC = ol::TextureContainerComponent;
     entityUpdate(mPlayfield, mController, 0.f);
 
-    auto&& texture_component = getComponent<TCC>(*mPlayfield);
+    auto&& texture_component = ol::ecs::getComponent<TCC>(*mPlayfield);
 
     EXPECT_FALSE(texture_component.NeedsUpdate());
     EXPECT_EQ(mModel->GetDrawableObjects().GetSize(), 1);
@@ -131,28 +114,30 @@ TEST_F(PlayfieldEntityTests, Update)
 
 TEST(PlayfieldFunctions, GetPlotStripXOffset_FirstZero)
 {
-    ASSERT_EQ(OpenLabora::playfield::getPlotStripXOffset(PlotType::Begin), 0);
+    ASSERT_EQ(ol::playfield::getPlotStripXOffset(ol::plot::Type::Begin), 0);
 }
 
 TEST(PlayfieldFunctions, GetPlotStripXOffset_NonFirstNonZero)
 {
+    using PlotType = ol::plot::Type;
     for (auto&& type = PlotType::Begin + 1; type != PlotType::End; ++type) {
-        ASSERT_GT(OpenLabora::playfield::getPlotStripXOffset(type), 0);
+        ASSERT_GT(ol::playfield::getPlotStripXOffset(type), 0);
     }
 }
 
 TEST(PlayfieldFunctions, GetPlotStripXOffset_NextAlwaysGreater)
 {
+    using PlotType = ol::plot::Type;
     auto prev{ 0 };
     for (auto&& type = PlotType::Begin + 1; type != PlotType::End; ++type) {
-        auto cur = OpenLabora::playfield::getPlotStripXOffset(type);
+        auto cur = ol::playfield::getPlotStripXOffset(type);
         EXPECT_GT(cur, prev);
-        EXPECT_GE(cur - prev, OpenLabora::tile::kTileWidth);
+        EXPECT_GE(cur - prev, ol::tile::kTileWidth);
         prev = cur;
     }
 }
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {

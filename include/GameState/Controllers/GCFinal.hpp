@@ -19,7 +19,7 @@
 #include "AppState/StateIds.hpp"
 #include "GameState/Model/Model.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 // A controller indicating that app has reached its final state
@@ -37,6 +37,6 @@ public:
     void Update(const float) {};
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // GCFINAL_HPP_

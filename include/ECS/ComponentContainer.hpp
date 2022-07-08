@@ -17,7 +17,7 @@
 #include <memory>
 #include "Misc/UID.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 template<class... TComponents>
@@ -58,6 +58,6 @@ getComponent(const ComponentContainer<TComponents...>& container) noexcept
 
 } // namespace ecs
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // COMPONENTCONTAINER_HPP_

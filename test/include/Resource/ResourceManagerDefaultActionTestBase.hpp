@@ -3,7 +3,7 @@
 
 #include "IResourceManagerMock.hpp"
 
-namespace Test
+namespace test
 {
 
 class ResourceManagerDefaultActionTestBase : public ::testing::Test
@@ -31,6 +31,6 @@ public:
         : ResourceManagerDefaultActionTestBase(sf::Texture{}) {};
 };
 
-} // namespace Test
+} // namespace test
 
 #endif // RESOURCEMANAGERDEFAULTACTIONTESTBASE_HPP_

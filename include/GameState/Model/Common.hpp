@@ -18,7 +18,7 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include "Misc/RangeWrapper.hpp"
 
-namespace OpenLabora::model
+namespace open_labora::model
 {
 
 using DrawableCPtr = std::unique_ptr<sf::Drawable>;
@@ -29,6 +29,6 @@ using DrawableRangeConst = RangeWrapper<DrawableIterConst>;
 template<class T>
 concept Drawable = std::derived_from<std::remove_cvref_t<T>, sf::Drawable>;
 
-} // namespace OpenLabora::model
+} // namespace open_labora::model
 
 #endif // COMMON_HPP_

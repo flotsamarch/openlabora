@@ -13,10 +13,10 @@
 #include <gtest/gtest.h>
 #include "Misc/PtrView.hpp"
 
-namespace Test
+namespace test
 {
 
-using OpenLabora::PtrView;
+namespace ol = open_labora;
 
 struct TestStruct
 {
@@ -25,10 +25,10 @@ struct TestStruct
 
 TEST(PtrViewTests, GetNullptr)
 {
-    PtrView<int> ptr{ nullptr };
-    PtrView<const int> ptr_c{ nullptr };
-    PtrView<double> ptr_d{ nullptr };
-    PtrView<TestStruct> ptr_s{ nullptr };
+    ol::PtrView<int> ptr{ nullptr };
+    ol::PtrView<const int> ptr_c{ nullptr };
+    ol::PtrView<double> ptr_d{ nullptr };
+    ol::PtrView<TestStruct> ptr_s{ nullptr };
 
     EXPECT_EQ(ptr_s.Get(), nullptr);
     EXPECT_EQ(ptr_d.Get(), nullptr);
@@ -38,10 +38,10 @@ TEST(PtrViewTests, GetNullptr)
 
 TEST(PtrViewTests, DefaultIsNullptr)
 {
-    PtrView<int> ptr{};
-    PtrView<const int> ptr_c{};
-    PtrView<double> ptr_d{ nullptr };
-    PtrView<TestStruct> ptr_s{ nullptr };
+    ol::PtrView<int> ptr{};
+    ol::PtrView<const int> ptr_c{};
+    ol::PtrView<double> ptr_d{ nullptr };
+    ol::PtrView<TestStruct> ptr_s{ nullptr };
 
     EXPECT_EQ(ptr_s.Get(), nullptr);
     EXPECT_EQ(ptr_d.Get(), nullptr);
@@ -56,10 +56,10 @@ TEST(PtrViewTests, Get)
     auto dvalue{ 5.0 };
     auto obj{ TestStruct{} };
 
-    PtrView ptr{ &value };
-    PtrView ptr_c{ &cvalue };
-    PtrView ptr_d{ &dvalue };
-    PtrView ptr_obj{ &obj };
+    ol::PtrView ptr{ &value };
+    ol::PtrView ptr_c{ &cvalue };
+    ol::PtrView ptr_d{ &dvalue };
+    ol::PtrView ptr_obj{ &obj };
 
     EXPECT_NE(ptr.Get(), nullptr);
     EXPECT_NE(ptr_c.Get(), nullptr);
@@ -80,8 +80,8 @@ TEST(PtrViewTests, Get)
 TEST(PtrViewOperatorTests, OperatorBool)
 {
     auto value{ 5 };
-    PtrView ptr{ &value };
-    PtrView<int> ptr_null{};
+    ol::PtrView ptr{ &value };
+    ol::PtrView<int> ptr_null{};
 
     EXPECT_FALSE(ptr_null);
     EXPECT_TRUE(ptr);
@@ -94,10 +94,10 @@ TEST(PtrViewOperatorTests, OperatorStar)
     auto dvalue{ 5.0 };
     auto obj{ TestStruct{} };
 
-    PtrView ptr{ &value };
-    PtrView ptr_c{ &cvalue };
-    PtrView ptr_d{ &dvalue };
-    PtrView ptr_obj{ &obj };
+    ol::PtrView ptr{ &value };
+    ol::PtrView ptr_c{ &cvalue };
+    ol::PtrView ptr_d{ &dvalue };
+    ol::PtrView ptr_obj{ &obj };
 
     EXPECT_EQ(*ptr, value);
     EXPECT_EQ(*ptr_c, cvalue);
@@ -109,7 +109,7 @@ TEST(PtrViewOperatorTests, ArrowOperator)
 {
     constexpr auto value{ 5 };
     auto obj{ TestStruct{ value } };
-    PtrView ptr_obj{ &obj };
+    ol::PtrView ptr_obj{ &obj };
 
     ASSERT_EQ(ptr_obj->value, value);
 }
@@ -119,9 +119,9 @@ TEST(PtrViewTests, Reset)
     auto value_init{ 5 };
     auto value_after{ 10 };
 
-    PtrView ptr_1{ &value_init };
-    PtrView ptr_2{ &value_init };
-    PtrView ptr_3{ &value_init };
+    ol::PtrView ptr_1{ &value_init };
+    ol::PtrView ptr_2{ &value_init };
+    ol::PtrView ptr_3{ &value_init };
 
     ptr_1.Reset(&value_after);
     ptr_2.Reset(nullptr);
@@ -138,8 +138,8 @@ TEST(PtrViewTests, Swap)
     auto value_1{ 5 };
     auto value_2{ 10 };
 
-    PtrView ptr_1{ &value_1 };
-    PtrView ptr_2{ &value_2 };
+    ol::PtrView ptr_1{ &value_1 };
+    ol::PtrView ptr_2{ &value_2 };
 
     ptr_1.Swap(ptr_2);
 
@@ -151,7 +151,7 @@ TEST(PtrViewTests, Release)
 {
     auto value{ 5 };
 
-    PtrView ptr{ &value };
+    ol::PtrView ptr{ &value };
 
     auto ptr_r = ptr.Release();
 
@@ -165,11 +165,11 @@ TEST(PtrViewOperatorTests, OperatorBinaryEquals)
     auto same_value{ 5 };
     auto other_value{ 10 };
 
-    PtrView ptr{ &value };
-    PtrView ptr_copy{ &value };
-    PtrView ptr_same_value{ &same_value };
-    PtrView ptr_other{ &other_value };
-    PtrView<int> ptr_null{};
+    ol::PtrView ptr{ &value };
+    ol::PtrView ptr_copy{ &value };
+    ol::PtrView ptr_same_value{ &same_value };
+    ol::PtrView ptr_other{ &other_value };
+    ol::PtrView<int> ptr_null{};
 
     EXPECT_FALSE(ptr == nullptr);
     EXPECT_FALSE(nullptr == ptr);
@@ -186,11 +186,11 @@ TEST(PtrViewOperatorTests, OperatorBinaryNotequals)
     auto same_value{ 5 };
     auto other_value{ 10 };
 
-    PtrView ptr{ &value };
-    PtrView ptr_copy{ &value };
-    PtrView ptr_same_value{ &same_value };
-    PtrView ptr_other{ &other_value };
-    PtrView<int> ptr_null{};
+    ol::PtrView ptr{ &value };
+    ol::PtrView ptr_copy{ &value };
+    ol::PtrView ptr_same_value{ &same_value };
+    ol::PtrView ptr_other{ &other_value };
+    ol::PtrView<int> ptr_null{};
 
     EXPECT_TRUE(ptr != nullptr);
     EXPECT_TRUE(nullptr != ptr);
@@ -207,9 +207,9 @@ TEST(PtrViewOperatorTests, OperatorLessThan)
     auto lower_value{ 10 };
     int* int_null = nullptr;
 
-    PtrView ptr_higher{ &higher_value };
-    PtrView ptr_lower{ &lower_value };
-    PtrView<int> ptr_null{};
+    ol::PtrView ptr_higher{ &higher_value };
+    ol::PtrView ptr_lower{ &lower_value };
+    ol::PtrView<int> ptr_null{};
 
     EXPECT_EQ(ptr_higher < ptr_lower, &higher_value < &lower_value);
     ASSERT_EQ(ptr_higher < ptr_null, &higher_value < int_null);
@@ -221,9 +221,9 @@ TEST(PtrViewOperatorTests, OperatorMoreThan)
     auto lower_value{ 10 };
     int* int_null = nullptr;
 
-    PtrView ptr_higher{ &higher_value };
-    PtrView ptr_lower{ &lower_value };
-    PtrView<int> ptr_null{};
+    ol::PtrView ptr_higher{ &higher_value };
+    ol::PtrView ptr_lower{ &lower_value };
+    ol::PtrView<int> ptr_null{};
 
     EXPECT_EQ(ptr_higher > ptr_lower, &higher_value > &lower_value);
     ASSERT_EQ(ptr_higher > ptr_null, &higher_value > int_null);
@@ -235,9 +235,9 @@ TEST(PtrViewOperatorTests, OperatorLessEqual)
     auto lower_value{ 10 };
     int* int_null = nullptr;
 
-    PtrView ptr_higher{ &higher_value };
-    PtrView ptr_lower{ &lower_value };
-    PtrView<int> ptr_null{};
+    ol::PtrView ptr_higher{ &higher_value };
+    ol::PtrView ptr_lower{ &lower_value };
+    ol::PtrView<int> ptr_null{};
 
     EXPECT_EQ(ptr_higher <= ptr_lower, &higher_value <= &lower_value);
     ASSERT_EQ(ptr_higher <= ptr_null, &higher_value <= int_null);
@@ -249,15 +249,15 @@ TEST(PtrViewOperatorTests, OperatorMoreEqual)
     auto lower_value{ 10 };
     int* int_null = nullptr;
 
-    PtrView ptr_higher{ &higher_value };
-    PtrView ptr_lower{ &lower_value };
-    PtrView<int> ptr_null{};
+    ol::PtrView ptr_higher{ &higher_value };
+    ol::PtrView ptr_lower{ &lower_value };
+    ol::PtrView<int> ptr_null{};
 
     EXPECT_EQ(ptr_higher >= ptr_lower, &higher_value >= &lower_value);
     ASSERT_EQ(ptr_higher >= ptr_null, &higher_value >= int_null);
 }
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {

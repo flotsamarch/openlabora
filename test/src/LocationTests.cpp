@@ -15,7 +15,7 @@
 #include "Resource/IResourceManagerMock.hpp"
 #include "game/Location.hpp"
 
-namespace Test
+namespace test
 {
 
 using ::testing::NiceMock;
@@ -71,7 +71,7 @@ TEST_F(TFLocationTests, Placeable)
                                         Tile::TileType::Forest));
 }
 #endif
-}
+} // namespace test
 #if 0
 int main(int argc, char** argv)
 {

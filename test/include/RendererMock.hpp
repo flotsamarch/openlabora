@@ -18,7 +18,7 @@
 #include "SFML/Window/Event.hpp"
 #include "SFML/Graphics/Drawable.hpp"
 
-namespace Test
+namespace test
 {
 
 /**
@@ -42,6 +42,6 @@ struct RendererMock
     MOCK_METHOD(void, RemoveAllWidgets, ());
 };
 
-} // namespace Test
+} // namespace test
 
 #endif // Test

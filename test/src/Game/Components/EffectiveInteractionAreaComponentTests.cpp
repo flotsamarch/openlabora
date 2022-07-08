@@ -13,9 +13,9 @@
 #include <gtest/gtest.h>
 #include "Game/Components/EffectiveInteractionAreaComponent.hpp"
 
-using OpenLabora::EffectiveInteractionAreaComponent;
+using open_labora::EffectiveInteractionAreaComponent;
 
-namespace Test
+namespace test
 {
 
 TEST(EffectiveInteractionAreaTests, GetOffset_ShapeCopyCtor)
@@ -91,7 +91,7 @@ TEST(EffectiveInteractionAreaTests, IsPointInArea_FalseOffset)
     ASSERT_FALSE(component.IsPointInArea(point));
 }
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {

@@ -13,15 +13,13 @@
 #include <gtest/gtest.h>
 #include "Game/Components/SelectableComponent.hpp"
 
-namespace Test
+namespace test
 {
-
-using OpenLabora::SelectableComponent;
 
 class SelectableComponentsTests : public ::testing::Test
 {
 protected:
-    SelectableComponent mComponent{};
+    open_labora::SelectableComponent mComponent{};
 };
 
 TEST_F(SelectableComponentsTests, DefaultDeselected)
@@ -64,7 +62,7 @@ TEST_F(SelectableComponentsTests, Leave)
     ASSERT_FALSE(mComponent.HasBeenEntered());
 }
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {

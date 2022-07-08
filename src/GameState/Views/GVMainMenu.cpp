@@ -15,7 +15,7 @@
 #include "GameState/Views/GVMainMenu.hpp"
 #include "AppState/StateIds.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 GVMainMenu::GVMainMenu(PtrView<IApplication<StateIdsVariant>> app,
@@ -53,4 +53,4 @@ void GVMainMenu::Update([[maybe_unused]]const float update_delta_seconds)
 {
 }
 
-} // namespace OpenLabora
+} // namespace open_labora

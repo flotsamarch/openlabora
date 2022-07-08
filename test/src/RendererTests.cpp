@@ -16,12 +16,13 @@
 #include "Renderer.hpp"
 #include "Misc/PtrView.hpp"
 
-namespace Test
+namespace test
 {
 
-using Renderer= OpenLabora::Renderer<GuiMock<WindowMock>, WindowMock>;
+namespace ol = open_labora;
 
-using OpenLabora::PtrView;
+using Renderer = ol::Renderer<GuiMock<WindowMock>, WindowMock>;
+
 using ::testing::Return;
 using ::testing::_;
 using ::testing::Field;
@@ -31,7 +32,7 @@ class TestFRenderer : public ::testing::Test
 protected:
     GuiMock<WindowMock> mGui;
     WindowMock mWindow;
-    Renderer mRenderer{ PtrView(&mGui), PtrView(&mWindow) };
+    Renderer mRenderer{ ol::PtrView(&mGui), ol::PtrView(&mWindow) };
 public:
     virtual ~TestFRenderer() {};
 };
@@ -111,7 +112,7 @@ TEST_F(TestFRenderer, HandleEventCloseWindow)
     ASSERT_FALSE(mRenderer.HandleEvent(event));
 }
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {

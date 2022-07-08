@@ -20,7 +20,7 @@
 #include "Game/Components/PlotComponent.hpp"
 #include "Resource/IResourceManager.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 using Plot = ComponentContainer<PositionComponent,
@@ -149,6 +149,6 @@ using PlotsPair = std::pair<PlotRef, PlotRef>;
 
 } // namespace plot
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // PLOT_HPP_

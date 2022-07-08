@@ -15,7 +15,7 @@
 #include <concepts>
 #include <iterator>
 
-namespace OpenLabora
+namespace open_labora
 {
 
 template<class T>
@@ -66,6 +66,6 @@ RangeWrapper(Y& container) -> RangeWrapper<typename Y::iterator>;
 template<IterableContainer Y>
 RangeWrapper(const Y& container) -> RangeWrapper<typename Y::const_iterator>;
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // RANGEWRAPPER_HPP_

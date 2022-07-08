@@ -14,10 +14,11 @@
 #include "Game/Components/PlotComponent.hpp"
 #include "Game/Plot.hpp"
 
-namespace Test
+namespace test
 {
 
-using Type = OpenLabora::plot::Type;
+namespace ol = open_labora;
+using Type = ol::plot::Type;
 
 static constexpr auto begin_value = static_cast<int>(Type::Begin);
 static constexpr auto end_value = static_cast<int>(Type::End);
@@ -100,41 +101,41 @@ TEST(TileOperatorsTests, OperatorPlusRight_BigNumber)
 
 TEST(PlotComponentTests, GetType)
 {
-    auto plot = OpenLabora::PlotComponent(OpenLabora::plot::kCoastalPlotSpan,
-                                          Type::Coastal,
-                                          true);
+    auto plot = ol::PlotComponent(ol::plot::kCoastalPlotSpan,
+                                  Type::Coastal,
+                                  true);
 
     ASSERT_EQ(plot.GetType(), Type::Coastal);
 }
 
 TEST(PlotComponentTests, GetTileCount)
 {
-    auto plot = OpenLabora::PlotComponent(OpenLabora::plot::kCoastalPlotSpan,
-                                          Type::Coastal,
-                                          true);
+    auto plot = ol::PlotComponent(ol::plot::kCoastalPlotSpan,
+                                  Type::Coastal,
+                                  true);
 
-    ASSERT_EQ(plot.GetTileCount(), OpenLabora::plot::kCoastalPlotSpan.size());
+    ASSERT_EQ(plot.GetTileCount(), ol::plot::kCoastalPlotSpan.size());
 }
 
 TEST(PlotComponentTests, GetTiles)
 {
-    auto plot = OpenLabora::PlotComponent(OpenLabora::plot::kCoastalPlotSpan,
-                                          Type::Coastal,
-                                          true);
+    auto plot = ol::PlotComponent(ol::plot::kCoastalPlotSpan,
+                                  Type::Coastal,
+                                  true);
 
-    ASSERT_EQ(plot.GetTiles().data(), OpenLabora::plot::kCoastalPlotSpan.data());
+    ASSERT_EQ(plot.GetTiles().data(), ol::plot::kCoastalPlotSpan.data());
 }
 
 TEST(PlotComponentTests, IsAlternative)
 {
-    auto plot = OpenLabora::PlotComponent(OpenLabora::plot::kCoastalPlotSpan,
-                                          Type::Coastal,
-                                          true);
+    auto plot = ol::PlotComponent(ol::plot::kCoastalPlotSpan,
+                                  Type::Coastal,
+                                  true);
 
     ASSERT_TRUE(plot.IsAlternative());
 }
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {

@@ -13,24 +13,23 @@
 #include <gtest/gtest.h>
 #include "Game/Components/SignalComponent.hpp"
 
-namespace Test
+namespace test
 {
 
-using OpenLabora::SignalComponent;
-using OpenLabora::signals::kOnLeftPress;
+namespace ol = open_labora;
 
 class SignalComponentTests : public ::testing::Test
 {
 protected:
-    SignalComponent mComponent{};
+    ol::SignalComponent mComponent{};
 };
 
 TEST_F(SignalComponentTests, Connect)
 {
     auto delegate = [] {};
-    auto serial_1 = mComponent.Connect(kOnLeftPress, delegate);
-    auto serial_2 = mComponent.Connect(kOnLeftPress, delegate);
-    auto serial_3 = mComponent.Connect(kOnLeftPress, delegate);
+    auto serial_1 = mComponent.Connect(ol::signals::kOnLeftPress, delegate);
+    auto serial_2 = mComponent.Connect(ol::signals::kOnLeftPress, delegate);
+    auto serial_3 = mComponent.Connect(ol::signals::kOnLeftPress, delegate);
 
     EXPECT_EQ(serial_1, 0u);
     EXPECT_EQ(serial_2, 1u);
@@ -42,8 +41,8 @@ TEST_F(SignalComponentTests, Emit)
     bool changed = false;
     auto delegate = [&changed] { changed = true; };
 
-    mComponent.Connect(kOnLeftPress, delegate);
-    mComponent.Emit(kOnLeftPress);
+    mComponent.Connect(ol::signals::kOnLeftPress, delegate);
+    mComponent.Emit(ol::signals::kOnLeftPress);
 
     ASSERT_EQ(changed, true);
 }
@@ -53,9 +52,9 @@ TEST_F(SignalComponentTests, Disconnect)
     bool changed = false;
     auto delegate = [&changed] { changed = true; };
 
-    auto serial = mComponent.Connect(kOnLeftPress, delegate);
-    mComponent.Disconnect(kOnLeftPress, serial);
-    mComponent.Emit(kOnLeftPress);
+    auto serial = mComponent.Connect(ol::signals::kOnLeftPress, delegate);
+    mComponent.Disconnect(ol::signals::kOnLeftPress, serial);
+    mComponent.Emit(ol::signals::kOnLeftPress);
 
     ASSERT_EQ(changed, false);
 }
@@ -65,14 +64,14 @@ TEST_F(SignalComponentTests, DisconnectAll)
     bool changed = false;
     auto delegate = [&changed] { changed = true; };
 
-    mComponent.Connect(kOnLeftPress, delegate);
-    mComponent.DisconnectAll(kOnLeftPress);
-    mComponent.Emit(kOnLeftPress);
+    mComponent.Connect(ol::signals::kOnLeftPress, delegate);
+    mComponent.DisconnectAll(ol::signals::kOnLeftPress);
+    mComponent.Emit(ol::signals::kOnLeftPress);
 
     ASSERT_EQ(changed, false);
 }
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {

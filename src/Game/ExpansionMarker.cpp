@@ -14,7 +14,7 @@
 #include "Resource/IResourceManager.hpp"
 #include "GameState/Controllers/GameController.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 namespace marker
@@ -250,4 +250,4 @@ void entityUpdate(ExpansionMarker::Ptr marker,
     controller->AddDrawableObject(sprite_cmpnt.GetDrawableObject());
 }
 
-} // namespace OpenLabora
+} // namespace open_labora

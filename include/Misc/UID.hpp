@@ -17,7 +17,7 @@
 #include <stdexcept>
 #include "EnumMap.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 namespace uid
@@ -43,6 +43,6 @@ inline Uid getUid(Type type = Type::General)
 
 } // namespace uid
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // UID_HPP_

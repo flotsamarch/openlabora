@@ -15,7 +15,7 @@
 
 #include <type_traits>
 
-namespace OpenLabora
+namespace open_labora
 {
 
 // Wrapper for raw pointer with the default value set to nullptr
@@ -96,6 +96,6 @@ template<class T, class Y>
 bool operator<(const PtrView<T>& lhs, const PtrView<Y>& rhs)
 { return lhs.Get() < rhs.Get(); };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // PTRVIEW_HPP_

@@ -23,7 +23,7 @@
 #include "Misc/TupleUtils.hpp"
 #include "GUI/Subviews/SubviewInitializer.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 /**
@@ -204,6 +204,6 @@ void GameView<TGui, TWindow, TStateIdsVariant, TGameController, TSubviews...>
     std::apply(update, mSubviews);
 }
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // GAMEVIEW_HPP_

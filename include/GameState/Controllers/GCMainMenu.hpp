@@ -21,7 +21,7 @@
 #include "AppState/StateIds.hpp"
 #include "GameState/Model/NoModel.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 // Game controller for Main Menu state
@@ -43,6 +43,6 @@ public:
     void Update(const float update_delta_seconds);
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // GCMAINMENU_HPP_

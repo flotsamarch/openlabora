@@ -4,7 +4,7 @@
 #include <compare>
 #include "Misc/UID.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class Signal
@@ -31,12 +31,12 @@ inline const Signal kOnMiddleRelease{};
 
 } // namespace signals
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 template<>
-struct std::hash<OpenLabora::Signal>
+struct std::hash<open_labora::Signal>
 {
-    std::size_t operator()(const OpenLabora::Signal& signal) const noexcept
+    std::size_t operator()(const open_labora::Signal& signal) const noexcept
     { return std::hash<decltype(signal.GetId())>{}(signal.GetId()); }
 };
 

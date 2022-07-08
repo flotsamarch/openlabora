@@ -17,7 +17,7 @@
 #include <SFML/Graphics/View.hpp>
 #include "Misc/PtrView.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 // Interface and wrapper for window methods needed during gameplay
@@ -51,6 +51,6 @@ public:
     { mGui->add(widget, name); }
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // GAMEWINDOW_HPP_

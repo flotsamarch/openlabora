@@ -14,7 +14,7 @@
 #include "Game/Playfield.hpp"
 #include <cassert>
 
-namespace OpenLabora
+namespace open_labora
 {
 
 using TileInfo = tile::TileInfo;
@@ -78,7 +78,7 @@ bool PlayfieldComponent::IsPlotsLimitReached(plot::Type type) const
     return plots.size() >= plot::kPlotMaxCount.Get(type);
 }
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #if 0 // TODO: Reimplement Build Mode
 Plot::OptionalTileInfo

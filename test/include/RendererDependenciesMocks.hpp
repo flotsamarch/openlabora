@@ -20,7 +20,7 @@
 #include <TGUI/Widget.hpp>
 #include <TGUI/String.hpp>
 
-namespace Test
+namespace test
 {
 
 // Mock class for render target of graphics library.
@@ -52,6 +52,6 @@ struct GuiMock
     MOCK_METHOD(void, removeAllWidgets, (), ());
 };
 
-} // namespace Test
+} // namespace test
 
 #endif // TESTRENDERERDEPENDENCIES_HPP_

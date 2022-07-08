@@ -25,7 +25,7 @@
 #include "GameState/Controllers/GCDuel.hpp"
 #include "GameState/Controllers/GCFinal.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 // ----------------------- ADD ALL STATES HERE ----------------------------------
@@ -35,7 +35,7 @@ using FinalState = AppState<NoModel, GVFinal, GCFinal>;
 
 using State = std::variant<MainMenuState, DuelState, FinalState>;
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 
 #endif // APPSTATEDEFS_HPP_

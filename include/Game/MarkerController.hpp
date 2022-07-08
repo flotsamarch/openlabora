@@ -20,7 +20,7 @@
 #include "Game/ExpansionMarker.hpp"
 #include "Misc/EnumMap.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class MarkerController final
@@ -73,6 +73,6 @@ public:
     void DeselectMarker();
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // MARKERCONTROLLER_HPP_

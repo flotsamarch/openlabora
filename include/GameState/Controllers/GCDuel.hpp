@@ -16,7 +16,7 @@
 #include "GameState/Controllers/GameController.hpp"
 #include "Resource/IResourceManager.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class GCDuel final : public GameController
@@ -29,6 +29,6 @@ public:
            Model::Ptr);
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // GCDUEL_HPP_

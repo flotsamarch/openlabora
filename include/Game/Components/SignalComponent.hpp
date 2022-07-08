@@ -20,7 +20,7 @@
 #include "Misc/EnumMap.hpp"
 #include "Misc/UID.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class SignalComponent final
@@ -54,7 +54,7 @@ public:
     { mSignals[signal].clear(); }
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 
 #endif // SIGNALCOMPONENT_HPP_

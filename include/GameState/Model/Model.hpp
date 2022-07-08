@@ -22,7 +22,7 @@
 #include "Game/Playfield.hpp"
 // #include "Game/Location.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class Model final
@@ -139,6 +139,6 @@ public:
     { mWorldMousePosition = position; }
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // MODEL_HPP_

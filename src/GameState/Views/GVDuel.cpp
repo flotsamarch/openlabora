@@ -12,7 +12,7 @@
 
 #include "GameState/Views/GVDuel.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 GVDuel::GVDuel(PtrView<IApplication<StateIdsVariant>> app,
@@ -64,4 +64,4 @@ GVDuel::GVDuel(PtrView<IApplication<StateIdsVariant>> app,
 #endif // duel ui
 }
 
-} //namespace OpenLabora
+} //namespace open_labora

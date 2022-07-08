@@ -21,7 +21,7 @@
 #include "AppState/StateIds.hpp"
 #include "GUI/Subviews/ExpansionSubview.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class GameController;
@@ -42,7 +42,7 @@ public:
            Model::PtrConst);
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 
 #endif // GVDUEL_HPP_

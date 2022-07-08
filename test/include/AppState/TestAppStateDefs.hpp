@@ -18,27 +18,28 @@
 #include "GameState/ControllerMocks.hpp"
 #include "GameState/ViewMocks.hpp"
 
-namespace Test
+namespace test
 {
 
-using TestState1 = OpenLabora::AppState<OpenLabora::NoModel, GVMock1, GCMock1>;
-using TestState2 = OpenLabora::AppState<OpenLabora::NoModel, GVMock2, GCMock2>;
-using TestStateFinal = OpenLabora::AppState<OpenLabora::NoModel,
-                                            GVMockFinal, GCMockFinal>;
+namespace ol = open_labora;
 
-using NiceState1 = OpenLabora::AppState<OpenLabora::NoModel,
-                                        ::testing::NiceMock<GVMock1>,
-                                        ::testing::NiceMock<GCMock1>>;
-using NiceState2 = OpenLabora::AppState<OpenLabora::NoModel,
-                                        ::testing::NiceMock<GVMock2>,
-                                        ::testing::NiceMock<GCMock2>>;
-using NiceStateFinal = OpenLabora::AppState<OpenLabora::NoModel,
-                                            ::testing::NiceMock<GVMockFinal>,
-                                            ::testing::NiceMock<GCMockFinal>>;
+using TestState1 = ol::AppState<ol::NoModel, GVMock1, GCMock1>;
+using TestState2 = ol::AppState<ol::NoModel, GVMock2, GCMock2>;
+using TestStateFinal = ol::AppState<ol::NoModel, GVMockFinal, GCMockFinal>;
+
+using NiceState1 = ol::AppState<ol::NoModel,
+                                ::testing::NiceMock<GVMock1>,
+                                ::testing::NiceMock<GCMock1>>;
+using NiceState2 = ol::AppState<ol::NoModel,
+                                ::testing::NiceMock<GVMock2>,
+                                ::testing::NiceMock<GCMock2>>;
+using NiceStateFinal = ol::AppState<ol::NoModel,
+                                    ::testing::NiceMock<GVMockFinal>,
+                                    ::testing::NiceMock<GCMockFinal>>;
 
 using TestState = std::variant<TestState1, TestState2, TestStateFinal>;
 using NiceState = std::variant<NiceState1, NiceState2, NiceStateFinal>;
 
-} // namespace Test
+} // namespace test
 
 #endif // TESTAPPSTATE_HPP_

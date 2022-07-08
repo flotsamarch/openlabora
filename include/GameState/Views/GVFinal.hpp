@@ -22,7 +22,7 @@
 #include "AppState/StateIds.hpp"
 #include "GameState/Controllers/GCFinal.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 // A view indicating that app has reached its final state
@@ -40,6 +40,6 @@ public:
     void Update(const float) {};
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // GVFINAL_HPP_

@@ -16,7 +16,7 @@
 #include <gmock/gmock.h>
 #include <SFML/Window/Event.hpp>
 
-namespace Test
+namespace test
 {
 
 struct GVMock1
@@ -41,6 +41,6 @@ struct GVMockFinal
     MOCK_METHOD(void, Update, (const float), ());
 };
 
-} // namespace Test
+} // namespace test
 
 #endif // VIEWMOCKS_HPP_

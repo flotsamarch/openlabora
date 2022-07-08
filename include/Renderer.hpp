@@ -21,7 +21,7 @@
 #include <utility>
 #include "Misc/PtrView.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 
@@ -35,7 +35,7 @@ template<class TGui, class TWindow>
 class Renderer final
 {
     static constexpr int kFramerateLimit{ 144 };
-    static constexpr std::string_view kWindowName{ "OpenLabora" };
+    static constexpr std::string_view kWindowName{ "open_labora" };
     PtrView<TWindow> mWindow;
     PtrView<TGui> mGui;
     sf::VideoMode mVideoMode{ *sf::VideoMode::getFullscreenModes().begin() };
@@ -109,6 +109,6 @@ bool Renderer<TGui, TWindow>::HandleEvent(const sf::Event& evt)
     return result;
 }
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // RENDERER_HPP_

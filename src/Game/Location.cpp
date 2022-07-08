@@ -13,7 +13,7 @@
 #include <cassert>
 #include "Game/Location.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 Location::Location(LocationType type)
@@ -31,4 +31,4 @@ bool Location::IsPlaceableOn(LocationType location_t, Tile::TileType tile_t)
     return result->second == tile_t;
 }
 
-} // namespace OpenLabora
+} // namespace open_labora

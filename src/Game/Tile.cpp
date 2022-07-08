@@ -13,7 +13,7 @@
 #include <cmath>
 #include "Game/Tile.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 namespace tile
@@ -54,4 +54,4 @@ Type operator+(const Type& lhs, int rhs) noexcept
 
 } // namespace tile
 
-} // namespace OpenLabora
+} // namespace open_labora

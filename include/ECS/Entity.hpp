@@ -17,7 +17,7 @@
 #include <SFML/Window/Event.hpp>
 #include "Game/Playfield.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class GameController;
@@ -76,6 +76,6 @@ public:
     { return entity.mSelf->HandleEvent(controller, event); }
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // ENTITY_HPP_

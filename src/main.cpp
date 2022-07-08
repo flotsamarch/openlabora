@@ -25,14 +25,14 @@ int main(int, char** argv)
 {
     auto path_to_executable = std::filesystem::absolute(argv[0]);
 
-    using namespace OpenLabora;
-    Application<tgui::GuiSFML,
-                sf::RenderWindow,
-                Renderer,
-                Transitions,
-                State,
-                StateIdsVariant,
-                ResourceManager> app(path_to_executable);
+    namespace ol = open_labora;
+    ol::Application<tgui::GuiSFML,
+                    sf::RenderWindow,
+                    ol::Renderer,
+                    ol::Transitions,
+                    ol::State,
+                    ol::StateIdsVariant,
+                    ol::ResourceManager> app(path_to_executable);
 
     return app.run();
 }

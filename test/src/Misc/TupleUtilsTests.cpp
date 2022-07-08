@@ -14,10 +14,10 @@
 #include <gmock/gmock.h>
 #include "Misc/TupleUtils.hpp"
 
-namespace Test
+namespace test
 {
 
-namespace ol = OpenLabora;
+namespace ol = open_labora;
 
 TEST(TupleUtilsTests, CreateTuple_SizeOne)
 {
@@ -112,7 +112,7 @@ TEST(TupleUtilsTests, ApplyUntilFalse_AppliedPartially)
     ASSERT_EQ(call_counter, tuple_size - 1);
 }
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {

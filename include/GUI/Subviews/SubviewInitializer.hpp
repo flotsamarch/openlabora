@@ -16,7 +16,7 @@
 #include "GameWindow.hpp"
 #include "Misc/PtrView.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 // Structure for uniform initialization of subviews
@@ -31,6 +31,6 @@ struct SubviewInitializer final
         : game_window{ window }, game_controller{ controller } {};
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // SUBVIEWINITIALIZER_HPP_

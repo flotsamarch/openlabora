@@ -17,7 +17,7 @@
 #include <filesystem>
 #include "IResourceManager.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class ResourceManager final : public IResourceManager
@@ -48,6 +48,6 @@ public:
     RegisterTexture(std::string_view name, const sf::Texture&) override;
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // RESOURCEMANAGER_HPP_

@@ -15,7 +15,7 @@
 
 #include <variant>
 
-namespace OpenLabora
+namespace open_labora
 {
 
 // ------------------------ ADD ALL STATE IDS HERE ------------------------------
@@ -25,6 +25,6 @@ struct FinalStateId final {};
 
 using StateIdsVariant = std::variant<MainMenuStateId, DuelStateId, FinalStateId>;
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // STATEIDS_HPP_

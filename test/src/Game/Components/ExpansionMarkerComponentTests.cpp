@@ -15,33 +15,30 @@
 #include "Game/Components/ExpansionMarkerComponent.hpp"
 #include "Resource/ResourceManagerDefaultActionTestBase.hpp"
 
-namespace Test
+namespace test
 {
 
+namespace ol = open_labora;
+using MarkerComponent = ol::ExpansionMarkerComponent;
+
 using ExpansionMarkerComponentTests = ResourceManagerDefaultActionTestBase;
-using OpenLabora::ExpansionMarkerComponent;
-using OpenLabora::PlotComponent;
-using OpenLabora::PositionComponent;
-using OpenLabora::ecs::getComponent;
-using PlotType = OpenLabora::plot::Type;
-using MarkerType = OpenLabora::marker::Type;
 
 TEST_F(ExpansionMarkerComponentTests, GetPlots)
 {
-    constexpr auto type = PlotType::Begin;
+    constexpr auto type = ol::plot::Type::Begin;
     const auto position = sf::Vector2f{ 5.f, 10.f };
-    auto plot = OpenLabora::plot::create(PlotType::Begin,
-                                         position,
-                                         mResourceMgr);
+    auto plot = ol::plot::create(ol::plot::Type::Begin,
+                                 position,
+                                 mResourceMgr);
 
-    auto component = ExpansionMarkerComponent(MarkerType::Begin, plot, plot);
+    auto component = MarkerComponent(ol::marker::Type::Begin, plot, plot);
 
     auto&& [plot1, plot2] = component.GetPlots();
-    auto&& plot1_cmpnt = getComponent<PlotComponent>(plot1.get());
-    auto&& plot2_cmpnt = getComponent<PlotComponent>(plot2.get());
+    auto&& plot1_cmpnt = ol::ecs::getComponent<ol::PlotComponent>(plot1.get());
+    auto&& plot2_cmpnt = ol::ecs::getComponent<ol::PlotComponent>(plot2.get());
 
-    auto&& plot1_pos = getComponent<PositionComponent>(plot1.get());
-    auto&& plot2_pos = getComponent<PositionComponent>(plot2.get());
+    auto&& plot1_pos = ol::ecs::getComponent<ol::PositionComponent>(plot1.get());
+    auto&& plot2_pos = ol::ecs::getComponent<ol::PositionComponent>(plot2.get());
 
     EXPECT_EQ(plot1_cmpnt.GetType(), type);
     EXPECT_EQ(plot2_cmpnt.GetType(), type);
@@ -53,31 +50,31 @@ TEST_F(ExpansionMarkerComponentTests, GetPlots)
 
 TEST_F(ExpansionMarkerComponentTests, GetType)
 {
-    constexpr auto type = MarkerType::Begin;
-    auto plot = OpenLabora::plot::create(PlotType::Begin, {}, mResourceMgr);
-    auto component = ExpansionMarkerComponent(type, plot, plot);
+    constexpr auto type = ol::marker::Type::Begin;
+    auto plot = ol::plot::create(ol::plot::Type::Begin, {}, mResourceMgr);
+    auto component = MarkerComponent(type, plot, plot);
 
     ASSERT_EQ(component.GetType(), type);
 }
 
 TEST_F(ExpansionMarkerComponentTests, GetPlotType)
 {
-    constexpr auto type = PlotType::Begin;
-    auto plot = OpenLabora::plot::create(type, {}, mResourceMgr);
-    auto component = ExpansionMarkerComponent(MarkerType::Begin, plot, plot);
+    constexpr auto type = ol::plot::Type::Begin;
+    auto plot = ol::plot::create(type, {}, mResourceMgr);
+    auto component = MarkerComponent(ol::marker::Type::Begin, plot, plot);
 
     ASSERT_EQ(component.GetPlotType(), type);
 }
 
 TEST_F(ExpansionMarkerComponentTests, SetPlotPositions)
 {
-    using OpenLabora::ecs::getComponent;
-    using OpenLabora::PositionComponent;
+    using ol::ecs::getComponent;
+    using ol::PositionComponent;
 
     constexpr auto x = 15.887f;
     constexpr auto y = 92.345f;
-    auto plot = OpenLabora::plot::create(PlotType::Begin, {}, mResourceMgr);
-    auto component = ExpansionMarkerComponent(MarkerType::Begin, plot, plot);
+    auto plot = ol::plot::create(ol::plot::Type::Begin, {}, mResourceMgr);
+    auto component = MarkerComponent(ol::marker::Type::Begin, plot, plot);
     auto plots = component.GetPlots();
     auto&& plot_cmpnt = getComponent<PositionComponent>(plots.first.get());
     auto&& plot_alt_cmpnt = getComponent<PositionComponent>(plots.second.get());
@@ -89,7 +86,7 @@ TEST_F(ExpansionMarkerComponentTests, SetPlotPositions)
     ASSERT_GE(plot_alt_cmpnt.position.y, y);
 }
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {

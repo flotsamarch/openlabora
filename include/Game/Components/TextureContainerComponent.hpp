@@ -15,7 +15,7 @@
 
 #include <SFML/Graphics/Texture.hpp>
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class TextureContainerComponent final
@@ -37,6 +37,6 @@ public:
     { return mTexture; };
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // TEXTURECONTAINERCOMPONENT_HPP_

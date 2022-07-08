@@ -19,7 +19,7 @@
 #include "Playfield.hpp"
 #include "Tile.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class Location final : public Entity<sf::Sprite>
@@ -83,6 +83,6 @@ inline Location::LocationType operator++ (Location::LocationType& type) {
     return type;
 }
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // LOCATION_HPP_

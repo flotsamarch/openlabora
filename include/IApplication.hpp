@@ -13,7 +13,7 @@
 #ifndef IAPPLICATION_HPP_
 #define IAPPLICATION_HPP_
 
-namespace OpenLabora
+namespace open_labora
 {
 
 template<class TStateIdsVariant>
@@ -25,6 +25,6 @@ public:
     virtual void ChangeState(TStateIdsVariant state_id) = 0;
 };
 
-}
+} // namespace open_labora
 
 #endif // IAPPLICATION_HPP_

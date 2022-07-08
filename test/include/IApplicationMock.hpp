@@ -17,16 +17,16 @@
 #include "IApplication.hpp"
 #include "AppState/TestStateIds.hpp"
 
-namespace Test
+namespace test
 {
 
 template<class TStateIdsVariant>
-class IApplicationMock final : public OpenLabora::IApplication<TStateIdsVariant>
+class IApplicationMock final : public open_labora::IApplication<TStateIdsVariant>
 {
 public:
     MOCK_METHOD(void, ChangeState, (TStateIdsVariant), (override));
 };
 
-} // namespace Test
+} // namespace test
 
 #endif // IAPPLICATIONMOCK_HPP_

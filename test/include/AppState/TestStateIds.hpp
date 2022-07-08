@@ -15,7 +15,7 @@
 
 #include <variant>
 
-namespace Test
+namespace test
 {
 
 struct TestState1Id {};
@@ -24,6 +24,6 @@ struct TestStateFinalId {};
 
 using TestStateIds = std::variant<TestState1Id, TestState2Id, TestStateFinalId>;
 
-} // namespace Test
+} // namespace test
 
 #endif // TESTSTATEIDS_HPP_

@@ -15,7 +15,7 @@
 
 #include "Common.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 struct NoModel final
@@ -28,6 +28,6 @@ struct NoModel final
 };
 
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // NOMODEL_HPP_

@@ -15,7 +15,7 @@
 #include "Game/Playfield.hpp"
 #include "GameState/Controllers/GameController.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 using TCC = TextureContainerComponent;
@@ -143,4 +143,4 @@ void entityUpdate(Playfield::Ptr entity,
     controller->AddDrawableObject(sprite.GetDrawableObject());
 }
 
-} // namespace OpenLabora
+} // namespace open_labora

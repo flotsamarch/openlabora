@@ -19,7 +19,7 @@
 #include "TestStateIds.hpp"
 #include "TestAppStateDefs.hpp"
 
-namespace Test
+namespace test
 {
 
 /**
@@ -35,7 +35,7 @@ class TestTransitions final
         using ModelT = typename TAppState::ModelType;
         using ControllerT = typename TAppState::ControllerType;
         using ViewT = typename TAppState::ViewType;
-        using MVCState = OpenLabora::AppState<ModelT, ViewT, ControllerT>;
+        using MVCState = open_labora::AppState<ModelT, ViewT, ControllerT>;
 
         auto model = std::make_shared<ModelT>();
         auto controller = std::make_shared<ControllerT>();
@@ -69,7 +69,7 @@ class NiceTransitions final
         using ModelT = typename TAppState::ModelType;
         using ControllerT = typename TAppState::ControllerType;
         using ViewT = typename TAppState::ViewType;
-        using MVCState = OpenLabora::AppState<ModelT, ViewT, ControllerT>;
+        using MVCState = open_labora::AppState<ModelT, ViewT, ControllerT>;
 
         auto model = std::make_shared<ModelT>();
         auto controller = std::make_shared<ControllerT>();
@@ -94,6 +94,6 @@ public:
     };
 };
 
-} // namespace Test
+} // namespace test
 
 #endif // TESTTRANSITIONS_HPP_

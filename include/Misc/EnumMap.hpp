@@ -19,7 +19,7 @@
 #include <stdexcept>
 #include <compare>
 
-namespace OpenLabora
+namespace open_labora
 {
 
 template<class T>
@@ -219,6 +219,6 @@ constexpr EnumMap<TEnumKey, TValue>
     }
 }
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // ENUMMAP_HPP_

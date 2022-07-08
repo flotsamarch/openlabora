@@ -23,7 +23,7 @@
 #include "Misc/EnumMap.hpp"
 #include "SubviewInitializer.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 namespace expansionWindow
@@ -160,6 +160,6 @@ inline void subviewUpdate([[maybe_unused]]ExpansionSubview& subview,
 {
 }
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // EXPANSIONSUBVIEW_HPP_

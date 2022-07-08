@@ -16,7 +16,7 @@
 #include <SFML/Graphics/Shape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 
-namespace OpenLabora
+namespace open_labora
 {
 
 namespace interaction
@@ -61,6 +61,6 @@ public:
 using RectangleInteractionAreaComponent =
     EffectiveInteractionAreaComponent<sf::RectangleShape>;
 
-}// namespace OpenLabora
+}// namespace open_labora
 
 #endif // EFFECTIVEINTERACTIONAREA_HPP_

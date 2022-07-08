@@ -23,7 +23,7 @@
 #include "GameWindow.hpp"
 #include "Resource/IResourceManager.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 /**
@@ -173,6 +173,6 @@ void Application<TGui,
     }
 }
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // APPLICATION_HPP_

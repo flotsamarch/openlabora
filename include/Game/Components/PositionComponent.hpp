@@ -15,7 +15,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
-namespace OpenLabora
+namespace open_labora
 {
 
 struct PositionComponent final
@@ -27,6 +27,6 @@ struct PositionComponent final
     PositionComponent(sf::Vector2f position_) : position{ position_ } {};
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // POSITIONCOMPONENT_HPP_

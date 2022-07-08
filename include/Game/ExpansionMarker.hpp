@@ -24,7 +24,7 @@
 #include "Resource/IResourceManager.hpp"
 #include "Signal.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 using ExpansionMarker = ComponentContainer<ExpansionMarkerComponent,
@@ -81,6 +81,6 @@ void entityUpdate(ExpansionMarker::Ptr,
                   std::shared_ptr<GameController>,
                   float update_delta_seconds);
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // EXPANSIONMARKER_HPP_

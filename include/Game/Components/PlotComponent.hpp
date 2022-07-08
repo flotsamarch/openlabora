@@ -16,7 +16,7 @@
 #include <span>
 #include "Game/Tile.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 namespace plot
@@ -83,6 +83,6 @@ public:
 
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // PLOTCOMPONENT_HPP_

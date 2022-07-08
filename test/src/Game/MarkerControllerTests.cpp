@@ -17,20 +17,19 @@
 #include "Resource/ResourceManagerDefaultActionTestBase.hpp"
 #include "Misc/UID.hpp"
 
-namespace Test
+namespace test
 {
 
-using OpenLabora::Playfield;
-using OpenLabora::ecs::getComponent;
-using OpenLabora::MarkerController;
-using PlotType = OpenLabora::plot::Type;
+namespace ol = open_labora;
 using TestBase = ResourceManagerDefaultActionTestBase;
+using PlotType = ol::plot::Type;
 
 class MarkerControllerTests : public TestBase
 {
+    using Controller = ol::MarkerController;
 protected:
-    Playfield::Ptr mPlayfield{ OpenLabora::playfield::create(mResourceMgr, {}) };
-    MarkerController::Ptr mController{ std::make_shared<MarkerController>() };
+    ol::Playfield::Ptr mPlayfield{ ol::playfield::create(mResourceMgr, {}) };
+    Controller::Ptr mController{ std::make_shared<Controller>() };
 };
 
 TEST_F(MarkerControllerTests, IsEmptyByDefault)
@@ -42,8 +41,8 @@ TEST_F(MarkerControllerTests, IsEmptyByDefault)
 
 TEST_F(MarkerControllerTests, CreateMissingMarkers_NotEmptyAfterCall)
 {
-    auto registrar = [] (OpenLabora::ExpansionMarker::Ptr)
-    { return OpenLabora::uid::getUid(); };
+    auto registrar = [] (ol::ExpansionMarker::Ptr)
+    { return ol::uid::getUid(); };
 
     mController->CreateMissingMarkers(mPlayfield,
                                       registrar,
@@ -59,10 +58,10 @@ TEST_F(MarkerControllerTests, CreateMissingMarkers_DefaultAmount)
 {
     auto counter{ 0u };
     constexpr auto expected_amount_of_created_markers{ 8u };
-    auto registrar = [&counter] (OpenLabora::ExpansionMarker::Ptr)
+    auto registrar = [&counter] (ol::ExpansionMarker::Ptr)
     {
         counter++;
-        return OpenLabora::uid::getUid();
+        return ol::uid::getUid();
     };
 
     mController->CreateMissingMarkers(mPlayfield,
@@ -78,15 +77,14 @@ TEST_F(MarkerControllerTests,
 {
     auto counter{ 0u };
     constexpr auto expected_amount_of_created_markers{ 14u };
-    auto registrar = [&counter] (OpenLabora::ExpansionMarker::Ptr)
+    auto registrar = [&counter] (ol::ExpansionMarker::Ptr)
     {
         counter++;
-        return OpenLabora::uid::getUid();
+        return ol::uid::getUid();
     };
 
-    using OpenLabora::plot::create;
-    auto&& pf_cmpnt = getComponent<OpenLabora::PlayfieldComponent>(*mPlayfield);
-    const auto& plot = create(PlotType::Central, {}, mResourceMgr);
+    auto&& pf_cmpnt = ol::ecs::getComponent<ol::PlayfieldComponent>(*mPlayfield);
+    const auto& plot = ol::plot::create(PlotType::Central, {}, mResourceMgr);
 
     pf_cmpnt.AddPlotToTop(plot);
     pf_cmpnt.AddPlotToTop(plot);
@@ -110,15 +108,14 @@ TEST_F(MarkerControllerTests,
 {
     auto counter{ 0u };
     constexpr auto expected_amount_of_created_markers{ 14u };
-    auto registrar = [&counter] (OpenLabora::ExpansionMarker::Ptr)
+    auto registrar = [&counter] (ol::ExpansionMarker::Ptr)
     {
         counter++;
-        return OpenLabora::uid::getUid();
+        return ol::uid::getUid();
     };
 
-    using OpenLabora::plot::create;
-    auto&& pf_cmpnt = getComponent<OpenLabora::PlayfieldComponent>(*mPlayfield);
-    const auto& plot = create(PlotType::Central, {}, mResourceMgr);
+    auto&& pf_cmpnt = ol::ecs::getComponent<ol::PlayfieldComponent>(*mPlayfield);
+    const auto& plot = ol::plot::create(PlotType::Central, {}, mResourceMgr);
     pf_cmpnt.AddPlotToTop(plot);
     pf_cmpnt.AddPlotToTop(plot);
     pf_cmpnt.AddPlotToTop(plot);
@@ -128,7 +125,7 @@ TEST_F(MarkerControllerTests,
                                       [] {},
                                       mResourceMgr);
 
-    auto markers_count = OpenLabora::EnumMap<PlotType, size_t>{};
+    auto markers_count = ol::EnumMap<PlotType, size_t>{};
     for (auto&& [type, markers] : mController->GetMarkers()) {
         markers_count[type] = markers.size();
     }
@@ -154,12 +151,12 @@ TEST_F(MarkerControllerTests, RemoveExcess_DoesNothingByDefault)
 {
     bool called{ false };
 
-    auto registrar = [] (OpenLabora::ExpansionMarker::Ptr)
+    auto registrar = [] (ol::ExpansionMarker::Ptr)
     {
-        return OpenLabora::uid::getUid();
+        return ol::uid::getUid();
     };
 
-    auto deleter = [&called] (std::span<OpenLabora::uid::Uid>)
+    auto deleter = [&called] (std::span<ol::uid::Uid>)
     { called = true; };
 
     mController->CreateMissingMarkers(mPlayfield,
@@ -179,23 +176,22 @@ TEST_F(MarkerControllerTests, RemoveExcess_RemovesFillingMarkers)
 {
     bool called{ false };
 
-    auto registrar = [] (OpenLabora::ExpansionMarker::Ptr)
+    auto registrar = [] (ol::ExpansionMarker::Ptr)
     {
-        return OpenLabora::uid::getUid();
+        return ol::uid::getUid();
     };
 
-    auto deleter = [&called] (std::span<OpenLabora::uid::Uid>)
+    auto deleter = [&called] (std::span<ol::uid::Uid>)
     { called = true; };
 
-    using OpenLabora::plot::create;
-    auto&& pf_cmpnt = getComponent<OpenLabora::PlayfieldComponent>(*mPlayfield);
+    auto&& pf_cmpnt = ol::ecs::getComponent<ol::PlayfieldComponent>(*mPlayfield);
 
     mController->CreateMissingMarkers(mPlayfield,
                                       registrar,
                                       [] {},
                                       mResourceMgr);
 
-    const auto& plot = create(PlotType::Begin, {}, mResourceMgr);
+    const auto& plot = ol::plot::create(PlotType::Begin, {}, mResourceMgr);
     pf_cmpnt.AddPlotToTop(plot);
 
     mController->RemoveExcessMarkers(mPlayfield, deleter);
@@ -213,20 +209,19 @@ TEST_F(MarkerControllerTests,
 {
     bool called{ false };
 
-    auto registrar = [] (OpenLabora::ExpansionMarker::Ptr)
+    auto registrar = [] (ol::ExpansionMarker::Ptr)
     {
-        return OpenLabora::uid::getUid();
+        return ol::uid::getUid();
     };
 
-    auto deleter = [&called] (std::span<OpenLabora::uid::Uid>)
+    auto deleter = [&called] (std::span<ol::uid::Uid>)
     { called = true; };
 
-    using OpenLabora::plot::create;
-    auto&& pf_cmpnt = getComponent<OpenLabora::PlayfieldComponent>(*mPlayfield);
-    auto markers_count = OpenLabora::EnumMap<PlotType, size_t>{};
+    auto&& pf_cmpnt = ol::ecs::getComponent<ol::PlayfieldComponent>(*mPlayfield);
+    auto markers_count = ol::EnumMap<PlotType, size_t>{};
 
     for (auto&& [type, markers] : mController->GetMarkers()) {
-        const auto& plot = create(type, {}, mResourceMgr);
+        const auto& plot = ol::plot::create(type, {}, mResourceMgr);
 
         while (!pf_cmpnt.IsPlotsLimitReached(type)) {
             pf_cmpnt.AddPlotToTop(plot);
@@ -260,7 +255,7 @@ void SimulateClickOnUpperMarker(PlotType type,
                                 const MarkerControllerComponent& component,
                                 Playfield::PtrConst playfield)
 {
-    using OpenLabora::marker::GetBoundaryMarkerPositions;
+    using ol::marker::GetBoundaryMarkerPositions;
     const auto& [upper_pos, _] = GetBoundaryMarkerPositions(type, playfield);
     auto fake_mouse_pos = upper_pos + sf::Vector2f{ 1.f, 1.f };
 
@@ -300,7 +295,7 @@ TEST_F(MarkerControllerTests, DeselectMarker)
 }
 #endif
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {

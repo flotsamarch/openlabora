@@ -25,7 +25,7 @@
 #include "Resource/IResourceManager.hpp"
 #include "GameWindow.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 /**
@@ -93,6 +93,6 @@ public:
     }
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // TRANSITIONS_HPP_

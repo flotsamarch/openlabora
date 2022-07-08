@@ -15,7 +15,7 @@
 
 #include "Game/Plot.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 namespace marker
@@ -64,6 +64,6 @@ public:
 
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // EXPANSIONMARKERCOMPONENT_HPP_

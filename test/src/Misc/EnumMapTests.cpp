@@ -14,10 +14,10 @@
 #include <algorithm>
 #include "Misc/EnumMap.hpp"
 
-namespace Test
+namespace test
 {
 
-using OpenLabora::EnumMap;
+namespace ol = open_labora;
 
 enum class TestEnum
 {
@@ -29,14 +29,14 @@ static constexpr size_t kItemCount =
 
 TEST(EnumMapTests, GetSize_DefaultCtor)
 {
-    auto map = EnumMap<TestEnum, int>{};
+    auto map = ol::EnumMap<TestEnum, int>{};
 
     ASSERT_EQ(kItemCount, map.GetSize());
 }
 
 TEST(EnumMapTests, GetSize_InitializerListCtor)
 {
-    auto map = EnumMap<TestEnum, int>
+    auto map = ol::EnumMap<TestEnum, int>
     {
         { TestEnum::Test1, 1 },
         { TestEnum::Test2, 2 },
@@ -48,7 +48,7 @@ TEST(EnumMapTests, GetSize_InitializerListCtor)
 
 TEST(EnumMapTests, GetSize_InitializerListCtorConstexpr)
 {
-    constexpr auto map = EnumMap<TestEnum, bool>
+    constexpr auto map = ol::EnumMap<TestEnum, bool>
     {
         { TestEnum::Test1, true },
         { TestEnum::Test2, false },
@@ -64,7 +64,7 @@ TEST(EnumMapTests, Get)
     constexpr auto value_2 = 2;
     constexpr auto value_3 = 3;
 
-    auto map = EnumMap<TestEnum, int>
+    auto map = ol::EnumMap<TestEnum, int>
     {
         { TestEnum::Test1, value_1 },
         { TestEnum::Test2, value_2 },
@@ -82,7 +82,7 @@ TEST(EnumMapTests, Get_Constexpr)
     constexpr auto value_2 = 2;
     constexpr auto value_3 = 3;
 
-    constexpr auto map = EnumMap<TestEnum, int>
+    constexpr auto map = ol::EnumMap<TestEnum, int>
     {
         { TestEnum::Test1, value_1 },
         { TestEnum::Test2, value_2 },
@@ -96,7 +96,7 @@ TEST(EnumMapTests, Get_Constexpr)
 
 TEST(EnumMapTests, Get_Default)
 {
-    auto map = EnumMap<TestEnum, int>{};
+    auto map = ol::EnumMap<TestEnum, int>{};
 
     EXPECT_EQ(map.Get(TestEnum::Test1), 0);
     EXPECT_EQ(map.Get(TestEnum::Test2), 0);
@@ -109,7 +109,7 @@ TEST(EnumMapTests, Get_Mutator)
     constexpr auto value_2 = 2;
     constexpr auto value_3 = 3;
 
-    auto map = EnumMap<TestEnum, int>{};
+    auto map = ol::EnumMap<TestEnum, int>{};
     map.Get(TestEnum::Test1) = value_1;
     map.Get(TestEnum::Test2) = value_2;
     map.Get(TestEnum::Test3) = value_3;
@@ -121,7 +121,7 @@ TEST(EnumMapTests, Get_Mutator)
 
 TEST(EnumMapTests, OperatorSquareBrackets_Default)
 {
-    auto map = EnumMap<TestEnum, int>{};
+    auto map = ol::EnumMap<TestEnum, int>{};
 
     EXPECT_EQ(map[TestEnum::Test1], 0);
     EXPECT_EQ(map[TestEnum::Test2], 0);
@@ -134,7 +134,7 @@ TEST(EnumMapTests, OperatorSquareBrackets_Read)
     constexpr auto value_2 = 2;
     constexpr auto value_3 = 3;
 
-    auto map = EnumMap<TestEnum, int>
+    auto map = ol::EnumMap<TestEnum, int>
     {
         { TestEnum::Test1, value_1 },
         { TestEnum::Test2, value_2 },
@@ -152,7 +152,7 @@ TEST(EnumMapTests, OperatorSquareBrackets_ReadConstexpr)
     constexpr auto value_2 = 2;
     constexpr auto value_3 = 3;
 
-    constexpr auto map = EnumMap<TestEnum, int>
+    constexpr auto map = ol::EnumMap<TestEnum, int>
     {
         { TestEnum::Test1, value_1 },
         { TestEnum::Test2, value_2 },
@@ -170,7 +170,7 @@ TEST(EnumMapTests, OperatorSquareBrackets_Mutator)
     constexpr auto value_2 = 2;
     constexpr auto value_3 = 3;
 
-    auto map = EnumMap<TestEnum, int>{};
+    auto map = ol::EnumMap<TestEnum, int>{};
     map[TestEnum::Test1] = value_1;
     map[TestEnum::Test2] = value_2;
     map[TestEnum::Test3] = value_3;
@@ -182,7 +182,7 @@ TEST(EnumMapTests, OperatorSquareBrackets_Mutator)
 
 TEST(EnumMapIteratorTests, RangeBasedForLoop_Regular)
 {
-    auto map = EnumMap<TestEnum, int>{};
+    auto map = ol::EnumMap<TestEnum, int>{};
 
     for (auto&& [key, value] : map) {
         value++;
@@ -200,7 +200,7 @@ TEST(EnumMapIteratorTests, RangeBasedForLoop_Const)
     constexpr auto value_2 = 2;
     constexpr auto value_3 = 3;
 
-    constexpr auto map = EnumMap<TestEnum, int>
+    constexpr auto map = ol::EnumMap<TestEnum, int>
     {
         { TestEnum::Test1, value_1 },
         { TestEnum::Test2, value_2 },
@@ -212,7 +212,7 @@ TEST(EnumMapIteratorTests, RangeBasedForLoop_Const)
     }
 }
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {

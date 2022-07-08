@@ -20,7 +20,7 @@
 #include "AppState/TestStateIds.hpp"
 #include "Resource/IResourceManagerMock.hpp"
 
-namespace Test
+namespace test
 {
 
 struct Empty{};
@@ -29,7 +29,7 @@ using ::testing::Field;
 
 template<template<class...> class TTransitions,
          class TStateVariant, class TStateVariantId>
-using TestApp = OpenLabora::Application<Empty, Empty,
+using TestApp = open_labora::Application<Empty, Empty,
                                         RendererMock,
                                         TTransitions,
                                         TStateVariant,
@@ -58,7 +58,7 @@ class TransitionToDefault
             using ModelT = typename TRequiredState::ModelType;
             using ControllerT = typename TRequiredState::ControllerType;
             using ViewT = typename TRequiredState::ViewType;
-            using MVCState = OpenLabora::AppState<ModelT, ViewT, ControllerT>;
+            using MVCState = open_labora::AppState<ModelT, ViewT, ControllerT>;
 
             auto model = std::make_shared<ModelT>();
             auto controller = std::make_shared<ControllerT>();
@@ -300,7 +300,7 @@ TEST(ApplicationEventHandlingTests, HandleEvents_GuiConsumes)
     ASSERT_NO_FATAL_FAILURE(app.HandleEvents());
 }
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {

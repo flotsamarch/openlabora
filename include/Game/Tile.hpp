@@ -18,7 +18,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include "Misc/EnumMap.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 namespace tile
@@ -64,6 +64,6 @@ constexpr EnumMap<Type, std::string_view> kTileToTextureMap(
 
 } // namespace tile
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // TILE_HPP_

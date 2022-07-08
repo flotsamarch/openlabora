@@ -23,7 +23,7 @@
 #include "GameState/Controllers/GCDuel.hpp"
 #include "GameState/Controllers/GCFinal.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 // Represents a state of the application with the help of MVC pattern
@@ -47,6 +47,6 @@ public:
         : model{ _model }, view{ std::move(_view) }, controller{ _controller } {}
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // APPSTATE_HPP_

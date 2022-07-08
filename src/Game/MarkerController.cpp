@@ -13,7 +13,7 @@
 #include "Game/MarkerController.hpp"
 #include "GameState/Controllers/GameController.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 void MarkerController
@@ -204,4 +204,4 @@ void MarkerController::TranslateMarkers(Playfield::PtrConst playfield)
     }
 }
 
-} // namespace OpenLabora
+} // namespace open_labora

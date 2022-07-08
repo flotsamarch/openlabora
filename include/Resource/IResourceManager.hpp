@@ -19,7 +19,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class IResourceManager
@@ -40,6 +40,6 @@ public:
     virtual ~IResourceManager() = default;
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // IRESOURCEMANAGER_HPP_

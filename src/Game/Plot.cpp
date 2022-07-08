@@ -15,7 +15,7 @@
 #include <algorithm>
 #include "Game/Plot.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 namespace plot
@@ -152,4 +152,4 @@ Plot::GetTileInfoUnderPoint(const sf::Vector2f& point) const
 }
 #endif
 
-} // namespace OpenLabora
+} // namespace open_labora

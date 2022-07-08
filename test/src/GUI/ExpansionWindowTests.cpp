@@ -16,12 +16,10 @@
 #include "GUI/ExpansionWindow.hpp"
 #include "RendererDependenciesMocks.hpp"
 
-namespace Test
+namespace test
 {
 
-using OpenLabora::GameWindow;
-using OpenLabora::PtrView;
-using OpenLabora::ExpansionWindow;
+namespace ol = open_labora;
 
 constexpr uint32_t win_size_x{ 1920 };
 constexpr uint32_t win_size_y{ 1080 };
@@ -30,13 +28,13 @@ class ExpansionWindowTests : public ::testing::Test
 {
     using WindowMock = sf::RenderTexture;
     using Gui = tgui::GuiSFML;
-    using GameWindow = GameWindow<Gui, WindowMock>;
+    using GameWindow = ol::GameWindow<Gui, WindowMock>;
     WindowMock mWindow{};
     Gui mGui{};
 
 protected:
-    GameWindow mGameWindow{ PtrView{ &mGui }, PtrView{ &mWindow } };
-    ExpansionWindow mExpansionWindow{ mGameWindow };
+    GameWindow mGameWindow{ ol::PtrView{ &mGui }, ol::PtrView{ &mWindow } };
+    ol::ExpansionWindow mExpansionWindow{ mGameWindow };
 
 public:
     ExpansionWindowTests()
@@ -97,9 +95,9 @@ TEST_F(ExpansionWindowTests, GetDeclineButton_NotNull)
 
 TEST_F(ExpansionWindowTests, SetState_ChooseOne_TogglesExist)
 {
-    mExpansionWindow.SetState(OpenLabora::expansionWindow::StateChooseOne{});
-    const auto name_1 = OpenLabora::expansionWindow::kAltToggle1Name;
-    const auto name_2 = OpenLabora::expansionWindow::kAltToggle2Name;
+    mExpansionWindow.SetState(ol::expansionWindow::StateChooseOne{});
+    const auto name_1 = ol::expansionWindow::kAltToggle1Name;
+    const auto name_2 = ol::expansionWindow::kAltToggle2Name;
 
     auto window = mExpansionWindow.GetWindow();
     auto toggle_1 = window->get<tgui::ToggleButton>(name_1);
@@ -111,9 +109,9 @@ TEST_F(ExpansionWindowTests, SetState_ChooseOne_TogglesExist)
 
 TEST_F(ExpansionWindowTests, SetState_Confirm_TogglesDoNotExist)
 {
-    mExpansionWindow.SetState(OpenLabora::expansionWindow::StateConfirm{});
-    const auto name_1 = OpenLabora::expansionWindow::kAltToggle1Name;
-    const auto name_2 = OpenLabora::expansionWindow::kAltToggle2Name;
+    mExpansionWindow.SetState(ol::expansionWindow::StateConfirm{});
+    const auto name_1 = ol::expansionWindow::kAltToggle1Name;
+    const auto name_2 = ol::expansionWindow::kAltToggle2Name;
 
     auto window = mExpansionWindow.GetWindow();
     auto toggle_1 = window->get<tgui::ToggleButton>(name_1);
@@ -142,7 +140,7 @@ TEST_F(ExpansionWindowTests, Show_SetsWindowNotVisible)
 
 TEST_F(ExpansionWindowTests, GetToggleValue_ZeroByDefault)
 {
-    mExpansionWindow.SetState(OpenLabora::expansionWindow::StateChooseOne{});
+    mExpansionWindow.SetState(ol::expansionWindow::StateChooseOne{});
     auto value = mExpansionWindow.GetToggleValue();
 
     ASSERT_EQ(value, 0);
@@ -150,8 +148,8 @@ TEST_F(ExpansionWindowTests, GetToggleValue_ZeroByDefault)
 
 TEST_F(ExpansionWindowTests, GetToggleValue_ToggleButtonOne)
 {
-    mExpansionWindow.SetState(OpenLabora::expansionWindow::StateChooseOne{});
-    const auto name = OpenLabora::expansionWindow::kAltToggle1Name;
+    mExpansionWindow.SetState(ol::expansionWindow::StateChooseOne{});
+    const auto name = ol::expansionWindow::kAltToggle1Name;
     auto window = mExpansionWindow.GetWindow();
     auto toggle = window->get<tgui::ToggleButton>(name);
 
@@ -163,8 +161,8 @@ TEST_F(ExpansionWindowTests, GetToggleValue_ToggleButtonOne)
 
 TEST_F(ExpansionWindowTests, GetToggleValue_ToggleButtonTwo)
 {
-    mExpansionWindow.SetState(OpenLabora::expansionWindow::StateChooseOne{});
-    const auto name = OpenLabora::expansionWindow::kAltToggle2Name;
+    mExpansionWindow.SetState(ol::expansionWindow::StateChooseOne{});
+    const auto name = ol::expansionWindow::kAltToggle2Name;
     auto window = mExpansionWindow.GetWindow();
     auto toggle = window->get<tgui::ToggleButton>(name);
 
@@ -174,7 +172,7 @@ TEST_F(ExpansionWindowTests, GetToggleValue_ToggleButtonTwo)
     ASSERT_EQ(value, 2);
 }
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {

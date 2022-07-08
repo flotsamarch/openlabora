@@ -20,7 +20,7 @@
 #include "Misc/RangeWrapper.hpp"
 #include "Misc/EnumMap.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 namespace playfield
@@ -68,6 +68,6 @@ public:
     #endif
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // PLAYFIELDCOMPONENT_HPP_

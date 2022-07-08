@@ -16,7 +16,7 @@
 #include <sstream>
 #include "Resource/ResourceManager.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 ResourceManager::ResourceManager(const std::filesystem::path& current_path)
@@ -101,4 +101,4 @@ const sf::Texture& ResourceManager::RegisterTexture(std::string_view name,
     return result.first->second;
 };
 
-} // namespace OpenLabora
+} // namespace open_labora

@@ -23,7 +23,7 @@
 #include "AppState/StateIds.hpp"
 #include "GameState/Model/NoModel.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 class GCMainMenu;
@@ -49,6 +49,6 @@ public:
     void Update(const float update_delta_seconds);
 };
 
-} // namespace OpenLabora
+} // namespace open_labora
 
 #endif // GVMAINMENU_HPP_

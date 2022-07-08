@@ -13,16 +13,14 @@
 #include <gtest/gtest.h>
 #include "Misc/UID.hpp"
 
-namespace Test
+namespace test
 {
-
-using OpenLabora::uid::getUid;
 
 TEST(UidTests, GetUid)
 {
     for (int i = 0; i < 50; ++i)
     {
-        EXPECT_EQ(i, getUid());
+        EXPECT_EQ(i, open_labora::uid::getUid());
     }
 }
 
@@ -38,7 +36,7 @@ TEST(UidTests, GetOverMaxThrows)
 }
 #endif
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {

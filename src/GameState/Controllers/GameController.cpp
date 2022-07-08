@@ -12,7 +12,7 @@
 
 #include "GameState/Controllers/GameController.hpp"
 
-namespace OpenLabora
+namespace open_labora
 {
 
 GameController::GameController(PtrView<IApplication<StateIdsVariant>> app,
@@ -62,4 +62,4 @@ void GameController::EnableBuildMode([[maybe_unused]]Location::LocationType type
 }
 #endif
 
-} // namespace OpenLabora
+} // namespace open_labora

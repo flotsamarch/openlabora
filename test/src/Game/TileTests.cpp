@@ -13,11 +13,11 @@
 #include <gtest/gtest.h>
 #include "Game/Tile.hpp"
 
-namespace Test
+namespace test
 {
 
-using Type = OpenLabora::tile::Type;
-using TileInfo = OpenLabora::tile::TileInfo;
+using Type = open_labora::tile::Type;
+using TileInfo = open_labora::tile::TileInfo;
 
 static constexpr auto begin_value = static_cast<int>(Type::Begin);
 static constexpr auto end_value = static_cast<int>(Type::End);
@@ -181,7 +181,7 @@ TEST(TileInfoOperatorsTests, TileInfoOperatorEquals_CoordYSame)
     EXPECT_TRUE(one == two);
 }
 
-} // namespace Test
+} // namespace test
 
 int main(int argc, char** argv)
 {
