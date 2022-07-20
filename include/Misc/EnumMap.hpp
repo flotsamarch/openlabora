@@ -31,6 +31,29 @@ concept MappableEnum = requires
     T::Begin < T::End;
 };
 
+template<class TItem, class TIterItem, bool IsConst>
+class EnumMapIteratorTraitsHelper{};
+
+template<class TItem, class TIterItem>
+struct EnumMapIteratorTraitsHelper<TItem, TIterItem, false>
+{
+    using PtrType = TIterItem*; // Pointer type wrapped by iterator
+    using InitPtrType = TItem*; // Type for iterator initialization
+    using difference_type = std::ptrdiff_t;
+    using reference = TIterItem&;
+    using pointer = TIterItem*;
+};
+
+template<class TItem, class TIterItem>
+struct EnumMapIteratorTraitsHelper<TItem, TIterItem, true>
+{
+    using PtrType = const TIterItem*;
+    using InitPtrType = const TItem*;
+    using difference_type = std::ptrdiff_t;
+    using reference = const TIterItem&;
+    using pointer = const TIterItem*;
+};
+
 /**
  * EnumMap - associative container for key-value pairs where keys are enumerator
  * identifiers.
@@ -53,35 +76,17 @@ class EnumMap final
 
     using Container = std::array<Item, kItemCount>;
 
+    // Type that is iterated over. Protects the key from being changed.
+    using IterItem = std::pair<const TEnumKey, TValue>;
+
     template<bool IsConst>
     class IteratorImpl
     {
-        // Type that is iterated over. Protects the key from being changed.
-        using IterItem = std::pair<const TEnumKey, TValue>;
-
-        template<bool IsConstInner>
-        struct IterParams
-        {
-            using PtrType = IterItem*; // Pointer type wrapped by iterator
-            using InitPtrType = Item*; // Type for iterator initialization
-            using difference_type = std::ptrdiff_t;
-            using reference = IterItem&;
-            using pointer = IterItem*;
-        };
-
-        template<>
-        struct IterParams<true>
-        {
-            using PtrType = const IterItem*;
-            using InitPtrType = const Item*;
-            using difference_type = std::ptrdiff_t;
-            using reference = const IterItem&;
-            using pointer = const IterItem*;
-        };
+        using Traits = EnumMapIteratorTraitsHelper<Item, IterItem, IsConst>;
 
         // Select correct types based on constness of iterator
-        using PtrType = typename IterParams<IsConst>::PtrType;
-        using InitPtrType = typename IterParams<IsConst>::InitPtrType;
+        using PtrType = typename Traits::PtrType;
+        using InitPtrType = typename Traits::InitPtrType;
         using Iterator = IteratorImpl<IsConst>;
 
         PtrType mPtr;
@@ -92,10 +97,10 @@ class EnumMap final
             : mPtr{ reinterpret_cast<PtrType>(ptr) } {};
 
         using iterator_concept = std::bidirectional_iterator_tag;
-        using difference_type = typename IterParams<IsConst>::difference_type;
+        using difference_type = typename Traits::difference_type;
         using value_type = std::pair<const TEnumKey, TValue>;
-        using reference = typename IterParams<IsConst>::reference;
-        using pointer = typename IterParams<IsConst>::pointer;
+        using reference = typename Traits::reference;
+        using pointer = typename Traits::pointer;
 
         constexpr pointer operator->() const noexcept { return mPtr; }
 
