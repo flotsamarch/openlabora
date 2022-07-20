@@ -23,9 +23,7 @@ namespace open_labora
 namespace tuple_utils
 {
 
-/**
- * Create tuple which consists only of type T repeated N times
- */
+// Create tuple which consists only of type T repeated N times
 template<class T, size_t N>
 constexpr auto createTuple(const T& t)
 {
