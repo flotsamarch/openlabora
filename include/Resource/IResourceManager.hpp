@@ -16,28 +16,27 @@
 #include <memory>
 #include <string_view>
 #include <optional>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/RenderTexture.hpp>
+#include "LibTypedefs.hpp"
 
 namespace open_labora
 {
 
-class IResourceManager
+struct IResourceManager
 {
-    using TextureRef = std::reference_wrapper<const sf::Texture>;
+    using TextureRef = std::reference_wrapper<const Texture>;
 public:
     using Ptr = std::shared_ptr<IResourceManager>;
     using OptionalTextureRef = std::optional<TextureRef>;
 
-    virtual const sf::Texture&
+    virtual ~IResourceManager() = default;
+
+    virtual const Texture&
     GetTextureOrDefault(std::string_view name) const = 0;
 
     virtual OptionalTextureRef GetTexture(std::string_view name) const = 0;
 
-    virtual const sf::Texture&
-    RegisterTexture(std::string_view name, const sf::Texture&) = 0;
-
-    virtual ~IResourceManager() = default;
+    virtual const Texture&
+    RegisterTexture(std::string_view name, const Texture&) = 0;
 };
 
 } // namespace open_labora

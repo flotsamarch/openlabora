@@ -13,42 +13,46 @@
 #ifndef GAMEWINDOW_HPP_
 #define GAMEWINDOW_HPP_
 
-#include <TGUI/Widget.hpp>
-#include <SFML/Graphics/View.hpp>
+#include "IGameWindow.hpp"
 #include "Misc/PtrView.hpp"
+#include "LibTypedefs.hpp"
+#include "GUI/GuiTypedefs.hpp"
 
 namespace open_labora
 {
 
-// Interface and wrapper for window methods needed during gameplay
-// @tparam TGui - A GUI library class
-// @tparam TWindow - Render window class
-template<class TGui, class TWindow>
-class GameWindow final
+class GameWindow final : public IGameWindow
 {
-    PtrView<TWindow> mWindow;
-    PtrView<TGui> mGui;
+    PtrView<RenderWindow> mWindow;
+    PtrView<Gui> mGui;
 
 public:
-    GameWindow(PtrView<TGui> gui, PtrView<TWindow> window)
+    GameWindow(PtrView<Gui> gui, PtrView<RenderWindow> window)
         : mWindow{ window }, mGui{ gui } {};
 
-    // Set View - ingame region which is drawn and its position on the screen
-    void SetView(const sf::View& view) { mWindow->setView(view); }
+    void SetView(const View& view) override
+    { mWindow->setView(view); }
 
-    decltype(auto) GetView() const { return mWindow->getView(); }
+    const View& GetView() const override
+    { return mWindow->getView(); }
 
-    auto GetSize() { return mWindow->getSize(); } const
+    Vector2u GetWindowSize() const override
+    { return mWindow->getSize(); }
 
-    auto MapScreenToWorldCoords(const sf::Vector2i& point) const
+    Vector2f MapScreenToWorldCoords(const Vector2i& point) const override
     { return mWindow->mapPixelToCoords(point); }
 
-    auto MapWorldToScreenCoords(const sf::Vector2f& coord) const
+    Vector2i MapWorldToScreenCoords(const Vector2f& coord) const override
     { return mWindow->mapCoordsToPixel(coord); }
 
-    void AddWidget(const tgui::Widget::Ptr& widget,
-                   const tgui::String& name="") const
+    void AddWidget(Widget::Ptr widget, const GuiString& name) const override
     { mGui->add(widget, name); }
+
+    void AddWidget(Widget::Ptr widget) const override
+    { AddWidget(widget, ""); }
+
+    void RemoveAllWidgets() override
+    { mGui->removeAllWidgets(); }
 };
 
 } // namespace open_labora

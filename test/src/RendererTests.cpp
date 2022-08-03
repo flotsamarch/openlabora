@@ -21,18 +21,23 @@ namespace test
 
 namespace ol = open_labora;
 
-using Renderer = ol::Renderer<GuiMock<WindowMock>, WindowMock>;
+using testing::NiceMock;
 
-using ::testing::Return;
-using ::testing::_;
-using ::testing::Field;
+using TestWindow = NiceMock<WindowMock>;
+using TestGui = NiceMock<GuiMock<TestWindow>>;
+
+using Renderer = ol::Renderer<NiceMock<GuiMock<TestWindow>>, TestWindow>;
+
+using testing::Return;
+using testing::_;
+using testing::Field;
 
 class TestFRenderer : public ::testing::Test
 {
 protected:
-    GuiMock<WindowMock> mGui;
-    WindowMock mWindow;
-    Renderer mRenderer{ ol::PtrView(&mGui), ol::PtrView(&mWindow) };
+    TestGui mGui;
+    TestWindow mWindow;
+    Renderer mRenderer{ ol::PtrView{ &mGui }, ol::PtrView{ &mWindow } };
 public:
     virtual ~TestFRenderer() {};
 };
@@ -70,11 +75,18 @@ TEST_F(TestFRenderer, Clear)
 
 TEST_F(TestFRenderer, Draw)
 {
-    const auto& drawable = sf::Sprite{};
+    constexpr auto range_size{ 5u };
+    auto range = std::vector<ol::DrawablePtr>{ range_size };
 
-    EXPECT_CALL(mWindow, draw(_));
+    for (auto&& item : range)
+    {
+        item = std::make_unique<sf::Sprite>();
+    }
 
-    ASSERT_NO_FATAL_FAILURE(mRenderer.Draw(drawable));
+    EXPECT_CALL(mWindow, draw(_))
+        .Times(range_size);
+
+    ASSERT_NO_FATAL_FAILURE(mRenderer.Draw({ range }));
 }
 
 TEST_F(TestFRenderer, Display)

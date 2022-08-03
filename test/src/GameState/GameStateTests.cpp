@@ -1,0 +1,215 @@
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//
+// OpenLabora (c) by Flotsamarch (https://github.com/flotsamarch)
+//
+// This work is licensed under the Creative Commons
+// Attribution-NonCommercial-ShareAlike 4.0 International License.
+//
+// You should have received a copy of the license along with this
+// work. If not, see <http://creativecommons.org/licenses/by-nc-sa/4.0/>.
+//
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+#include <gtest/gtest.h>
+#include "GameState/GameState.hpp"
+#include "GameState/ModelMock.hpp"
+#include "GameState/GameControllerMock.hpp"
+#include "TestApplication.hpp"
+#include "GameWindowMock.hpp"
+#include "Resource/ResourceManagerMock.hpp"
+#include "Misc/Matchers.hpp"
+
+namespace test
+{
+
+using testing::NiceMock;
+using testing::Eq;
+
+using TestResourceManager = NiceMock<ResourceManagerMock>;
+using TestModel = NiceMock<ModelMock>;
+using TestGameWindow = NiceMock<GameWindowMock>;
+
+template<class TModel>
+struct TestViewModel final
+{
+    using ModelPtr = ol::PtrView<TModel>;
+    ModelPtr model;
+    TestViewModel(ModelPtr _model)
+        : model{ _model }
+    {
+    }
+};
+
+// This view consumes all input except when keyboard button T is down
+template<class TViewModel>
+struct TestView1 final
+{
+    using ViewModelPtr = ol::PtrView<TViewModel>;
+
+    ol::ApplicationContext::Ptr app;
+    ol::IGameWindow::Ptr window;
+    ViewModelPtr view_model;
+    bool handle_input_called{ false };
+
+    TestView1(ol::ApplicationContext::Ptr _app,
+             ol::IGameWindow::Ptr _window,
+             ViewModelPtr _view_model)
+        : app{ _app },
+          window{ _window },
+          view_model{ _view_model }
+    {
+    }
+
+    bool HandleInput(ol::Input::PtrConst input)
+    {
+        handle_input_called = true;
+        if (input->IsButtonDown(ol::input::Button::T)) {
+            return false;
+        }
+        return true;
+    }
+};
+
+// This view never consumes input
+template<class TViewModel>
+struct TestView2 final
+{
+    using ViewModelPtr = ol::PtrView<TViewModel>;
+
+    ol::ApplicationContext::Ptr app;
+    ol::IGameWindow::Ptr window;
+    ViewModelPtr view_model;
+    bool handle_input_called{ false };
+
+    TestView2(ol::ApplicationContext::Ptr _app,
+              ol::IGameWindow::Ptr _window,
+              ViewModelPtr _view_model)
+        : app{ _app },
+          window{ _window },
+          view_model{ _view_model }
+    {
+    }
+
+    bool HandleInput(ol::Input::PtrConst)
+    { return !(handle_input_called = true); }
+};
+
+using TestBinding1 = ol::VVMBinding<TestModel, TestView1, TestViewModel>;
+using TestBinding2 = ol::VVMBinding<TestModel, TestView2, TestViewModel>;
+
+class GameStateTests : public ::testing::Test
+{
+protected:
+    using AppCtx = ol::ApplicationContext;
+    using ResMgrPtr = std::shared_ptr<TestResourceManager>;
+    using GameWindowPtr = std::shared_ptr<TestGameWindow>;
+
+    TestApplication mApp{};
+    ResMgrPtr mResourceMgr = std::make_shared<TestResourceManager>();
+    ol::Input mInput{};
+    GameWindowPtr mWindow = std::make_shared<TestGameWindow>();
+};
+
+template<class T>
+using NiceGameControllerMock = NiceMock<GameControllerMock<T>>;
+
+using TestGameState = ol::GameState<NiceGameControllerMock,
+                                    TestModel,
+                                    TestBinding1,
+                                    TestBinding2>;
+
+TEST_F(GameStateTests, SetupIntermoduleInteraction)
+{
+    bool called{ false };
+    auto setup = [&called] (const auto&) { called = true; };
+    auto game_state = TestGameState{ AppCtx::Ptr{ &mApp },
+                                     mWindow,
+                                     mResourceMgr,
+                                     setup };
+
+    ASSERT_TRUE(called);
+}
+
+TEST_F(GameStateTests, HandleInput_All)
+{
+    auto binding1 = ol::PtrView<TestBinding1>{};
+    auto binding2 = ol::PtrView<TestBinding2>{};
+    auto setup = [&binding1, &binding2] (TestGameState::VVMBindings& bindings)
+    {
+        binding1 = ol::PtrView{ &(std::get<TestBinding1>(bindings)) };
+        binding2 = ol::PtrView{ &(std::get<TestBinding2>(bindings)) };
+    };
+
+    auto game_state = TestGameState{ AppCtx::Ptr{ &mApp },
+                                     mWindow,
+                                     mResourceMgr,
+                                     setup };
+
+    auto event = sf::Event{};
+    event.type = sf::Event::KeyPressed;
+    event.key.code = sf::Keyboard::T;
+    mInput.HandleEvent(event);
+
+    game_state.HandleInput(ol::Input::PtrConst{ &mInput });
+
+    EXPECT_TRUE(binding1->view.handle_input_called);
+    ASSERT_TRUE(binding2->view.handle_input_called);
+}
+
+TEST_F(GameStateTests, HandleInput_OnlyFirst)
+{
+    auto binding1 = ol::PtrView<TestBinding1>{};
+    auto binding2 = ol::PtrView<TestBinding2>{};
+    auto setup = [&binding1, &binding2] (TestGameState::VVMBindings& bindings)
+    {
+        binding1 = ol::PtrView{ &(std::get<TestBinding1>(bindings)) };
+        binding2 = ol::PtrView{ &(std::get<TestBinding2>(bindings)) };
+    };
+
+    auto game_state = TestGameState{ AppCtx::Ptr{ &mApp },
+                                     mWindow,
+                                     mResourceMgr,
+                                     setup };
+
+    game_state.HandleInput(ol::Input::PtrConst{ &mInput });
+
+    EXPECT_TRUE(binding1->view.handle_input_called);
+    ASSERT_FALSE(binding2->view.handle_input_called);
+}
+
+TEST_F(GameStateTests, MapScreenCoordsToWorldCallModelMethod)
+{
+    const auto new_position = ol::Vector2i{ 77, 836 };
+
+    auto game_state = TestGameState{ AppCtx::Ptr{ &mApp },
+                                     mWindow,
+                                     mResourceMgr,
+                                     [] (const auto&) {} };
+
+    auto&& model = game_state.GetModel();
+
+    EXPECT_CALL(*mWindow, MapScreenToWorldCoords(Eq(new_position)));
+
+    EXPECT_CALL(model, SetWorldMousePosition);
+
+    game_state.MapScreenCoordsToWorld(new_position);
+}
+
+TEST_F(GameStateTests, GetWindow)
+{
+    auto game_state = TestGameState{ AppCtx::Ptr{ &mApp },
+                                     mWindow,
+                                     mResourceMgr,
+                                     [] (const auto&) {} };
+
+    ASSERT_EQ(game_state.GetWindow(), mWindow);
+}
+
+} // namespace test
+
+int main(int argc, char** argv)
+{
+    testing::InitGoogleTest(&argc, argv);
+    testing::InitGoogleMock(&argc, argv);
+    return RUN_ALL_TESTS();
+}

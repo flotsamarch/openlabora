@@ -27,8 +27,6 @@
 namespace open_labora
 {
 
-class GameController;
-
 using Playfield = ComponentContainer<ImmobileComponent,
                                      PlayfieldComponent,
                                      TextureContainerComponent,
@@ -67,6 +65,7 @@ constexpr float getPlotStripXOffset(plot::Type type)
 
 } // namespace playfield
 
+#if 0
 bool entityHandleEvent(Playfield::Ptr entity,
                        std::shared_ptr<GameController> controller,
                        const sf::Event& event);
@@ -74,6 +73,7 @@ bool entityHandleEvent(Playfield::Ptr entity,
 void entityUpdate(Playfield::Ptr entity,
                   std::shared_ptr<GameController> controller,
                   float update_delta_seconds);
+#endif
 
 } // namespace open_labora
 

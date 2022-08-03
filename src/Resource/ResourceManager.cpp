@@ -15,6 +15,7 @@
 #include <iostream>
 #include <sstream>
 #include "Resource/ResourceManager.hpp"
+#include "LibTypedefs.hpp"
 
 namespace open_labora
 {
@@ -54,7 +55,7 @@ ResourceManager::ResourceManager(const std::filesystem::path& current_path)
             auto filename = file.path().filename().string();
             auto texture_name =
                 filename.substr(0, filename.size() - suffix.size());
-            auto texture = sf::Texture{};
+            auto texture = Texture{};
 
             if (!texture.loadFromFile(file.path().string())) {
                 // TODO: Exception safety pass
@@ -68,7 +69,7 @@ ResourceManager::ResourceManager(const std::filesystem::path& current_path)
     }
 }
 
-std::optional<std::reference_wrapper<const sf::Texture>>
+std::optional<std::reference_wrapper<const Texture>>
 ResourceManager::GetTexture(std::string_view name) const
 {
     auto str = std::string{ name };
@@ -81,7 +82,7 @@ ResourceManager::GetTexture(std::string_view name) const
     return { mTextures.find(str)->second };
 }
 
-const sf::Texture&
+const Texture&
 ResourceManager::GetTextureOrDefault(std::string_view name) const
 {
     auto str = std::string{ name };
@@ -93,8 +94,8 @@ ResourceManager::GetTextureOrDefault(std::string_view name) const
     return mTextures.find(str)->second;
 }
 
-const sf::Texture& ResourceManager::RegisterTexture(std::string_view name,
-                                                    const sf::Texture& texture)
+const Texture& ResourceManager::RegisterTexture(std::string_view name,
+                                                    const Texture& texture)
 {
     auto result = mTextures.emplace(std::make_pair(name, texture));
     assert(result.second);

@@ -1,14 +1,14 @@
 #ifndef RESOURCEMANAGERDEFAULTACTIONTESTBASE_HPP_
 #define RESOURCEMANAGERDEFAULTACTIONTESTBASE_HPP_
 
-#include "IResourceManagerMock.hpp"
+#include "ResourceManagerMock.hpp"
 
 namespace test
 {
 
 class ResourceManagerDefaultActionTestBase : public ::testing::Test
 {
-    using ResourceMgr = testing::NiceMock<IResourceManagerMock>;
+    using ResourceMgr = testing::NiceMock<ResourceManagerMock>;
     using ResourceMgrPtr = std::shared_ptr<ResourceMgr>;
     std::filesystem::path mPath{};
 

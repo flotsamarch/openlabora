@@ -13,17 +13,15 @@
 #ifndef RENDERER_HPP_
 #define RENDERER_HPP_
 
-#include <SFML/Graphics.hpp>
-#include <TGUI/Core.hpp>
-#include <TGUI/Backends/SFML.hpp>
 #include <string_view>
 #include <memory>
-#include <utility>
+#include <optional>
+#include <SFML/Window/Event.hpp>
 #include "Misc/PtrView.hpp"
+#include "LibTypedefs.hpp"
 
 namespace open_labora
 {
-
 
 /**
  * Class that is responsible for drawing things on screen
@@ -38,7 +36,7 @@ class Renderer final
     static constexpr std::string_view kWindowName{ "open_labora" };
     PtrView<TWindow> mWindow;
     PtrView<TGui> mGui;
-    sf::VideoMode mVideoMode{ *sf::VideoMode::getFullscreenModes().begin() };
+    VideoMode mVideoMode{ *VideoMode::getFullscreenModes().begin() };
 
 public:
     Renderer(PtrView<TGui>, PtrView<TWindow>);
@@ -51,12 +49,18 @@ public:
 
     bool IsWindowOpen() const { return mWindow->isOpen(); };
 
-    std::optional<sf::Event> PollEvent() const;
+    using OptionalEvent = std::optional<sf::Event>;
+    OptionalEvent PollEvent() const;
 
     // Must be called before Draw()
     void Clear() { mWindow->clear(); }
 
-    void Draw(const sf::Drawable& drawable) { mWindow->draw(drawable); }
+    void Draw(DrawableRangeConst drawable_range)
+    {
+        for (auto&& object : drawable_range) {
+            mWindow->draw(*object);
+        }
+    }
 
     // Must be called after Draw()
     void Display();
@@ -73,7 +77,7 @@ Renderer<TGui, TWindow>::Renderer(PtrView<TGui> gui, PtrView<TWindow> window)
 {
     mWindow->create(mVideoMode,
                    std::string(kWindowName),
-                   sf::Style::Fullscreen);
+                   kWindowStyle);
     mWindow->setFramerateLimit(kFramerateLimit);
     mWindow->setVerticalSyncEnabled(true);
 
@@ -83,7 +87,7 @@ Renderer<TGui, TWindow>::Renderer(PtrView<TGui> gui, PtrView<TWindow> window)
 }
 
 template<class TGui, class TWindow>
-std::optional<sf::Event> Renderer<TGui, TWindow>::PollEvent() const
+auto Renderer<TGui, TWindow>::PollEvent() const -> Renderer::OptionalEvent
 {
     sf::Event event;
     if (!IsWindowOpen() || !mWindow->pollEvent(event)) {

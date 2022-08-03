@@ -17,11 +17,11 @@
 #include <variant>
 #include <chrono>
 #include <filesystem>
-#include "IApplication.hpp"
-#include "GameState/Model/Model.hpp"
+#include "ApplicationState/ApplicationContext.hpp"
 #include "Misc/PtrView.hpp"
-#include "GameWindow.hpp"
+#include "IGameWindow.hpp"
 #include "Resource/IResourceManager.hpp"
+#include "Input/Input.hpp"
 
 namespace open_labora
 {
@@ -32,34 +32,27 @@ namespace open_labora
  * @tparam TGui - A GUI library class
  * @tparam TWindow - Render window class
  * @tparam TRenderer - Wrapper for graphics and GUI libraries
- * @tparam TTransitions - Callable for a std::visit that creates new state
- * @tparam TStatesVariant - Variant of all possible states (AppState's)
- * @tparam TStateIdsVariant - Variant of all possible IDs for each state.
- * ID is empty struct that is later used in TTransitions implementation
+ * @tparam TResourceManager - Resource manager class
  */
-template<class TGui, class TWindow, template<class...> class TRenderer,
-         template<class...> class TTransitions, class TStatesVariant,
-         class TStateIdsVariant, class TResourceManager>
-class Application final : public IApplication<TStateIdsVariant>
+template<class TGui,
+         class TWindow,
+         class TGameWindow,
+         template<class...> class TRenderer,
+         class TResourceManager>
+class Application final : public ApplicationContext
 {
     using Clock = std::chrono::steady_clock;
     TGui mGui{};
     TWindow mWindow{};
     TRenderer<TGui, TWindow> mRenderer{ PtrView(&mGui), PtrView(&mWindow) };
     IResourceManager::Ptr mResourceMgr = std::make_shared<TResourceManager>();
+    Input mInput{};
 
-    using IApplicationPtr = PtrView<IApplication<TStateIdsVariant>>;
-    TTransitions<TGui, TWindow> mTransitions
-    {
-        IApplicationPtr(this), mResourceMgr,
-        GameWindow<TGui, TWindow>{PtrView(&mGui), PtrView(&mWindow)}
-    };
-
-    TStatesVariant mState = *std::visit(mTransitions, TStateIdsVariant{});
+    void HandleEvents();
 
 public:
-    Application(const std::filesystem::path& path) :
-        mResourceMgr{ std::make_shared<TResourceManager>(path) } {}
+    Application(const std::filesystem::path& path)
+        : mResourceMgr{ std::make_shared<TResourceManager>(path) } {}
 
     Application(const Application&) = delete;
     Application(Application&&) = delete;
@@ -69,34 +62,34 @@ public:
     // Main application loop
     uint32_t run();
 
-    // @arg state_id - Empty struct that represents one of possible app states
-    void ChangeState(TStateIdsVariant state_id) override;
+    IResourceManager::Ptr GetResourceMgr() const
+    { return mResourceMgr; }
 
-    template<class TAppState>
-    bool IsSameState() const noexcept
-    { return std::holds_alternative<TAppState>(mState); }
-
-    bool IsFinalState() const noexcept
-    { return mState.index() == std::variant_size_v<TStatesVariant> - 1; }
-
-    IResourceManager::Ptr GetResourceMgr() const { return mResourceMgr; }
-    TStatesVariant& GetState() noexcept { return mState; }
     TRenderer<TGui, TWindow>& GetRenderer() noexcept
     { return mRenderer; }
 
-    void HandleEvents();
+    IGameWindow::Ptr GetGameWindow()
+    {
+        return std::make_shared<TGameWindow>(PtrView{ &mGui },
+                                             PtrView{ &mWindow });
+    }
+
+    bool HasReachedFinalState()
+    { return stateGetFlagIsFinal(mState); }
+
+    const ApplicationState& GetState() const noexcept
+    { return mState; }
+
+    Input& GetInput() noexcept
+    { return mInput; }
 };
 
-template<class TGui, class TWindow, template<class...> class TRenderer,
-         template<class...> class TTransitions, class TStatesVariant,
-         class TStateIdsVariant, class TResourceManager>
-uint32_t Application<TGui,
-                     TWindow,
-                     TRenderer,
-                     TTransitions,
-                     TStatesVariant,
-                     TStateIdsVariant,
-                     TResourceManager>
+template<class TGui,
+         class TWindow,
+         class TGameWindow,
+         template<class...> class TRenderer,
+         class TResourceManager>
+uint32_t Application<TGui, TWindow, TGameWindow, TRenderer, TResourceManager>
 ::run()
 {
     auto start_time = Clock::now();
@@ -105,71 +98,44 @@ uint32_t Application<TGui,
         std::chrono::duration<float> delta_seconds = end_time - start_time;
         start_time = end_time;
 
+        mInput.Update(delta_seconds.count());
+
         HandleEvents();
 
-        auto update = [ds = delta_seconds.count()] (auto&& state) {
-            state.view->Update(ds);
-            state.controller->Update(ds);
-        };
-        std::visit(update, mState);
+        stateUpdate(mState, delta_seconds.count());
 
         mRenderer.Clear();
 
-        auto get_drawable_objects = [] (auto&& state) {
-            return state.model->GetDrawableObjects();
-        };
-
-        auto&& drawable_objects = std::visit(get_drawable_objects, mState);
-        for(auto&& drawable : drawable_objects) {
-            mRenderer.Draw(*drawable);
-        }
+        auto&& drawable_range = stateGetDrawableObjects(mState);
+        mRenderer.Draw(drawable_range);
         mRenderer.Display();
 
-        if (IsFinalState()) {
+        if (HasReachedFinalState()) {
             break;
         }
     }
     return 0;
 }
 
-template<class TGui, class TWindow, template<class...> class TRenderer,
-         template<class...> class TTransitions, class TStatesVariant,
-         class TStateIdsVariant, class TResourceManager>
-void Application<TGui,
-                 TWindow,
-                 TRenderer,
-                 TTransitions,
-                 TStatesVariant,
-                 TStateIdsVariant,
-                 TResourceManager>
-::ChangeState(TStateIdsVariant state_id)
-{
-    mRenderer.RemoveAllWidgets();
-    mState = *std::visit(mTransitions, state_id);
-}
-
-template<class TGui, class TWindow, template<class...> class TRenderer,
-         template<class...> class TTransitions, class TStatesVariant,
-         class TStateIdsVariant, class TResourceManager>
-void Application<TGui,
-                 TWindow,
-                 TRenderer,
-                 TTransitions,
-                 TStatesVariant,
-                 TStateIdsVariant,
-                 TResourceManager>
+template<class TGui,
+         class TWindow,
+         class TGameWindow,
+         template<class...> class TRenderer,
+         class TResourceManager>
+void Application<TGui, TWindow, TGameWindow, TRenderer, TResourceManager>
 ::HandleEvents()
- {
+{
      while (auto&& event = mRenderer.PollEvent()) {
-        bool consumed = mRenderer.HandleEvent(*event);
-        if (consumed) {
-            continue;
-        }
-        auto handle = [&evt = *event] (auto&& state) {
-            state.view->HandleEvent(evt);
-            state.controller->HandleEvent(evt);
-        };
-        std::visit(handle, mState);
+         bool consumed = mRenderer.HandleEvent(*event);
+         if (consumed) {
+             continue;
+         }
+
+         mInput.HandleEvent(*event);
+         while (mInput.HasUnhandledInput()) {
+             stateHandleInput(mState, Input::PtrConst{ &mInput });
+             mInput.Advance();
+         }
     }
 }
 

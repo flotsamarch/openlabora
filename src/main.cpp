@@ -10,15 +10,14 @@
 //
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-#include <iostream>
 #include <filesystem>
 #include <TGUI/Core.hpp>
 #include <TGUI/Backends/SFML.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "Application.hpp"
+#include "GameWindow.hpp"
 #include "Renderer.hpp"
-#include "AppState/StateIds.hpp"
-#include "AppState/Transitions.hpp"
+#include "GameState/MainMenuFwd.hpp"
 #include "Resource/ResourceManager.hpp"
 
 int main(int, char** argv)
@@ -28,11 +27,14 @@ int main(int, char** argv)
     namespace ol = open_labora;
     ol::Application<tgui::GuiSFML,
                     sf::RenderWindow,
+                    ol::GameWindow,
                     ol::Renderer,
-                    ol::Transitions,
-                    ol::State,
-                    ol::StateIdsVariant,
                     ol::ResourceManager> app(path_to_executable);
 
+    namespace state = ol::state;
+    using MainMenu = state::MainMenu;
+    state::changeState<MainMenu>(ol::ApplicationContext::Ptr{ &app },
+                                 app.GetGameWindow(),
+                                 app.GetResourceMgr());
     return app.run();
 }

@@ -14,12 +14,14 @@
 #define RENDERERMOCK_HPP_
 
 #include <gmock/gmock.h>
+#include <SFML/Window/Event.hpp>
 #include <optional>
-#include "SFML/Window/Event.hpp"
-#include "SFML/Graphics/Drawable.hpp"
+#include "LibTypedefs.hpp"
 
 namespace test
 {
+
+namespace ol = open_labora;
 
 /**
  * Mock class for graphics and GUI library wrapper.
@@ -30,15 +32,23 @@ namespace test
 template<class TWindow, class TGui>
 struct RendererMock
 {
+    virtual ~RendererMock() = default;
+
     template<class... Args>
-    RendererMock(Args...) {};
+    RendererMock(Args&&...) {};
 
     MOCK_METHOD(bool, IsWindowOpen, (), (const));
+
     MOCK_METHOD(std::optional<sf::Event>, PollEvent, (), (const));
+
     MOCK_METHOD(void, Clear, ());
-    MOCK_METHOD(void, Draw, (const sf::Drawable&));
+
+    MOCK_METHOD(void, Draw, (ol::DrawableRangeConst));
+
     MOCK_METHOD(void, Display, ());
+
     MOCK_METHOD(bool, HandleEvent, (const sf::Event&));
+
     MOCK_METHOD(void, RemoveAllWidgets, ());
 };
 
