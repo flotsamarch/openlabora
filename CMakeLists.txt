@@ -64,6 +64,12 @@ endif()
 include(cmake/Vcpkg.cmake)
 
 #
+# Install external projects
+#
+include(ExternalProject)
+include(cmake/ExternalProjects.cmake)
+
+#
 # Create library, setup header and source files
 #
 
@@ -179,6 +185,7 @@ target_include_directories(
   ${PROJECT_NAME}
   PUBLIC
   $<INSTALL_INTERFACE:include>
+  $<BUILD_INTERFACE:${EXTERNAL_INSTALL_LOCATION}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -188,6 +195,7 @@ if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
     ${PROJECT_NAME}_LIB
     PUBLIC
     $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${EXTERNAL_INSTALL_LOCATION}/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/test/include>
     PRIVATE

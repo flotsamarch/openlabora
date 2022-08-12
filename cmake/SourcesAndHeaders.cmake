@@ -69,9 +69,17 @@ set(headers
     include/Misc/PtrView.hpp
     include/Misc/EnumMap.hpp
     include/Misc/UID.hpp
+    include/Misc/CommonTypedefs.hpp
+    # ECS
+    include/ECS/MassAssignComponents.hpp
+    include/ECS/Entity.hpp
+    include/ECS/System.hpp
+    include/ECS/Feature.hpp
+    include/ECS/Registry.hpp
+    include/ECS/Predicates.hpp
     # Game systems
-    include/Input/Input.hpp
     include/LibTypedefs.hpp
+    include/Input/Input.hpp
     include/ApplicationState/ApplicationState.hpp
     include/Resource/ResourceManager.hpp
     include/Resource/IResourceManager.hpp
@@ -91,6 +99,12 @@ set(test_sources
     src/Misc/EnumMapTests.cpp
     src/Misc/UIDTests.cpp
     src/Misc/TupleUtilsTests.cpp
+    # ECS
+    src/ECS/EntityTests.cpp
+    src/ECS/MassAssignComponentsTests.cpp
+    src/ECS/FeatureTests.cpp
+    src/ECS/SystemTests.cpp
+    src/ECS/RegistryTests.cpp
     # Game systems
     src/Input/InputTests.cpp
     src/ApplicationState/ApplicationStateTests.cpp
