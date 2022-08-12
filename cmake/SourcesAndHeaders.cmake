@@ -60,11 +60,6 @@ set(headers
     include/GameState/Duel.hpp
     include/GameState/GameController.hpp
     include/GameState/Model.hpp
-    # include/GameState/Views/GameView.hpp
-    # include/GameState/Views/GVFinal.hpp
-    # include/GameState/Views/GVDuel.hpp
-    # include/GameState/Controllers/GCFinal.hpp
-    # include/GameState/Controllers/GCDuel.hpp
     # GUI
     # include/GUI/Subviews/SubviewInitializer.hpp
     # include/GUI/Subviews/ExpansionSubview.hpp
