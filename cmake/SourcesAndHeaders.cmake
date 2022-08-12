@@ -76,8 +76,6 @@ set(headers
     include/Misc/UID.hpp
     # Game systems
     include/Input/Input.hpp
-    # include/ECS/ComponentContainer.hpp
-    # include/ECS/Entity.hpp
     include/LibTypedefs.hpp
     include/ApplicationState/ApplicationState.hpp
     include/Resource/ResourceManager.hpp

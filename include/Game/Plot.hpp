@@ -14,7 +14,6 @@
 #define PLOT_HPP_
 
 #include <functional>
-#include "ECS/ComponentContainer.hpp"
 #include "Game/Components/PositionComponent.hpp"
 #include "Game/Components/SpriteComponent.hpp"
 #include "Game/Components/PlotComponent.hpp"
@@ -23,15 +22,17 @@
 namespace open_labora
 {
 
+#if 0
 using Plot = ComponentContainer<PositionComponent,
                                 PlotComponent,
                                 SpriteComponent>;
+#endif
 
 
 namespace plot
 {
 
-void setPosition(Plot&, const sf::Vector2f&, bool needs_shift = false);
+// void setPosition(Plot&, const sf::Vector2f&, bool needs_shift = false);
 
 constexpr size_t kPlotTypeCount
 { static_cast<size_t>(plot::Type::End) - static_cast<size_t>(plot::Type::Begin)};
@@ -135,6 +136,7 @@ constexpr EnumMap<Type, std::pair<TileSpan, TileSpan>> kPlotTypeToSpans
     { Type::Mountain, {kMountainPlotTopSpan, kMountainPlotBottomSpan } },
 };
 
+#if 0
 // Use to create plots during gameplay
 Plot create(Type type, const sf::Vector2f& position,
             IResourceManager::Ptr, bool alternative = false);
@@ -146,6 +148,7 @@ Plot createCentralInitial(const sf::Vector2f& position,
 
 using PlotRef = std::reference_wrapper<const Plot>;
 using PlotsPair = std::pair<PlotRef, PlotRef>;
+#endif
 
 } // namespace plot
 

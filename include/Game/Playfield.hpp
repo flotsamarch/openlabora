@@ -17,7 +17,6 @@
 #include <numeric>
 #include <algorithm>
 #include <SFML/Window/Event.hpp>
-#include "ECS/ComponentContainer.hpp"
 #include "Components/ImmobileComponent.hpp"
 #include "Components/TextureContainerComponent.hpp"
 #include "Components/PlayfieldComponent.hpp"
@@ -27,21 +26,24 @@
 namespace open_labora
 {
 
+#if 0
 using Playfield = ComponentContainer<ImmobileComponent,
                                      PlayfieldComponent,
                                      TextureContainerComponent,
                                      SpriteComponent>;
+#endif
 
 namespace playfield
 {
 
 struct PlotCreationParams
 {
-    plot::PlotsPair plots;
+    // plot::PlotsPair plots;
     bool add_to_top;
     bool alt_required;
 };
 
+#if 0
 std::function<void()>
 MakePlotCreationDelegate(Playfield::Ptr,
                          std::function<PlotCreationParams()> get_params);
@@ -51,6 +53,7 @@ Playfield::Ptr create(IResourceManager::Ptr,
 
 Playfield::Ptr create(IResourceManager::Ptr,
                       float initial_x, float initial_y);
+#endif
 
 constexpr float getPlotStripXOffset(plot::Type type)
 {

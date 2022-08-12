@@ -31,6 +31,7 @@ constexpr uint32_t kMaxFieldWidth{ 9u };
 
 } // namespace playfield
 
+#if 0
 class PlayfieldComponent final
 {
     using PlotList = std::deque<Plot>;
@@ -67,6 +68,7 @@ public:
     GetTileIndicesUnderPoint(const sf::Vector2f&) const noexcept;
     #endif
 };
+#endif
 
 } // namespace open_labora
 
