@@ -132,8 +132,9 @@ TEST_F(EscapeMenuViewTests, HandleInput_NoInput)
 
     mInput.HandleEvent(event);
 
-    mView.HandleInput(ol::Input::PtrConst{ &mInput });
+    bool was_input_consumed = mView.HandleInput(ol::Input::PtrConst{ &mInput });
 
+    EXPECT_FALSE(was_input_consumed);
     EXPECT_EQ(lock_counter, 0);
     ASSERT_EQ(unlock_counter, 0);
 }
@@ -151,8 +152,9 @@ TEST_F(EscapeMenuViewTests, HandleInput_SingleEscapeLocksCamera)
 
     mInput.HandleEvent(event);
 
-    mView.HandleInput(ol::Input::PtrConst{ &mInput });
+    bool was_input_consumed = mView.HandleInput(ol::Input::PtrConst{ &mInput });
 
+    EXPECT_TRUE(was_input_consumed);
     ASSERT_EQ(lock_counter, 1);
 }
 
@@ -160,6 +162,7 @@ TEST_F(EscapeMenuViewTests, HandleInput_DoubleEscapeUnlocksCamera)
 {
     auto lock_counter{ 0u };
     auto unlock_counter{ 0u };
+    bool was_input_consumed{ false };
     TestEscapeMenuView mView{ mApp, mWindow, ol::PtrView{ &mViewModel } };
 
     mViewModel.SetLockCameraMovementCallback([&lc = lock_counter] { ++lc; });
@@ -178,10 +181,14 @@ TEST_F(EscapeMenuViewTests, HandleInput_DoubleEscapeUnlocksCamera)
     mInput.HandleEvent(event); // Simulate Escape press again
 
     while (mInput.HasUnhandledInput()) {
-        mView.HandleInput(ol::Input::PtrConst{ &mInput });
+        auto result = mView.HandleInput(ol::Input::PtrConst{ &mInput });
         mInput.Advance();
+        if (result) {
+            was_input_consumed = true;
+        }
     }
 
+    EXPECT_TRUE(was_input_consumed);
     EXPECT_EQ(lock_counter, 1);
     ASSERT_EQ(unlock_counter, 1);
 }

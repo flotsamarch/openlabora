@@ -12,8 +12,6 @@ set(sources
     src/GameState/Final.cpp
     src/GameState/MainMenu.cpp
     src/GameState/Duel.cpp
-    # src/GameState/Views/GVDuel.cpp
-    # src/GameState/Controllers/GCDuel.cpp
     # GUI
     # src/GUI/ExpansionInterface.cpp
     # src/GUI/ExpansionWindow.cpp
@@ -111,6 +109,7 @@ set(test_sources
     src/ApplicationTests.cpp
     src/GameState/GameControllerTests.cpp
     src/GameState/GameStateTests.cpp
+    src/GameState/ModelTests.cpp
     # Game Views
     src/GameState/Views/CameraViewTests.cpp
     src/GameState/Views/EscapeMenuViewTests.cpp

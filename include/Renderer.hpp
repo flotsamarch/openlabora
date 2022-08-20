@@ -58,7 +58,7 @@ public:
     void Draw(DrawableRangeConst drawable_range)
     {
         for (auto&& object : drawable_range) {
-            mWindow->draw(*object);
+            mWindow->draw(object.get());
         }
     }
 

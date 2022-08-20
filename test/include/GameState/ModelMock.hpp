@@ -30,13 +30,14 @@ struct ModelMock
 
     MOCK_METHOD(bool, IsPaused, (), (const, noexcept));
 
-    MOCK_METHOD(void, SetPaused, (bool));
+    MOCK_METHOD(void, SetPaused, (bool), (noexcept));
 
-    MOCK_METHOD(ol::DrawableRangeConst, GetDrawableObjects, (), (const, noexcept));
+    MOCK_METHOD(ol::DrawableRangeConst, GetDrawableObjects, (),
+                (const, noexcept));
 
     MOCK_METHOD(void, ClearDrawableObjects, (), (noexcept));
 
-    MOCK_METHOD(void, AddDrawableObject, (ol::DrawablePtr));
+    MOCK_METHOD(void, AddDrawableObject, (const ol::Drawable&), (noexcept));
 
     MOCK_METHOD(void, SetWorldMousePosition, (const ol::Vector2f&));
 

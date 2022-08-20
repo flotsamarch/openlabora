@@ -144,12 +144,14 @@ TEST_F(CameraViewTests, HandleInput_NoMouseMovement)
     EXPECT_CALL(*mWindow, SetView)
         .Times(0);
 
-    mView.HandleInput(ol::Input::PtrConst{ &mInput });
+    bool was_input_consumed = mView.HandleInput(ol::Input::PtrConst{ &mInput });
+    ASSERT_FALSE(was_input_consumed);
 }
 
 TEST_F(CameraViewTests, HandleInput_MouseMovesCamera)
 {
     constexpr auto move_event_count{ 5u };
+    bool was_input_consumed{ false };
     TestCameraView mView{ mApp, mWindow, ol::PtrView{ &mViewModel } };
     auto view = sf::View{};
     auto event = sf::Event{};
@@ -173,9 +175,14 @@ TEST_F(CameraViewTests, HandleInput_MouseMovesCamera)
         .Times(move_event_count);
 
     while(mInput.HasUnhandledInput()) {
-        mView.HandleInput(ol::Input::PtrConst{ &mInput });
+        auto result = mView.HandleInput(ol::Input::PtrConst{ &mInput });
         mInput.Advance();
+        if (result) {
+            was_input_consumed = true;
+        }
     }
+
+    ASSERT_FALSE(was_input_consumed);
 }
 
 } // namespace test

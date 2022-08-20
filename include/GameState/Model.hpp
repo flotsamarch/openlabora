@@ -14,6 +14,7 @@
 #define MODEL_HPP_
 
 #include "Misc/PtrView.hpp"
+#include "Misc/CommonTypedefs.hpp"
 #include "LibTypedefs.hpp"
 
 namespace open_labora
@@ -24,7 +25,7 @@ class Model final
     DrawableContainer mDrawableObjects;
 
     bool bPaused{ false };
-    static constexpr uint32_t kMaxPlayers = 4;
+    static constexpr uint kMaxPlayers = 4;
 
     Vector2f mWorldMousePosition{};
 
@@ -33,11 +34,10 @@ public:
 
     using Ptr = PtrView<Model>;
 
-public:
     bool IsPaused() const noexcept
     { return bPaused; }
 
-    void SetPaused(bool value)
+    void SetPaused(bool value) noexcept
     { bPaused = value; }
 
     DrawableRangeConst GetDrawableObjects() const noexcept
@@ -46,8 +46,8 @@ public:
     void ClearDrawableObjects() noexcept
     { mDrawableObjects.clear(); }
 
-    void AddDrawableObject(DrawablePtr drawable)
-    { mDrawableObjects.emplace_back(std::move(drawable)); }
+    void AddDrawableObject(const Drawable& drawable) noexcept
+    { mDrawableObjects.emplace_back(drawable); }
 
     void SetWorldMousePosition(const Vector2f& position)
     { mWorldMousePosition = position; }

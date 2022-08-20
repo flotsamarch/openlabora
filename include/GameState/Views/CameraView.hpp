@@ -33,6 +33,10 @@ public:
                PtrView<TViewModel>);
 
     bool HandleInput(Input::PtrConst input);
+
+    void Update([[maybe_unused]]float update_delta_seconds)
+    {
+    }
 };
 
 template<class TViewModel>

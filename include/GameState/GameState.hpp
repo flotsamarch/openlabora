@@ -40,13 +40,14 @@ class GameState final
 {
 public:
     using VVMBindings = std::tuple<TViewToViewModelBindings...>;
+    using ModelPtr = std::unique_ptr<TModel>;
 
 private:
     ApplicationContext::Ptr mApp;
-    TModel mModel;
     IResourceManager::Ptr mResourceMgr;
-    TGameController<TModel> mGameController;
     IGameWindow::Ptr mWindow;
+    ModelPtr mModel;
+    TGameController<TModel> mGameController;
     VVMBindings mVVMBindings;
 
     // Create a tuple of special initializer objects for VVMBindings
@@ -72,37 +73,65 @@ public:
     GameState(ApplicationContext::Ptr app,
               IGameWindow::Ptr window,
               IResourceManager::Ptr resource_mgr,
+              ModelPtr model,
               std::function<void(VVMBindings&)> setup_intermodule)
         : mApp{ app },
           mWindow{ window },
           mResourceMgr{ resource_mgr },
-          mGameController{ app, resource_mgr, PtrView{ &mModel }, 2 },
-          mVVMBindings{ createInitializer(app, window, PtrView{ &mModel }) }
+          mModel{ std::move(model) },
+          mGameController{ app, resource_mgr, PtrView{ mModel.get() }, 2 },
+          mVVMBindings{ createInitializer(app, window, PtrView{ mModel.get() }) }
     {
         setup_intermodule(mVVMBindings);
     }
 
-    void HandleInput(Input::PtrConst input)
-    {
-        bool propagate = true;
-        auto pred = [&propagate] (auto&&) { return propagate; };
-        auto handle_events = [&propagate, input] (auto&& binding)
-        {
-            propagate = !binding.view.HandleInput(input);
-        };
+    void HandleInput(Input::PtrConst);
 
-        tuple_utils::applyUntilFalse(mVVMBindings, handle_events, pred);
-    }
+    void Update(float update_delta_seconds);
 
     void MapScreenCoordsToWorld(const Vector2i& point)
-    { mModel.SetWorldMousePosition(mWindow->MapScreenToWorldCoords(point)); }
+    { mModel->SetWorldMousePosition(mWindow->MapScreenToWorldCoords(point)); }
 
     TModel& GetModel() noexcept
-    { return mModel; }
+    { return *mModel; }
 
     IGameWindow::Ptr GetWindow()
     { return mWindow; }
+
+    IResourceManager::Ptr GetResourceManager()
+    { return mResourceMgr; }
 };
+
+template<template<class...> class TGameController,
+         class TModel,
+         class... TViewToViewModelBindings>
+void GameState<TGameController, TModel, TViewToViewModelBindings...>
+::HandleInput(Input::PtrConst input)
+{
+    bool propagate = true;
+    auto pred = [&propagate] (auto&&) { return propagate; };
+    auto handle_events = [&propagate, input] (auto&& binding)
+    {
+        propagate = !binding.view.HandleInput(input);
+    };
+
+    tuple_utils::applyUntilFalse(mVVMBindings, handle_events, pred);
+}
+
+template<template<class...> class TGameController,
+         class TModel,
+         class... TViewToViewModelBindings>
+void GameState<TGameController, TModel, TViewToViewModelBindings...>
+::Update(float update_delta_seconds)
+{
+    mModel->ClearDrawableObjects();
+    auto update = [ds = update_delta_seconds] (auto&&... bindings)
+    {
+        ((bindings.view.Update(ds)), ...);
+    };
+
+    std::apply(update, mVVMBindings);
+}
 
 } // namespace open_labora
 

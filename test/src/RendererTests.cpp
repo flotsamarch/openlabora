@@ -76,11 +76,11 @@ TEST_F(TestFRenderer, Clear)
 TEST_F(TestFRenderer, Draw)
 {
     constexpr auto range_size{ 5u };
-    auto range = std::vector<ol::DrawablePtr>{ range_size };
+    auto sprites = std::vector<ol::Sprite>{ range_size };
+    auto range = ol::DrawableContainer{};
 
-    for (auto&& item : range)
-    {
-        item = std::make_unique<sf::Sprite>();
+    for (auto&& sprite : sprites) {
+        range.push_back(std::ref(sprite));
     }
 
     EXPECT_CALL(mWindow, draw(_))

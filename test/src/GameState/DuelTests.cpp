@@ -17,6 +17,7 @@
 #include "TestApplication.hpp"
 #include "GameWindowMock.hpp"
 #include "Resource/ResourceManagerMock.hpp"
+#include "GameState/ModelMock.hpp"
 
 namespace test
 {
@@ -48,29 +49,47 @@ protected:
     WinPtr mWindow = std::make_shared<TestWindow>();
     ResMgrPtr mResourceMgr = std::make_shared<TestResourceMgr>();
     std::function<void(ol::Duel::VVMBindings)> mSetup = [] (const auto&) {};
+    std::unique_ptr<ol::Model> mModel{ std::make_unique<ol::Model>() };
 };
 
 TEST_F(DuelTests, GetFlagIsFinal_False)
 {
-    auto state = ol::Duel{ CtxPtr{ &mApp }, mWindow, mResourceMgr, mSetup };
+    auto state = ol::Duel{ CtxPtr{ &mApp },
+                           mWindow,
+                           mResourceMgr,
+                           std::move(mModel),
+                           mSetup };
 
     ASSERT_FALSE(ol::stateGetFlagIsFinal(state));
 }
 
 TEST_F(DuelTests, GetDrawableObjects_NotEmpty)
 {
-    auto state = ol::Duel{ CtxPtr{ &mApp }, mWindow, mResourceMgr, mSetup };
+    constexpr auto sprite_count{ 5u };
+    auto sprites = std::vector<ol::Sprite>{ sprite_count };
 
-    // Should be ASSERT_FALSE when reimplement drawable objects
-    // ASSERT_FALSE(ol::stateGetDrawableObjects(state).IsEmpty());
-    ASSERT_TRUE(ol::stateGetDrawableObjects(state).IsEmpty());
+    for (auto&& sprite : sprites) {
+        mModel->AddDrawableObject(sprite);
+    }
+
+    auto state = ol::Duel{ CtxPtr{ &mApp },
+                           mWindow,
+                           mResourceMgr,
+                           std::move(mModel),
+                           mSetup };
+
+    ASSERT_EQ(ol::stateGetDrawableObjects(state).GetSize(), sprite_count);
 }
 
 TEST_F(DuelTests, StateHandleInput_MouseMoveUpdatesWorldMousePosition)
 {
     constexpr auto new_pos_x = 3702.f;
     constexpr auto new_pos_y = 90560.f;
-    auto state = ol::Duel{ CtxPtr{ &mApp }, mWindow, mResourceMgr, mSetup };
+    auto state = ol::Duel{ CtxPtr{ &mApp },
+                           mWindow,
+                           mResourceMgr,
+                           std::move(mModel),
+                           mSetup };
     auto input = ol::Input{};
     auto&& model = state.GetModel();
     auto event = sf::Event{};

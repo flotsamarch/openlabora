@@ -37,6 +37,10 @@ public:
                    PtrView<TViewModel>);
 
     bool HandleInput(Input::PtrConst);
+
+    void Update([[maybe_unused]]float update_delta_seconds)
+    {
+    }
 };
 
 template<class TViewModel>
@@ -73,8 +77,9 @@ bool EscapeMenuView<TViewModel>
         const bool is_visible = menu_vbox->isVisible();
         menu_vbox->setVisible(!is_visible);
         mViewModel->SetOpen(!is_visible);
+        return true;
     }
-    return true;
+    return false;
 };
 
 } // namespace open_labora

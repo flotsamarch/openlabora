@@ -21,9 +21,9 @@
 namespace open_labora
 {
 
-void stateUpdate([[maybe_unused]]Duel& state,
-                 [[maybe_unused]]float update_delta_seconds)
+void stateUpdate(Duel& state, float update_delta_seconds)
 {
+    state.Update(update_delta_seconds);
 }
 
 void stateHandleInput(Duel& state, Input::PtrConst input)
@@ -39,8 +39,8 @@ void stateHandleInput(Duel& state, Input::PtrConst input)
     state.HandleInput(input);
 }
 
-DrawableRangeConst stateGetDrawableObjects(Duel&)
-{ return {}; }
+DrawableRangeConst stateGetDrawableObjects(Duel& state)
+{ return state.GetModel().GetDrawableObjects(); }
 
 void state::changeState(state::Duel,
                         ApplicationContext::Ptr app,
@@ -57,7 +57,11 @@ void state::changeState(state::Duel,
         escape_menu.SetLockCameraMovementCallback(lock_cam);
         escape_menu.SetUnlockCameraMovementCallback(unlock_cam);
     };
-    app->ChangeState<open_labora::Duel>(window, resource_mgr, setup);
+    auto model = std::make_unique<Model>();
+    app->ChangeState<open_labora::Duel>(window,
+                                        resource_mgr,
+                                        std::move(model),
+                                        setup);
 }
 
 bool stateGetFlagIsFinal(const Duel&) noexcept

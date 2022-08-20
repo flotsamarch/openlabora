@@ -17,8 +17,7 @@
 #include "Resource/IResourceManager.hpp"
 #include "LibTypedefs.hpp"
 #include "Input/Input.hpp"
-// TODO: Reimplement Build Mode
-// #include "Game/Location.hpp"
+#include "Misc/CommonTypedefs.hpp"
 
 namespace open_labora
 {
@@ -27,16 +26,18 @@ namespace open_labora
 template<class TModel>
 class GameController final
 {
+    using ModelPtr = typename TModel::Ptr;
+
 protected:
     ApplicationContext::Ptr mApp;
     IResourceManager::Ptr mResourceMgr;
-    typename TModel::Ptr mModel;
+    ModelPtr mModel;
 
 public:
     GameController(ApplicationContext::Ptr app,
                    IResourceManager::Ptr,
-                   typename TModel::Ptr,
-                   uint32_t player_count);
+                   ModelPtr,
+                   uint player_count);
 
     void HandleInput(Input::PtrConst);
 
@@ -45,7 +46,7 @@ public:
     void SetPaused(bool value) noexcept
     { mModel->SetPaused(value); };
 
-    typename TModel::Ptr GetModel() const
+    ModelPtr GetModel() const noexcept(noexcept(ModelPtr{ mModel }))
     { return mModel; }
 
     IResourceManager::Ptr GetResourceManager() const noexcept
@@ -59,26 +60,11 @@ template<class TModel>
 GameController<TModel>::GameController(ApplicationContext::Ptr app,
                                        IResourceManager::Ptr resource_mgr,
                                        typename TModel::Ptr model,
-                                       [[maybe_unused]]uint32_t player_count)
+                                       [[maybe_unused]]uint player_count)
     : mApp{ app },
       mResourceMgr{ resource_mgr },
       mModel{ model }
 {
-    #if 0
-    auto pf_width = static_cast<float>(playfield::kMaxFieldWidth);
-    auto pf_margin = pf_width * tile::kTileWidth + 3 * tile::kTileWidth;
-
-    for (uint32_t player{0}; auto&& pf : mModel->GetPlayfields()) {
-        auto position = sf::Vector2f{ 0.f, 0.f };
-        pf.reset();
-        if (player < player_count) {
-            pf = playfield::create(resource_mgr, position);
-            AddEntity(pf);
-            position.x += pf_margin;
-            player++;
-        }
-    }
-    #endif
 }
 
 template<class TModel>

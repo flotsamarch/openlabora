@@ -50,6 +50,7 @@ struct TestView1 final
     ol::IGameWindow::Ptr window;
     ViewModelPtr view_model;
     bool handle_input_called{ false };
+    float update_timer{ 0.f };
 
     TestView1(ol::ApplicationContext::Ptr _app,
              ol::IGameWindow::Ptr _window,
@@ -58,6 +59,11 @@ struct TestView1 final
           window{ _window },
           view_model{ _view_model }
     {
+    }
+
+    void Update(float update_delta_seconds)
+    {
+        update_timer += update_delta_seconds;
     }
 
     bool HandleInput(ol::Input::PtrConst input)
@@ -80,6 +86,7 @@ struct TestView2 final
     ol::IGameWindow::Ptr window;
     ViewModelPtr view_model;
     bool handle_input_called{ false };
+    float update_timer{ 0.f };
 
     TestView2(ol::ApplicationContext::Ptr _app,
               ol::IGameWindow::Ptr _window,
@@ -90,6 +97,11 @@ struct TestView2 final
     {
     }
 
+    void Update(float update_delta_seconds)
+    {
+        update_timer += update_delta_seconds;
+    }
+
     bool HandleInput(ol::Input::PtrConst)
     { return !(handle_input_called = true); }
 };
@@ -97,17 +109,19 @@ struct TestView2 final
 using TestBinding1 = ol::VVMBinding<TestModel, TestView1, TestViewModel>;
 using TestBinding2 = ol::VVMBinding<TestModel, TestView2, TestViewModel>;
 
-class GameStateTests : public ::testing::Test
+class GameStateTests : public testing::Test
 {
 protected:
     using AppCtx = ol::ApplicationContext;
     using ResMgrPtr = std::shared_ptr<TestResourceManager>;
     using GameWindowPtr = std::shared_ptr<TestGameWindow>;
+    using ModelPtr = std::unique_ptr<TestModel>;
 
     TestApplication mApp{};
     ResMgrPtr mResourceMgr = std::make_shared<TestResourceManager>();
     ol::Input mInput{};
     GameWindowPtr mWindow = std::make_shared<TestGameWindow>();
+    ModelPtr mModel = std::make_unique<TestModel>();
 };
 
 template<class T>
@@ -125,6 +139,7 @@ TEST_F(GameStateTests, SetupIntermoduleInteraction)
     auto game_state = TestGameState{ AppCtx::Ptr{ &mApp },
                                      mWindow,
                                      mResourceMgr,
+                                     std::move(mModel),
                                      setup };
 
     ASSERT_TRUE(called);
@@ -143,6 +158,7 @@ TEST_F(GameStateTests, HandleInput_All)
     auto game_state = TestGameState{ AppCtx::Ptr{ &mApp },
                                      mWindow,
                                      mResourceMgr,
+                                     std::move(mModel),
                                      setup };
 
     auto event = sf::Event{};
@@ -169,6 +185,7 @@ TEST_F(GameStateTests, HandleInput_OnlyFirst)
     auto game_state = TestGameState{ AppCtx::Ptr{ &mApp },
                                      mWindow,
                                      mResourceMgr,
+                                     std::move(mModel),
                                      setup };
 
     game_state.HandleInput(ol::Input::PtrConst{ &mInput });
@@ -184,6 +201,7 @@ TEST_F(GameStateTests, MapScreenCoordsToWorldCallModelMethod)
     auto game_state = TestGameState{ AppCtx::Ptr{ &mApp },
                                      mWindow,
                                      mResourceMgr,
+                                     std::move(mModel),
                                      [] (const auto&) {} };
 
     auto&& model = game_state.GetModel();
@@ -200,9 +218,35 @@ TEST_F(GameStateTests, GetWindow)
     auto game_state = TestGameState{ AppCtx::Ptr{ &mApp },
                                      mWindow,
                                      mResourceMgr,
+                                     std::move(mModel),
                                      [] (const auto&) {} };
 
     ASSERT_EQ(game_state.GetWindow(), mWindow);
+}
+
+TEST_F(GameStateTests, Update_ForwardsCallsToViews)
+{
+    constexpr auto dt = 4.32f;
+    auto timer1 = ol::PtrView<float>{};
+    auto timer2 = ol::PtrView<float>{};
+    auto setup = [&timer1, &timer2] (TestGameState::VVMBindings& bindings)
+    {
+        auto&& view1 = std::get<TestBinding1>(bindings).view;
+        auto&& view2 = std::get<TestBinding2>(bindings).view;
+
+        timer1.Reset(&view1.update_timer);
+        timer2.Reset(&view2.update_timer);
+    };
+    auto game_state = TestGameState{ AppCtx::Ptr{ &mApp },
+                                     mWindow,
+                                     mResourceMgr,
+                                     std::move(mModel),
+                                     setup };
+
+    game_state.Update(dt);
+
+    EXPECT_FLOAT_EQ(*timer1, dt);
+    ASSERT_FLOAT_EQ(*timer2, dt);
 }
 
 } // namespace test

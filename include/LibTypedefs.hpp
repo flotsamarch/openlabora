@@ -29,8 +29,7 @@ namespace open_labora
 using Drawable = sf::Drawable;
 using Sprite = sf::Sprite;
 
-using DrawablePtr = std::unique_ptr<sf::Drawable>;
-using DrawableContainer = std::vector<DrawablePtr>;
+using DrawableContainer = std::vector<std::reference_wrapper<const Drawable>>;
 using DrawableIterConst = DrawableContainer::const_iterator;
 using DrawableRangeConst = RangeWrapper<DrawableIterConst>;
 
