@@ -129,15 +129,19 @@ public:
 
     TValue& Get(TEnumKey key);
 
+    const TValue& At(TEnumKey key) const;
+
+    TValue& At(TEnumKey key);
+
     constexpr EnumMap();
 
     constexpr EnumMap(const std::initializer_list<Item>& list);
 
     constexpr size_t GetSize() const noexcept { return kItemCount; }
 
-    constexpr TValue& operator[](TEnumKey key) noexcept { return Get(key); }
+    constexpr TValue& operator[](TEnumKey key) { return Get(key); }
 
-    constexpr const TValue& operator[](TEnumKey key) const noexcept
+    constexpr const TValue& operator[](TEnumKey key) const
     { return Get(key); }
 
     constexpr iterator begin() noexcept
@@ -163,18 +167,32 @@ public:
 template<MappableEnum TEnumKey, class TValue>
 constexpr const TValue& EnumMap<TEnumKey, TValue>::Get(TEnumKey key) const
 {
-    if (key < TEnumKey::Begin || key >= TEnumKey::End) {
-        throw std::range_error("EnumMap: Enum value outside of range");
-    }
-
+    assert(key >= TEnumKey::Begin && key < TEnumKey::End);
     return mItems[static_cast<size_t>(key)].second;
 }
 
 template<MappableEnum TEnumKey, class TValue>
 TValue& EnumMap<TEnumKey, TValue>::Get(TEnumKey key)
 {
+    assert(key >= TEnumKey::Begin && key < TEnumKey::End);
+    return mItems[static_cast<size_t>(key)].second;
+}
+
+template<MappableEnum TEnumKey, class TValue>
+const TValue& EnumMap<TEnumKey, TValue>::At(TEnumKey key) const
+{
     if (key < TEnumKey::Begin || key >= TEnumKey::End) {
-        throw std::range_error("EnumMap: Enum value outside of range");
+        throw std::out_of_range("EnumMap: Key value outside of key range");
+    }
+
+    return mItems[static_cast<size_t>(key)].second;
+}
+
+template<MappableEnum TEnumKey, class TValue>
+TValue& EnumMap<TEnumKey, TValue>::At(TEnumKey key)
+{
+    if (key < TEnumKey::Begin || key >= TEnumKey::End) {
+        throw std::out_of_range("EnumMap: Key value outside of key range");
     }
 
     return mItems[static_cast<size_t>(key)].second;
@@ -193,7 +211,7 @@ constexpr EnumMap<TEnumKey, TValue>
 ::EnumMap(const std::initializer_list<Item>& list)
 {
     if (list.size() != kItemCount) {
-        throw std::invalid_argument("Not all enum values are used");
+        throw std::invalid_argument("EnumMap: Not all enum values are used");
     }
 
     for (size_t i = 0; auto&& item : list) {
@@ -202,7 +220,7 @@ constexpr EnumMap<TEnumKey, TValue>
                                  item.first < TEnumKey::End;
 
         if (!is_in_range) {
-            throw std::invalid_argument("Enum value outside of range");
+            throw std::out_of_range("EnumMap: Key value outside of range");
         }
 
         for (size_t j = 0; auto&& inner : list) {
@@ -213,7 +231,7 @@ constexpr EnumMap<TEnumKey, TValue>
 
             if (inner.first == item.first) {
                 constexpr std::string_view err_msg =
-                    "Multiple values for one key are not allowed";
+                    "EnumMap: Only one value per key is allowed";
                 throw std::invalid_argument(err_msg.data());
             }
             ++j;

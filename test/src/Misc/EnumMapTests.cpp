@@ -119,6 +119,78 @@ TEST(EnumMapTests, Get_Mutator)
     ASSERT_EQ(map.Get(TestEnum::Test3), value_3);
 }
 
+TEST(EnumMapTests, At)
+{
+    constexpr auto value_1 = 1;
+    constexpr auto value_2 = 2;
+    constexpr auto value_3 = 3;
+
+    auto map = ol::EnumMap<TestEnum, int>
+    {
+        { TestEnum::Test1, value_1 },
+        { TestEnum::Test2, value_2 },
+        { TestEnum::Test3, value_3 }
+    };
+
+    EXPECT_EQ(map.At(TestEnum::Test1), value_1);
+    EXPECT_EQ(map.At(TestEnum::Test2), value_2);
+    ASSERT_EQ(map.At(TestEnum::Test3), value_3);
+}
+
+TEST(EnumMapTests, At_Default)
+{
+    auto map = ol::EnumMap<TestEnum, int>{};
+
+    EXPECT_EQ(map.At(TestEnum::Test1), 0);
+    EXPECT_EQ(map.At(TestEnum::Test2), 0);
+    ASSERT_EQ(map.At(TestEnum::Test3), 0);
+}
+
+TEST(EnumMapTests, At_Mutator)
+{
+    constexpr auto value_1 = 1;
+    constexpr auto value_2 = 2;
+    constexpr auto value_3 = 3;
+
+    auto map = ol::EnumMap<TestEnum, int>{};
+    map.At(TestEnum::Test1) = value_1;
+    map.At(TestEnum::Test2) = value_2;
+    map.At(TestEnum::Test3) = value_3;
+
+    EXPECT_EQ(map.Get(TestEnum::Test1), value_1);
+    EXPECT_EQ(map.Get(TestEnum::Test2), value_2);
+    ASSERT_EQ(map.Get(TestEnum::Test3), value_3);
+}
+
+TEST(EnumMapTests, At_BoundsChecking_LowerBound)
+{
+    constexpr auto value_1 = 1;
+    constexpr auto value_2 = 2;
+    constexpr auto value_3 = 3;
+
+    auto map = ol::EnumMap<TestEnum, int>{};
+    map.Get(TestEnum::Test1) = value_1;
+    map.Get(TestEnum::Test2) = value_2;
+    map.Get(TestEnum::Test3) = value_3;
+
+    ASSERT_THROW(map.At(static_cast<TestEnum>(-1)), std::out_of_range);
+}
+
+TEST(EnumMapTests, At_BoundsChecking_UpperBound)
+{
+    constexpr auto value_1 = 1;
+    constexpr auto value_2 = 2;
+    constexpr auto value_3 = 3;
+
+    auto map = ol::EnumMap<TestEnum, int>{};
+    map.Get(TestEnum::Test1) = value_1;
+    map.Get(TestEnum::Test2) = value_2;
+    map.Get(TestEnum::Test3) = value_3;
+
+    const auto size = map.GetSize();
+    ASSERT_THROW(map.At(static_cast<TestEnum>(size)), std::out_of_range);
+}
+
 TEST(EnumMapTests, OperatorSquareBrackets_Default)
 {
     auto map = ol::EnumMap<TestEnum, int>{};
