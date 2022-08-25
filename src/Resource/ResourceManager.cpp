@@ -94,11 +94,10 @@ ResourceManager::GetTextureOrDefault(std::string_view name) const
     return mTextures.find(str)->second;
 }
 
-const Texture& ResourceManager::RegisterTexture(std::string_view name,
-                                                    const Texture& texture)
+const Texture& ResourceManager::StoreTexture(std::string_view name,
+                                             const Texture& texture)
 {
-    auto result = mTextures.emplace(std::make_pair(name, texture));
-    assert(result.second);
+    auto result = mTextures.insert_or_assign(std::string{ name }, texture);
     return result.first->second;
 };
 

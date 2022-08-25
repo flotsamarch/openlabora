@@ -36,7 +36,7 @@ public:
     virtual OptionalTextureRef GetTexture(std::string_view name) const = 0;
 
     virtual const Texture&
-    RegisterTexture(std::string_view name, const Texture&) = 0;
+    StoreTexture(std::string_view name, const Texture&) = 0;
 };
 
 } // namespace open_labora

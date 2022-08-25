@@ -45,7 +45,7 @@ public:
     GetTexture(std::string_view) const override;
 
     const sf::Texture&
-    RegisterTexture(std::string_view name, const sf::Texture&) override;
+    StoreTexture(std::string_view name, const sf::Texture&) override;
 };
 
 } // namespace open_labora

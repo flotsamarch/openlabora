@@ -37,7 +37,7 @@ public:
     MOCK_METHOD(IResourceManager::OptionalTextureRef, GetTexture,
                 (std::string_view), (const, override));
 
-    MOCK_METHOD(const ol::Texture&, RegisterTexture,
+    MOCK_METHOD(const ol::Texture&, StoreTexture,
                 (std::string_view, const ol::Texture&), (override));
 };
 
