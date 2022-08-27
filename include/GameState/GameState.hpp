@@ -25,6 +25,20 @@
 namespace open_labora
 {
 
+namespace game_state
+{
+
+struct MainFeature{};
+
+template<class TGameState>
+void assignFeaturesAndSystems(TGameState& game_state)
+{
+    auto&& registry = game_state.GetModel().GetRegistry();
+    registry.template AssignFeature<MainFeature>();
+}
+
+} // namespace game_state
+
 /**
  * Gameplay state that implements MVVM pattern
  *
@@ -83,6 +97,7 @@ public:
           mVVMBindings{ createInitializer(app, window, PtrView{ mModel.get() }) }
     {
         setup_intermodule(mVVMBindings);
+        game_state::assignFeaturesAndSystems(*this);
     }
 
     void HandleInput(Input::PtrConst);

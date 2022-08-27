@@ -16,6 +16,7 @@
 #include <gmock/gmock.h>
 #include "Misc/PtrView.hpp"
 #include "LibTypedefs.hpp"
+#include "ECS/Registry.hpp"
 
 namespace test
 {
@@ -42,6 +43,10 @@ struct ModelMock
     MOCK_METHOD(void, SetWorldMousePosition, (const ol::Vector2f&));
 
     MOCK_METHOD(ol::Vector2f, GetWorldMousePosition, (), (const));
+
+    MOCK_METHOD(ol::Registry&, GetRegistry, (), (noexcept));
+
+    MOCK_METHOD(const ol::Registry&, GetRegistry, (), (const, noexcept));
 };
 
 } // namespace test

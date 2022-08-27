@@ -24,6 +24,7 @@ namespace test
 
 using testing::NiceMock;
 using testing::Eq;
+using testing::ReturnRef;
 
 using TestResourceManager = NiceMock<ResourceManagerMock>;
 using TestModel = NiceMock<ModelMock>;
@@ -121,7 +122,14 @@ protected:
     ResMgrPtr mResourceMgr = std::make_shared<TestResourceManager>();
     ol::Input mInput{};
     GameWindowPtr mWindow = std::make_shared<TestGameWindow>();
+    ol::Registry mRegistry;
     ModelPtr mModel = std::make_unique<TestModel>();
+
+    GameStateTests()
+    {
+        ON_CALL(*mModel, GetRegistry())
+            .WillByDefault(ReturnRef(mRegistry));
+    }
 };
 
 template<class T>

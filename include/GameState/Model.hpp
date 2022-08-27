@@ -13,6 +13,7 @@
 #ifndef MODEL_HPP_
 #define MODEL_HPP_
 
+#include "ECS/Registry.hpp"
 #include "Misc/PtrView.hpp"
 #include "Misc/CommonTypedefs.hpp"
 #include "LibTypedefs.hpp"
@@ -22,6 +23,7 @@ namespace open_labora
 
 class Model final
 {
+    Registry mRegistry;
     DrawableContainer mDrawableObjects;
 
     bool bPaused{ false };
@@ -54,6 +56,12 @@ public:
 
     Vector2f GetWorldMousePosition() const
     { return mWorldMousePosition; }
+
+    Registry& GetRegistry() noexcept
+    { return mRegistry; }
+
+    const Registry& GetRegistry() const noexcept
+    { return mRegistry; }
 };
 
 } // namespace open_labora
