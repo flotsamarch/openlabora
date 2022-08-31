@@ -115,7 +115,6 @@ void systemHandleEvent(PlayfieldSystem& system,
                        RegistryRef registry,
                        const CreatePlotEvent& event)
 {
-
     auto entity = [&deques = system.GetLotDeques(),
                    type = event.lot_type,
                    &registry,

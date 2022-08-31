@@ -35,9 +35,9 @@ struct CreatePlotEvent
 };
 
 // Manage the playfield i.e. lot deques of each lot type
-class PlayfieldSystem : public System<PlayfieldSystem,
-                                      DrawEvent,
-                                      CreatePlotEvent>
+class PlayfieldSystem final : public System<PlayfieldSystem,
+                                            DrawEvent,
+                                            CreatePlotEvent>
 {
     using LotDequeContainer = std::unordered_map<lot::Type, Entity>;
     IResourceManager::Ptr mResourceMgr;
