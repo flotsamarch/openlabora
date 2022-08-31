@@ -13,42 +13,41 @@
 #ifndef SPRITECOMPONENT_HPP_
 #define SPRITECOMPONENT_HPP_
 
-#include <SFML/Graphics/Sprite.hpp>
-#include "TextureContainerComponent.hpp"
+#include "LibTypedefs.hpp"
 
 namespace open_labora
 {
 
 class SpriteComponent final
 {
-    sf::Sprite mSprite{};
+    Sprite mSprite{};
 
 public:
-    void SetTexture(const sf::Texture& texture, bool resetRect = false)
+    void SetTexture(const Texture& texture, bool resetRect = false)
     { mSprite.setTexture(texture, resetRect); }
 
-    void SetPosition(const sf::Vector2f& position)
+    void SetPosition(const Vector2f& position)
     { mSprite.setPosition(position); }
 
-    void SetRect(const sf::IntRect& rectangle)
+    void SetRect(const IntRect& rectangle)
     { mSprite.setTextureRect(rectangle); }
 
-    const sf::Vector2f& GetPosition() const
+    const Vector2f& GetPosition() const
     { return mSprite.getPosition(); }
 
-    void Move(const sf::Vector2f& offset)
+    void Move(const Vector2f& offset)
     { mSprite.move(offset); }
 
-    void SetColor(const sf::Color& color)
+    void SetColor(const Color& color)
     { mSprite.setColor(color); }
 
-    decltype(auto) GetLocalBounds() const
+    FloatRect GetLocalBounds() const
     { return mSprite.getLocalBounds(); }
 
-    decltype(auto) GetGlobalBounds() const
+    FloatRect GetGlobalBounds() const
     { return mSprite.getGlobalBounds(); }
 
-    const sf::Sprite& GetDrawableObject() const
+    const Drawable& GetDrawableObject() const
     { return mSprite; }
 };
 

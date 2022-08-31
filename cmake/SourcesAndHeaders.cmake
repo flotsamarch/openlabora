@@ -1,13 +1,12 @@
 set(sources
     # Components
-    # src/Game/Components/PlayfieldComponent.cpp
     # Gameplay classes
-    # src/Game/Tile.cpp
-    # src/Game/Plot.cpp
-    # src/Game/Playfield.cpp
+    src/Game/Lot.cpp
     # src/Game/ExpansionMarker.cpp
     # src/Game/MarkerController.cpp
     # src/Game/Location.cpp
+    # Gameplay systems
+    src/Game/Systems/PlayfieldSystem.cpp
     # Game states
     src/GameState/Final.cpp
     src/GameState/MainMenu.cpp
@@ -27,29 +26,32 @@ set(exe_sources
 
 set(headers
     # Components
+    include/Game/Components/PositionComponent.hpp
+    include/Game/Components/DynamicTextureComponent.hpp
+    include/Game/Components/SpriteComponent.hpp
+    include/Game/Components/LotDequeComponent.hpp
     # include/Game/Components/ImmobileComponent.hpp
-    # include/Game/Components/PositionComponent.hpp
-    # include/Game/Components/TextureContainerComponent.hpp
-    # include/Game/Components/SpriteComponent.hpp
-    # include/Game/Components/PlayfieldComponent.hpp
-    # include/Game/Components/PlotComponent.hpp
     # include/Game/Components/EffectiveInteractionAreaComponent.hpp
     # include/Game/Components/SelectableComponent.hpp
     # include/Game/Components/SignalComponent.hpp
     # include/Game/Components/ExpansionMarkerComponent.hpp
     # Gameplay classes
-    # include/Game/Tile.hpp
-    # include/Game/Plot.hpp
-    # include/Game/Playfield.hpp
+    include/Game/Tile.hpp
+    include/Game/Lot.hpp
+    include/Game/Plot.hpp
     # include/Game/Signal.hpp
     # include/Game/ExpansionMarker.hpp
     # include/Game/MarkerController.hpp
     # include/Game/Location.hpp
+    # Gameplay systems
+    include/Game/Systems/PlayfieldSystem.hpp
     # Game states
     include/GameState/Views/ViewConcept.hpp
     include/GameState/ViewToViewModelBinding.hpp
     include/GameState/Views/EscapeMenuView.hpp
     include/GameState/ViewModels/EscapeMenuViewModel.hpp
+    include/GameState/Views/DrawableView.hpp
+    include/GameState/ViewModels/DrawableViewModel.hpp
     include/GameState/FinalFwd.hpp
     include/GameState/Final.hpp
     include/GameState/MainMenuFwd.hpp
@@ -118,16 +120,19 @@ set(test_sources
     src/GameState/MainMenuTests.cpp
     src/GameState/DuelTests.cpp
     # Components
-    # src/Game/Components/PlotComponentTests.cpp
-    # src/Game/Components/PlayfieldComponentTests.cpp
+    src/Game/Components/PositionComponentTests.cpp
+    src/Game/Components/LotDequeComponentTests.cpp
+    src/Game/Components/DynamicTextureComponentTests.cpp
     # src/Game/Components/EffectiveInteractionAreaComponentTests.cpp
     # src/Game/Components/SelectableComponentTests.cpp
     # src/Game/Components/SignalComponentTests.cpp
     # src/Game/Components/ExpansionMarkerComponentTests.cpp
     # Gameplay classes
     src/RendererTests.cpp
-    # src/Game/TileTests.cpp
-    # src/Game/PlotTests.cpp
-    # src/Game/PlayfieldTests.cpp
+    src/Game/TileTests.cpp
+    src/Game/LotTests.cpp
+    src/Game/PlotTests.cpp
     # src/Game/ExpansionMarkerTests.cpp
+    # Gameplay systems
+    src/Game/Systems/PlayfieldSystemTests.cpp
 )

@@ -15,8 +15,8 @@
 
 #include "ApplicationState/ApplicationContext.hpp"
 #include "IGameWindow.hpp"
-#include "Game/Playfield.hpp"
 #include "Input/Input.hpp"
+#include "Game/Tile.hpp"
 
 namespace open_labora
 {
@@ -49,8 +49,8 @@ CameraView<TViewModel>
 {
     const auto win_size = static_cast<Vector2f>(game_window->GetWindowSize());
     auto position = Vector2f{ -1 * win_size.x / 2, -1 * win_size.y / 2 };
-    auto pf_width = static_cast<float>(playfield::kMaxFieldWidth);
-    auto pf_height = static_cast<float>(playfield::kMaxFieldHeight);
+    const auto pf_width = static_cast<float>(tile::kMaxFieldWidth);
+    const auto pf_height = static_cast<float>(tile::kMaxFieldHeight);
     position.x += (pf_width / 2) * tile::kTileWidth;
     position.y += (pf_height / 2) * tile::kTileHeight;
 

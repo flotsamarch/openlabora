@@ -21,6 +21,7 @@
 #include "Resource/IResourceManager.hpp"
 #include "IGameWindow.hpp"
 #include "Input/Input.hpp"
+#include "Game/Systems/PlayfieldSystem.hpp"
 
 namespace open_labora
 {
@@ -34,7 +35,9 @@ template<class TGameState>
 void assignFeaturesAndSystems(TGameState& game_state)
 {
     auto&& registry = game_state.GetModel().GetRegistry();
-    registry.template AssignFeature<MainFeature>();
+    auto resource_mgr = game_state.GetResourceManager();
+    registry.template AssignFeature<MainFeature>()
+        .template AddSystem<PlayfieldSystem>(registry, resource_mgr);
 }
 
 } // namespace game_state

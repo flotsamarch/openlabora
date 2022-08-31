@@ -13,142 +13,97 @@
 #ifndef PLOT_HPP_
 #define PLOT_HPP_
 
-#include <functional>
-#include "Game/Components/PositionComponent.hpp"
-#include "Game/Components/SpriteComponent.hpp"
-#include "Game/Components/PlotComponent.hpp"
-#include "Resource/IResourceManager.hpp"
+#include "Lot.hpp"
 
 namespace open_labora
 {
 
-#if 0
-using Plot = ComponentContainer<PositionComponent,
-                                PlotComponent,
-                                SpriteComponent>;
-#endif
-
+// Plot is a collection of lot subtypes that are treated as a single entity
+using Plot = std::span<const lot::SubtypeId>;
 
 namespace plot
 {
 
-// void setPosition(Plot&, const sf::Vector2f&, bool needs_shift = false);
-
-constexpr size_t kPlotTypeCount
-{ static_cast<size_t>(plot::Type::End) - static_cast<size_t>(plot::Type::Begin)};
-
-constexpr std::array kCoastalPlotTiles
-{ tile::Type::Water, tile::Type::Coast };
-
-constexpr std::array kCentralPlotTiles
+// Each predefined plot has its unique id
+struct TypeId
 {
-    tile::Type::Forest, tile::Type::Forest,
-    tile::Type::Forest, tile::Type::Forest,
-    tile::Type::Hill
+    uint value;
+
+    constexpr TypeId(int type) noexcept
+        : value{ static_cast<uint>(type) } {}
+
+    constexpr operator uint() const noexcept { return value; }
 };
 
-constexpr std::array kCentralPlotAltTiles
+// ----------------- DEFINE PLOT TYPES FOR EACH LOT TYPE -----------------------
+enum CoastalPlotTypes
 {
-    tile::Type::Peat,
-    tile::Type::Forest, tile::Type::Forest,
-    tile::Type::Hill, tile::Type::Hill
+    kCoastal,
+    kCoastalPlotTypeCount // Must be the last. Represents the amount of entries
 };
 
-constexpr std::array kInitialCentralPlotTiles
+enum CentalPlotTypes
 {
-    tile::Type::Peat, tile::Type::Forest,
-    tile::Type::Forest, tile::Type::Forest,
-    tile::Type::Hill
+    kCentral,
+    kCentralAlt,
+    kCentralPlotTypeCount // Must be the last. Represents the amount of entries
 };
 
-constexpr std::array kInitialCentralPlotAltTiles
+enum MountainPlotTypes
 {
-    tile::Type::Peat,
-    tile::Type::Forest, tile::Type::Forest,
-    tile::Type::Forest, tile::Type::Forest
+    kMountain,
+    kMountainPlotTypeCount // Must be the last. Represents the amount of entries
 };
 
-constexpr std::array kMountainPlotTopTiles
-{ tile::Type::Hill, tile::Type::MountainUpper };
+// ------------------ GROUP LOT SUBTYPES BY PLOT TYPES -------------------------
+constexpr std::array<lot::SubtypeId, 2> kCoastalLotArray
+{ lot::kRegularCoast, lot::kRegularCoast };
 
-constexpr std::array kMountainPlotBottomTiles
-{ tile::Type::Hill, tile::Type::MountainLower };
+constexpr std::array<lot::SubtypeId, 1> kCentralLotArray
+{ lot::kCentralFFFFH };
 
-constexpr TileSpan kCoastalPlotSpan{ kCoastalPlotTiles };
-constexpr TileSpan kCentralPlotSpan{ kCentralPlotTiles };
-constexpr TileSpan kCentralPlotAltSpan{ kCentralPlotAltTiles };
-constexpr TileSpan kMountainPlotTopSpan{ kMountainPlotTopTiles };
-constexpr TileSpan kMountainPlotBottomSpan{kMountainPlotBottomTiles};
+constexpr std::array<lot::SubtypeId, 1> kCentralAltLotArray
+{ lot::kCentralPFFHH };
 
-constexpr TileSpan kInitialCentralPlotSpan
-{ kInitialCentralPlotTiles };
-constexpr TileSpan kInitialCentralPlotAltSpan
-{ kInitialCentralPlotAltTiles };
+constexpr std::array<lot::SubtypeId, 2> kMountainLotArray
+{ lot::kMountainTop, lot::kMountainBottom};
 
-// ------------------- ADD TILE COUNT FOR EACH PLOT HERE ---------------------
+// -------------------- DEFINE PLOTS FOR EACH PLOT TYPE ------------------------
+constexpr Plot kCoastalPlot
+{ kCoastalLotArray };
 
-constexpr EnumMap<Type, uint32_t> kPlotWidthTileCount
+constexpr Plot kCentralPlot
+{ kCentralLotArray };
+
+constexpr Plot kCentralAltPlot
+{ kCentralAltLotArray };
+
+constexpr Plot kMountainPlot
+{ kMountainLotArray };
+
+// ------------------------ GROUP PLOTS BY PLOT TYPE ---------------------------
+constexpr std::array kCoastalPlotArray
+{ kCoastalPlot };
+
+constexpr std::array kCentralPlotArray
+{ kCentralPlot, kCentralAltPlot };
+
+constexpr std::array kMountainPlotArray
+{ kMountainPlot };
+
+// ---------------------- MAP LOT TYPES TO PLOT GROUPS -------------------------
+constexpr EnumMap<lot::Type, std::span<const Plot>> kLotTypeToPlots
 {
-    { Type::Coastal, 2u },
-    { Type::Central, 5u },
-    { Type::Mountain, 2u },
+    { lot::Type::Coastal, kCoastalPlotArray },
+    { lot::Type::Central, kCentralPlotArray },
+    { lot::Type::Mountain, kMountainPlotArray },
 };
 
-// ------------------- ADD MAXIMUM COUNT OF EACH PLOT HERE ---------------------
-
-constexpr EnumMap<Type, uint32_t> kPlotMaxCount
+constexpr std::span<const Plot> getPlots(lot::Type type)
 {
-    { Type::Coastal, 18u },
-    { Type::Central, 11u },
-    { Type::Mountain, 18u },
-};
-
-// -------------------- ADD TEXTURE ID FOR EACH PLOT HERE ----------------------
-
-constexpr std::string_view kCoastalTextureName = "coastal_plot";
-constexpr std::string_view kCentralTextureName = "central_plot";
-constexpr std::string_view kCentralAltTextureName = "central_plot_alt";
-constexpr std::string_view kMountainTextureName = "mountain_plot";
-constexpr std::string_view kMountainAltTextureName = "mountain_plot_alt";
-constexpr std::string_view kCentralInitTextureName = "central_init_plot";
-constexpr std::string_view kCentralInitAltTextureName = "central_init_plot_alt";
-
-using TextureIdMapValueType = std::vector<std::string_view>;
-
-static const TextureIdMapValueType kCentralTextureNames
-{ kCentralTextureName, kCentralAltTextureName };
-
-static const TextureIdMapValueType kMountainTextureNames
-{ kMountainTextureName, kMountainAltTextureName };
-
-static const EnumMap<Type, TextureIdMapValueType> kTextureIdMap
-{
-    { Type::Coastal, { kCoastalTextureName }},
-    { Type::Central, kCentralTextureNames },
-    { Type::Mountain, kMountainTextureNames },
-};
-
-// --------------------- ADD SPANS FOR EACH PLOT TYPE HERE ---------------------
-constexpr EnumMap<Type, std::pair<TileSpan, TileSpan>> kPlotTypeToSpans
-{
-    { Type::Coastal, { kCoastalPlotSpan, kCentralPlotAltSpan } },
-    { Type::Central, { kCentralPlotSpan, kCentralPlotAltSpan } },
-    { Type::Mountain, {kMountainPlotTopSpan, kMountainPlotBottomSpan } },
-};
-
-#if 0
-// Use to create plots during gameplay
-Plot create(Type type, const sf::Vector2f& position,
-            IResourceManager::Ptr, bool alternative = false);
-
-// NOT the same as create(Type::Coastal, ...) - Uses special spans
-Plot createCentralInitial(const sf::Vector2f& position,
-                          IResourceManager::Ptr,
-                          bool alternative = false);
-
-using PlotRef = std::reference_wrapper<const Plot>;
-using PlotsPair = std::pair<PlotRef, PlotRef>;
-#endif
+    assert(type >= lot::Type::Begin && type < lot::Type::End);
+    return kLotTypeToPlots[type];
+}
 
 } // namespace plot
 

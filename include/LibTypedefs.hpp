@@ -18,6 +18,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <vector>
 #include <memory>
@@ -44,8 +45,12 @@ using RenderTexture = sf::RenderTexture;
 using RenderWindow = sf::RenderWindow;
 
 using VideoMode = sf::VideoMode;
+using Color = sf::Color;
 
 using FloatRect = sf::FloatRect;
+using IntRect = sf::IntRect;
+
+using RectangleShape = sf::RectangleShape;
 
 constexpr auto kWindowStyle = sf::Style::Fullscreen;
 

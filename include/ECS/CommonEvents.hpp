@@ -10,35 +10,14 @@
 //
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-#ifndef POSITIONCOMPONENT_HPP_
-#define POSITIONCOMPONENT_HPP_
-
-#include "LibTypedefs.hpp"
+#ifndef COMMONEVENTS_HPP_
+#define COMMONEVENTS_HPP_
 
 namespace open_labora
 {
 
-struct PositionComponent final
-{
-    float x{ 0.f };
-    float y{ 0.f };
-
-    PositionComponent() noexcept = default;
-
-    PositionComponent(float _x, float _y) noexcept
-        : x{ _x }, y{ _y }
-    {
-    }
-
-    PositionComponent(const Vector2f& position) noexcept
-        : x{ position.x }, y{ position.y }
-    {
-    }
-
-    operator Vector2f() const
-    { return { x, y }; }
-};
+struct DrawEvent{};
 
 } // namespace open_labora
 
-#endif // POSITIONCOMPONENT_HPP_
+#endif // COMMONEVENTS_HPP_

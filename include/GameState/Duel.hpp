@@ -20,14 +20,21 @@
 #include "GameState/ViewModels/EscapeMenuViewModel.hpp"
 #include "GameState/Views/CameraView.hpp"
 #include "GameState/ViewModels/CameraViewModel.hpp"
+#include "GameState/Views/DrawableView.hpp"
+#include "GameState/ViewModels/DrawableViewModel.hpp"
 
 namespace open_labora
 {
 
+using DrawableBinding = VVMBinding<Model, DrawableView, DrawableViewModel>;
 using EscapeMenuBinding = VVMBinding<Model, EscapeMenuView, EscapeMenuViewModel>;
 using CameraBinding = VVMBinding<Model, CameraView, CameraViewModel>;
 
-using Duel = GameState<GameController, Model, EscapeMenuBinding, CameraBinding>;
+using Duel = GameState<GameController,
+                       Model,
+                       DrawableBinding,
+                       EscapeMenuBinding,
+                       CameraBinding>;
 
 void stateUpdate(Duel&, float update_delta_seconds);
 

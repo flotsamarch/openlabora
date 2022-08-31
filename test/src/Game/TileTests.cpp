@@ -16,8 +16,10 @@
 namespace test
 {
 
-using Type = open_labora::tile::Type;
-using TileInfo = open_labora::tile::TileInfo;
+namespace ol = open_labora;
+
+using Type = ol::tile::Type;
+using TileInfo = ol::TileInfo;
 
 static constexpr auto begin_value = static_cast<int>(Type::Begin);
 static constexpr auto end_value = static_cast<int>(Type::End);
@@ -82,20 +84,6 @@ TEST(TileOperatorsTests, OperatorPlusRight_PlusRange)
 
     ASSERT_NE(type, Type::Begin);
     ASSERT_EQ(type, Type::End);
-}
-
-TEST(TileOperatorsTests, OperatorPlusLeft_BigNumber)
-{
-    constexpr auto very_big_number = static_cast<int>(Type::End) + 999999;
-
-    ASSERT_EQ(Type::Begin + very_big_number, Type::End);
-}
-
-TEST(TileOperatorsTests, OperatorPlusRight_BigNumber)
-{
-    constexpr auto very_big_number = static_cast<int>(Type::End) + 999999;
-
-    ASSERT_EQ(very_big_number + Type::Begin, Type::End);
 }
 
 TEST(TileInfoOperatorsTests, TileInfoOperatorEquals_Default)
