@@ -29,27 +29,31 @@ struct TypeId
 {
     uint value;
 
-    constexpr TypeId(int type) noexcept
-        : value{ static_cast<uint>(type) } {}
+    constexpr TypeId(uint type) noexcept
+        : value{ type } {}
 
-    constexpr operator uint() const noexcept { return value; }
+    constexpr explicit operator uint() const noexcept
+    { return static_cast<uint>(value); }
+
+    constexpr explicit operator size_t() const noexcept
+    { return static_cast<size_t>(value); }
 };
 
 // ----------------- DEFINE PLOT TYPES FOR EACH LOT TYPE -----------------------
-enum CoastalPlotTypes
+enum CoastalPlotTypes : uint
 {
     kCoastal,
     kCoastalPlotTypeCount // Must be the last. Represents the amount of entries
 };
 
-enum CentalPlotTypes
+enum CentalPlotTypes : uint
 {
     kCentral,
     kCentralAlt,
     kCentralPlotTypeCount // Must be the last. Represents the amount of entries
 };
 
-enum MountainPlotTypes
+enum MountainPlotTypes : uint
 {
     kMountain,
     kMountainPlotTypeCount // Must be the last. Represents the amount of entries
@@ -103,6 +107,12 @@ constexpr std::span<const Plot> getPlots(lot::Type type)
 {
     assert(type >= lot::Type::Begin && type < lot::Type::End);
     return kLotTypeToPlots[type];
+}
+
+constexpr size_t getLotCount(lot::Type type)
+{
+    assert(type >= lot::Type::Begin && type < lot::Type::End);
+    return kLotTypeToPlots[type][0].size();
 }
 
 } // namespace plot

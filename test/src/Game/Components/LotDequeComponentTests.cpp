@@ -102,7 +102,7 @@ TEST(LotDequeComponentsTests, OperatorSquareBrackets)
     }
 
     for (auto i{ 0u }; i < count; ++i) {
-        if (component[i] != i) {
+        if (static_cast<uint>(component[i]) != i) {
             differs_from_index = true;
         }
     }
@@ -121,7 +121,7 @@ TEST(LotDequeComponentsTests, RangeBasedForLoop)
     }
 
     for (auto i{ 0u }; auto&& subtype : component) {
-        if (subtype != i) {
+        if (static_cast<uint>(subtype) != i) {
             differs_from_index = true;
         }
         ++i;

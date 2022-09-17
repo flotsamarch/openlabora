@@ -22,7 +22,8 @@ Sprite getSprite(Type type,
                  SubtypeId subtype,
                  IResourceManager::Ptr resource_mgr)
 {
-    const auto texture_id = getLotSubtypeTextureNames(type)[subtype];
+    const auto subtype_index = static_cast<size_t>(subtype);
+    const auto texture_id = getLotSubtypeTextureNames(type)[subtype_index];
     auto&& stored_texture = resource_mgr->GetTexture(texture_id);
 
     if (!stored_texture) {
@@ -37,7 +38,7 @@ Sprite getSprite(Type type,
             sprite.setPosition({ 0.f, 0.f });
             sprite.setTextureRect({ 0, 0, tile::kTileWidth, tile::kTileHeight });
 
-            for (auto&& tile : getLotSubtypes(type)[subtype]) {
+            for (auto&& tile : getLotSubtypes(type)[subtype_index]) {
                 const auto texture_name = tile::getTextureName(tile);
                 auto&& texture = resource_mgr->GetTextureOrDefault(texture_name);
                 sprite.setTexture(texture);

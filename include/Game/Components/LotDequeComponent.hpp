@@ -44,7 +44,7 @@ public:
     Type GetLotType() const noexcept
     { return mLotType; }
 
-    uint operator[](size_t index) const
+    SubtypeId operator[](size_t index) const
     { return mLots[index]; }
 
     LotContainer::const_iterator begin() const noexcept

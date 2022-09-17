@@ -17,7 +17,6 @@
 #include <numeric>
 #include "Tile.hpp"
 #include "Resource/IResourceManager.hpp"
-#include "Misc/CommonTypedefs.hpp"
 
 namespace open_labora
 {
@@ -41,10 +40,14 @@ struct SubtypeId
 {
     uint value;
 
-    constexpr SubtypeId(int subtype) noexcept
-        : value{ static_cast<uint>(subtype) } {}
+    constexpr SubtypeId(uint subtype) noexcept
+        : value{ subtype } {}
 
-    constexpr operator uint() const noexcept { return value; }
+    constexpr explicit operator uint() const noexcept
+    { return static_cast<uint>(value); }
+
+    constexpr explicit operator size_t() const noexcept
+    { return static_cast<size_t>(value); }
 };
 
 constexpr size_t kLotTypeCount
@@ -53,13 +56,13 @@ constexpr size_t kLotTypeCount
 static constexpr uint kHeartlandOffsetY{ 26u * tile::kTileHeight };
 
 // ------------------ DEFINE SUBTYPES FOR EACH LOT TYPE ------------------------
-enum CoastalSubtypes
+enum CoastalSubtypes : uint
 {
     kRegularCoast,
     kCoastalSubtypeCount // Must be the last. Represents the amount of entries
 };
 
-enum CentralSubtypes
+enum CentralSubtypes : uint
 {
     kCentralFFFFH, // Regular
     kCentralPFFHH, // Alternative
@@ -68,7 +71,7 @@ enum CentralSubtypes
     kCentralSubtypeCount // Must be the last. Represents the amount of entries
 };
 
-enum MountainSubtypes
+enum MountainSubtypes : uint
 {
     kMountainTop,
     kMountainBottom,

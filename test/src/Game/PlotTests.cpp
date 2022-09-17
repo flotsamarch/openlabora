@@ -19,6 +19,20 @@ namespace test
 
 namespace ol = open_labora;
 
+TEST(LotTests, TypeId_Constructor)
+{
+    bool ne_init{ false };
+
+    for(auto i = 0u; i < 10u; ++i) {
+        auto subtype = ol::lot::SubtypeId{ i };
+        if (static_cast<size_t>(subtype) != i) {
+            ne_init = true;
+        }
+    }
+
+    ASSERT_FALSE(ne_init);
+}
+
 TEST(PlotTests, getPlots_AlwaysNotEmpty)
 {
     bool was_empty{ false };

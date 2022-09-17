@@ -116,6 +116,20 @@ TEST(LotTests, getMaximumCount_AlwaysGreaterThanZero)
     ASSERT_FALSE(eq_zero);
 }
 
+TEST(LotTests, SubtypeId_Constructor)
+{
+    bool ne_init{ false };
+
+    for(auto i = 0u; i < 10u; ++i) {
+        auto subtype = ol::lot::SubtypeId{ i };
+        if (static_cast<size_t>(subtype) != i) {
+            ne_init = true;
+        }
+    }
+
+    ASSERT_FALSE(ne_init);
+}
+
 TEST(LotTests, getLotSubtypes_AlwaysNotEmpty)
 {
     bool was_empty{ false };
