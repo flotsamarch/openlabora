@@ -103,6 +103,19 @@ TEST(LotTests, getTileCount_AlwaysGreaterThanZero)
     ASSERT_FALSE(eq_zero);
 }
 
+TEST(LotTests, getMaximumCount_AlwaysGreaterThanZero)
+{
+    bool eq_zero{ false };
+
+    for (auto type = Type::Begin; type < Type::End; ++type) {
+        if (ol::lot::getTileCount(type) == 0) {
+            eq_zero = true;
+        }
+    }
+
+    ASSERT_FALSE(eq_zero);
+}
+
 TEST(LotTests, getLotSubtypes_AlwaysNotEmpty)
 {
     bool was_empty{ false };

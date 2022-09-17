@@ -208,6 +208,12 @@ constexpr uint getTileCount(Type type)
     return kLotTileCount[type];
 }
 
+constexpr uint getMaximumCount(Type type)
+{
+    assert(type >= Type::Begin && type < Type::End);
+    return kMaximumLotCount[type];
+}
+
 constexpr Subtype getLotSubtypes(Type type)
 {
     assert(type >= Type::Begin && type < Type::End);
