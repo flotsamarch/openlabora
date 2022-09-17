@@ -50,6 +50,7 @@ using Color = sf::Color;
 using FloatRect = sf::FloatRect;
 using IntRect = sf::IntRect;
 
+using Shape = sf::Shape;
 using RectangleShape = sf::RectangleShape;
 
 constexpr auto kWindowStyle = sf::Style::Fullscreen;

@@ -29,19 +29,15 @@ set(headers
     include/Game/Components/PositionComponent.hpp
     include/Game/Components/DynamicTextureComponent.hpp
     include/Game/Components/SpriteComponent.hpp
+    include/Game/Components/SelectableComponent.hpp
+    include/Game/Components/SignalComponent.hpp
+    include/Game/Components/InteractionAreaComponent.hpp
     include/Game/Components/LotDequeComponent.hpp
-    # include/Game/Components/ImmobileComponent.hpp
-    # include/Game/Components/EffectiveInteractionAreaComponent.hpp
-    # include/Game/Components/SelectableComponent.hpp
-    # include/Game/Components/SignalComponent.hpp
-    # include/Game/Components/ExpansionMarkerComponent.hpp
     # Gameplay classes
+    include/Game/Signal.hpp
     include/Game/Tile.hpp
     include/Game/Lot.hpp
     include/Game/Plot.hpp
-    # include/Game/Signal.hpp
-    # include/Game/ExpansionMarker.hpp
-    # include/Game/MarkerController.hpp
     # include/Game/Location.hpp
     # Gameplay systems
     include/Game/Systems/PlayfieldSystem.hpp
@@ -123,9 +119,9 @@ set(test_sources
     src/Game/Components/PositionComponentTests.cpp
     src/Game/Components/LotDequeComponentTests.cpp
     src/Game/Components/DynamicTextureComponentTests.cpp
-    # src/Game/Components/EffectiveInteractionAreaComponentTests.cpp
-    # src/Game/Components/SelectableComponentTests.cpp
-    # src/Game/Components/SignalComponentTests.cpp
+    src/Game/Components/SelectableComponentTests.cpp
+    src/Game/Components/SignalComponentTests.cpp
+    src/Game/Components/InteractionAreaComponentTests.cpp
     # src/Game/Components/ExpansionMarkerComponentTests.cpp
     # Gameplay classes
     src/RendererTests.cpp
