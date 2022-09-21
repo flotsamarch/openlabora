@@ -123,7 +123,7 @@ TEST_F(PlayfieldSystemTests, HandleEvent_CreatePlotEvent_NonCentral_ToTop)
     auto position = entity.GetComponent<ol::PositionComponent>();
 
     EXPECT_EQ(position.x, pos_x);
-    EXPECT_LT(position.y, pos_y);
+    EXPECT_EQ(position.y, pos_y);
     ASSERT_EQ(deque.GetLotsCount(), 2);
 }
 

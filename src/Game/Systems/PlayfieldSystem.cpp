@@ -116,16 +116,19 @@ void systemHandleEvent(PlayfieldSystem& system,
                        const CreatePlotEvent& event)
 {
     auto entity = [&deques = system.GetLotDeques(),
-                   type = event.lot_type,
+                   &event,
                    &registry,
-                   &position = event.position]
+                   position = event.position] () mutable
     {
-        if (deques.contains(type)) {
-            return deques.at(type);
+        if (deques.contains(event.lot_type)) {
+            return deques.at(event.lot_type);
         }
 
-        auto new_deque = createLotDeque(registry, type, position);
-        deques.emplace(type, new_deque);
+        if (event.to_top) {
+            position.y += event.plot.size() * tile::kTileHeight;
+        }
+        auto new_deque = createLotDeque(registry, event.lot_type, position);
+        deques.emplace(event.lot_type, new_deque);
 
         return new_deque;
     } ();
