@@ -19,20 +19,10 @@
 #include "ECS/CommonEvents.hpp"
 #include "ECS/Registry.hpp"
 #include "ECS/MassAssignComponents.hpp"
-#include "Game/Plot.hpp"
+#include "Game/Systems/Events/CreatePlotEvent.hpp"
 
 namespace open_labora
 {
-
-struct CreatePlotEvent
-{
-    Plot plot;
-    lot::Type lot_type;
-    bool to_top{ false };
-    Vector2f position{ 0.f, 0.f }; // Baseline position for NEW deque (only).
-                                   // Adding lots to top or bottom is done
-                                   // relative to it.
-};
 
 // Manage the playfield i.e. lot deques of each lot type
 class PlayfieldSystem final : public System<PlayfieldSystem,
