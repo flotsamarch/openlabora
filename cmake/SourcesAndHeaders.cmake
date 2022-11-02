@@ -1,9 +1,10 @@
 set(sources
     # Components
     # Gameplay classes
-    src/Game/Lot.cpp
     # src/Game/ExpansionMarker.cpp
     # src/Game/MarkerController.cpp
+    src/Game/Lot.cpp
+    src/Game/LotDeque.cpp
     # src/Game/Location.cpp
     # Gameplay systems
     src/Game/Systems/PlayfieldSystem.cpp
@@ -38,6 +39,7 @@ set(headers
     include/Game/Tile.hpp
     include/Game/Lot.hpp
     include/Game/Plot.hpp
+    include/Game/LotDeque.hpp
     # include/Game/Location.hpp
     # Gameplay systems
     include/Game/Systems/PlayfieldSystem.hpp
@@ -127,6 +129,7 @@ set(test_sources
     src/RendererTests.cpp
     src/Game/TileTests.cpp
     src/Game/LotTests.cpp
+    src/Game/LotDequeTests.cpp
     src/Game/PlotTests.cpp
     # src/Game/ExpansionMarkerTests.cpp
     # Gameplay systems

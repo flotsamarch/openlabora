@@ -11,27 +11,13 @@
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 #include "Game/Systems/PlayfieldSystem.hpp"
-#include "Game/Components/LotDequeComponent.hpp"
+#include "Game/LotDeque.hpp"
 #include "Game/Components/DynamicTextureComponent.hpp"
 #include "Game/Components/PositionComponent.hpp"
 #include "Game/Components/SpriteComponent.hpp"
 
 namespace open_labora
 {
-
-Entity createLotDeque(RegistryRef registry,
-                      lot::Type type,
-                      const Vector2f& position)
-{
-    auto entity = registry.CreateEntity();
-    MassAssignComponents{ entity }
-        .Assign<LotDequeComponent>(type)
-        .Assign<PositionComponent>(position.x, position.y)
-        .Assign<DynamicTextureComponent>()
-        .Assign<SpriteComponent>();
-
-    return entity;
-}
 
 PlayfieldSystem::PlayfieldSystem(Registry& registry,
                                  IResourceManager::Ptr resource_mgr)
@@ -41,7 +27,7 @@ PlayfieldSystem::PlayfieldSystem(Registry& registry,
     const auto offset_x = static_cast<float>(lot::getOffsetX(central));
     const auto offset_y = static_cast<float>(lot::kHeartlandOffsetY);
 
-    auto entity = createLotDeque(registry, central, { offset_x, offset_y });
+    auto entity = lot_deque::create(registry, central, { offset_x, offset_y });
     mLotDeques.emplace(central, entity);
 
     auto&& deque = entity.GetComponent<LotDequeComponent>();
@@ -127,7 +113,7 @@ void systemHandleEvent(PlayfieldSystem& system,
         if (event.to_top) {
             position.y += event.plot.size() * tile::kTileHeight;
         }
-        auto new_deque = createLotDeque(registry, event.lot_type, position);
+        auto new_deque = lot_deque::create(registry, event.lot_type, position);
         deques.emplace(event.lot_type, new_deque);
 
         return new_deque;
