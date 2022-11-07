@@ -105,13 +105,15 @@ constexpr EnumMap<lot::Type, std::span<const Plot>> kLotTypeToPlots
 
 constexpr std::span<const Plot> getPlots(lot::Type type)
 {
-    assert(type >= lot::Type::Begin && type < lot::Type::End);
+    assert(type >= lot::Type::Begin);
+    assert(type < lot::Type::End);
     return kLotTypeToPlots[type];
 }
 
 constexpr size_t getLotCount(lot::Type type)
 {
-    assert(type >= lot::Type::Begin && type < lot::Type::End);
+    assert(type >= lot::Type::Begin);
+    assert(type < lot::Type::End);
     return kLotTypeToPlots[type][0].size();
 }
 

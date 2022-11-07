@@ -209,31 +209,36 @@ constexpr EnumMap<Type, std::span<const std::string_view>> kLotTypeToTextures
 
 constexpr uint getTileCount(Type type)
 {
-    assert(type >= Type::Begin && type < Type::End);
+    assert(type >= Type::Begin);
+    assert(type < Type::End);
     return kLotTileCount[type];
 }
 
 constexpr uint getMaximumCount(Type type)
 {
-    assert(type >= Type::Begin && type < Type::End);
+    assert(type >= Type::Begin);
+    assert(type < Type::End);
     return kMaximumLotCount[type];
 }
 
 constexpr Subtype getLotSubtypes(Type type)
 {
-    assert(type >= Type::Begin && type < Type::End);
+    assert(type >= Type::Begin);
+    assert(type < Type::End);
     return kLotTypeToSubtypes[type];
 }
 
 constexpr std::span<const std::string_view> getLotSubtypeTextureNames(Type type)
 {
-    assert(type >= Type::Begin && type < Type::End);
+    assert(type >= Type::Begin);
+    assert(type < Type::End);
     return kLotTypeToTextures[type];
 }
 
 constexpr float getOffsetX(Type type)
 {
-    assert(type >= Type::Begin && type < Type::End);
+    assert(type >= Type::Begin);
+    assert(type < Type::End);
     auto begin = kLotTileCount.cbegin();
     auto target = std::next(begin, static_cast<int>(type));
     auto plus = [] (auto&& lhs, auto&& rhs) { return lhs + rhs.second; };

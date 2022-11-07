@@ -168,14 +168,16 @@ public:
 template<MappableEnum TEnumKey, class TValue>
 constexpr const TValue& EnumMap<TEnumKey, TValue>::Get(TEnumKey key) const
 {
-    assert(key >= TEnumKey::Begin && key < TEnumKey::End);
+    assert(key >= TEnumKey::Begin);
+    assert(key < TEnumKey::End);
     return mItems[static_cast<size_t>(key)].second;
 }
 
 template<MappableEnum TEnumKey, class TValue>
 TValue& EnumMap<TEnumKey, TValue>::Get(TEnumKey key)
 {
-    assert(key >= TEnumKey::Begin && key < TEnumKey::End);
+    assert(key >= TEnumKey::Begin);
+    assert(key < TEnumKey::End);
     return mItems[static_cast<size_t>(key)].second;
 }
 
