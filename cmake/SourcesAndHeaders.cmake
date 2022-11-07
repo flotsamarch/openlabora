@@ -68,6 +68,7 @@ set(headers
     include/Misc/EnumMap.hpp
     include/Misc/UID.hpp
     include/Misc/CommonTypedefs.hpp
+    include/Misc/IterableEnumUtilities.hpp
     # ECS
     include/ECS/MassAssignComponents.hpp
     include/ECS/Entity.hpp
@@ -97,6 +98,7 @@ set(test_sources
     src/Misc/EnumMapTests.cpp
     src/Misc/UIDTests.cpp
     src/Misc/TupleUtilsTests.cpp
+    src/Misc/IterableEnumUtilitiesTests.cpp
     # ECS
     src/ECS/EntityTests.cpp
     src/ECS/MassAssignComponentsTests.cpp
