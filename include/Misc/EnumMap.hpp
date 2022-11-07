@@ -18,6 +18,7 @@
 #include <array>
 #include <stdexcept>
 #include <compare>
+#include <cassert>
 
 namespace open_labora
 {
