@@ -22,6 +22,7 @@
 #include "IGameWindow.hpp"
 #include "Input/Input.hpp"
 #include "Game/Systems/PlayfieldSystem.hpp"
+#include "Game/Systems/PlotAcquisitionSystem.hpp"
 
 namespace open_labora
 {
@@ -37,7 +38,16 @@ void assignFeaturesAndSystems(TGameState& game_state)
     auto&& registry = game_state.GetModel().GetRegistry();
     auto resource_mgr = game_state.GetResourceManager();
     registry.template AssignFeature<MainFeature>()
-        .template AddSystem<PlayfieldSystem>(registry, resource_mgr);
+        .template AddSystem<PlayfieldSystem>(registry, resource_mgr)
+        .template AddSystem<PlotAcquisitionSystem>(registry, resource_mgr);
+}
+
+template<class TGameState>
+void generateInitialEvents(TGameState& game_state)
+{
+    auto&& registry = game_state.GetModel().GetRegistry();
+
+    registry.HandleEvent(UpdateMarkersEvent{});
 }
 
 } // namespace game_state
@@ -101,6 +111,7 @@ public:
     {
         setup_intermodule(mVVMBindings);
         game_state::assignFeaturesAndSystems(*this);
+        game_state::generateInitialEvents(*this);
     }
 
     void HandleInput(Input::PtrConst);

@@ -241,12 +241,28 @@ constexpr float getOffsetX(Type type)
     assert(type < Type::End);
     auto begin = kLotTileCount.cbegin();
     auto target = std::next(begin, static_cast<int>(type));
-    auto plus = [] (auto&& lhs, auto&& rhs) { return lhs + rhs.second; };
 
-    return std::accumulate(begin, target, 0.f, plus) * tile::kTileWidth;
+    auto accumulator = 0.f;
+    auto add = [&accumulator] (auto value) { accumulator += value.second; };
+    std::for_each(begin, target, add);
+
+    return accumulator * tile::kTileWidth;
 }
 
 Sprite getSprite(Type, SubtypeId subtype, IResourceManager::Ptr);
+
+// @return lot type whose lot count is used to calculate marker count for
+// specified lot type.
+constexpr Type getAnchorLotType(lot::Type type)
+{
+    if (type < lot::Type::Central) {
+        return type + 1;
+    } else if (type > lot::Type::Central) {
+        return type - 1;
+    } else {
+        return type;
+    }
+}
 
 } // namespace lot
 

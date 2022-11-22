@@ -11,12 +11,12 @@
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 #include <gtest/gtest.h>
+#include "Resource/ResourceManagerDefaultActionTestBase.hpp"
 #include "GameState/GameState.hpp"
 #include "GameState/ModelMock.hpp"
 #include "GameState/GameControllerMock.hpp"
 #include "TestApplication.hpp"
 #include "GameWindowMock.hpp"
-#include "Resource/ResourceManagerMock.hpp"
 #include "Misc/Matchers.hpp"
 
 namespace test
@@ -110,7 +110,7 @@ struct TestView2 final
 using TestBinding1 = ol::VVMBinding<TestModel, TestView1, TestViewModel>;
 using TestBinding2 = ol::VVMBinding<TestModel, TestView2, TestViewModel>;
 
-class GameStateTests : public testing::Test
+class GameStateTests : public ResourceManagerDefaultActionTestBase
 {
 protected:
     using AppCtx = ol::ApplicationContext;
@@ -119,7 +119,6 @@ protected:
     using ModelPtr = std::unique_ptr<TestModel>;
 
     TestApplication mApp{};
-    ResMgrPtr mResourceMgr = std::make_shared<TestResourceManager>();
     ol::Input mInput{};
     GameWindowPtr mWindow = std::make_shared<TestGameWindow>();
     ol::Registry mRegistry;

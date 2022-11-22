@@ -39,6 +39,20 @@ struct TypeId
     { return static_cast<size_t>(value); }
 };
 
+/**
+ * This struct and 2 following typdefs exist to make sure that
+ * PlotAcquisitionViewModel::AcquirePlot(...) method signature always matches
+ * the callback signature that is called from GUI buttons of PlotAcquisitionMenu
+ * children to acquire new plots
+ */
+struct AcquirePlotParams
+{
+    TypeId type_id;
+};
+
+using AcquireReturnType = void;
+using AcquireCallback = std::function<AcquireReturnType(AcquirePlotParams&)>;
+
 // ----------------- DEFINE PLOT TYPES FOR EACH LOT TYPE -----------------------
 enum CoastalPlotTypes : uint
 {
@@ -46,7 +60,7 @@ enum CoastalPlotTypes : uint
     kCoastalPlotTypeCount // Must be the last. Represents the amount of entries
 };
 
-enum CentalPlotTypes : uint
+enum CentralPlotTypes : uint
 {
     kCentral,
     kCentralAlt,

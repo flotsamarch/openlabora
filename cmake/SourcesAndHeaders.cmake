@@ -1,20 +1,21 @@
 set(sources
     # Components
     # Gameplay classes
-    # src/Game/ExpansionMarker.cpp
-    # src/Game/MarkerController.cpp
     src/Game/Lot.cpp
     src/Game/LotDeque.cpp
+    src/Game/PlotAcquisitionMarker.cpp
     # src/Game/Location.cpp
     # Gameplay systems
     src/Game/Systems/PlayfieldSystem.cpp
+    src/Game/Systems/PlotAcquisitionSystem.cpp
     # Game states
     src/GameState/Final.cpp
     src/GameState/MainMenu.cpp
     src/GameState/Duel.cpp
+    src/GameState/Views/PlotAcquisitionView.cpp
     # GUI
-    # src/GUI/ExpansionInterface.cpp
-    # src/GUI/ExpansionWindow.cpp
+    src/GUI/ConfirmationWindow.cpp
+    src/GUI/PlotAcquisitionMenu.cpp
     # Game systems
     src/Input/Input.cpp
     src/Resource/ResourceManager.cpp
@@ -34,15 +35,19 @@ set(headers
     include/Game/Components/SignalComponent.hpp
     include/Game/Components/InteractionAreaComponent.hpp
     include/Game/Components/LotDequeComponent.hpp
+    include/Game/Components/PlotAcquireInfoComponent.hpp
     # Gameplay classes
     include/Game/Signal.hpp
     include/Game/Tile.hpp
     include/Game/Lot.hpp
     include/Game/Plot.hpp
     include/Game/LotDeque.hpp
+    include/Game/PlotAcquisitionMarker.hpp
     # include/Game/Location.hpp
     # Gameplay systems
     include/Game/Systems/PlayfieldSystem.hpp
+    include/Game/Systems/PlotAcquisitionSystem.hpp
+    include/Game/Systems/Events/UpdateMarkersEvent.hpp
     # Game states
     include/GameState/Views/ViewConcept.hpp
     include/GameState/ViewToViewModelBinding.hpp
@@ -50,6 +55,8 @@ set(headers
     include/GameState/ViewModels/EscapeMenuViewModel.hpp
     include/GameState/Views/DrawableView.hpp
     include/GameState/ViewModels/DrawableViewModel.hpp
+    include/GameState/Views/PlotAcquisitionView.hpp
+    include/GameState/ViewModels/PlotAcquisitionViewModel.hpp
     include/GameState/FinalFwd.hpp
     include/GameState/Final.hpp
     include/GameState/MainMenuFwd.hpp
@@ -59,9 +66,9 @@ set(headers
     include/GameState/GameController.hpp
     include/GameState/Model.hpp
     # GUI
-    # include/GUI/Subviews/SubviewInitializer.hpp
-    # include/GUI/Subviews/ExpansionSubview.hpp
-    # include/GUI/ExpansionWindow.hpp
+    include/GUI/GuiTypedefs.hpp
+    include/GUI/ConfirmationWindow.hpp
+    include/GUI/PlotAcquisitionMenu.hpp
     # Misc
     include/Misc/RangeWrapper.hpp
     include/Misc/PtrView.hpp
@@ -91,7 +98,8 @@ set(headers
 
 set(test_sources
     # GUI
-    # src/GUI/ExpansionWindowTests.cpp
+    src/GUI/PlotAcquisitionMenuTests.cpp
+    src/GUI/ConfirmationWindowTests.cpp
     # Misc
     src/Misc/PtrViewTests.cpp
     src/Misc/RangeWrapperTests.cpp
@@ -112,9 +120,12 @@ set(test_sources
     src/GameState/GameControllerTests.cpp
     src/GameState/GameStateTests.cpp
     src/GameState/ModelTests.cpp
+    # View Models
+    src/GameState/ViewModels/PlotAcquisitionViewModelTests.cpp
     # Game Views
     src/GameState/Views/CameraViewTests.cpp
     src/GameState/Views/EscapeMenuViewTests.cpp
+    src/GameState/Views/PlotAcquisitionViewTests.cpp
     # Game states
     src/GameState/FinalStateTests.cpp
     src/GameState/MainMenuTests.cpp
@@ -126,14 +137,14 @@ set(test_sources
     src/Game/Components/SelectableComponentTests.cpp
     src/Game/Components/SignalComponentTests.cpp
     src/Game/Components/InteractionAreaComponentTests.cpp
-    # src/Game/Components/ExpansionMarkerComponentTests.cpp
     # Gameplay classes
     src/RendererTests.cpp
     src/Game/TileTests.cpp
     src/Game/LotTests.cpp
     src/Game/LotDequeTests.cpp
     src/Game/PlotTests.cpp
-    # src/Game/ExpansionMarkerTests.cpp
+    src/Game/PlotAcquisitionMarkerTests.cpp
     # Gameplay systems
     src/Game/Systems/PlayfieldSystemTests.cpp
+    src/Game/Systems/PlotAcquisitionSystemTests.cpp
 )

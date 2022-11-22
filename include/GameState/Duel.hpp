@@ -22,6 +22,8 @@
 #include "GameState/ViewModels/CameraViewModel.hpp"
 #include "GameState/Views/DrawableView.hpp"
 #include "GameState/ViewModels/DrawableViewModel.hpp"
+#include "GameState/Views/PlotAcquisitionView.hpp"
+#include "GameState/ViewModels/PlotAcquisitionViewModel.hpp"
 
 namespace open_labora
 {
@@ -29,9 +31,13 @@ namespace open_labora
 using DrawableBinding = VVMBinding<Model, DrawableView, DrawableViewModel>;
 using EscapeMenuBinding = VVMBinding<Model, EscapeMenuView, EscapeMenuViewModel>;
 using CameraBinding = VVMBinding<Model, CameraView, CameraViewModel>;
+using PlotAcquisitionBinding = VVMBinding<Model,
+                                          PlotAcquisitionView,
+                                          PlotAcquisitionViewModel>;
 
 using Duel = GameState<GameController,
                        Model,
+                       PlotAcquisitionBinding,
                        DrawableBinding,
                        EscapeMenuBinding,
                        CameraBinding>;

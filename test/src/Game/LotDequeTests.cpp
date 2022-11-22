@@ -68,6 +68,87 @@ TEST_F(LotDequeTests, Create_EntityHasSpriteComponent)
     ASSERT_NE(deque.FindComponent<ol::SpriteComponent>(), nullptr);
 }
 
+TEST_F(LotDequeTests, CreateLotsInfo_LotsCountEqualsZeroByDefault)
+{
+    auto lots_info = ld::createLotsInfo(mRegistryRef);
+
+    for (auto type = lot::Type::Begin; type != lot::Type::End; ++type) {
+        auto it = lots_info.find(type);
+        ASSERT_NE(it, lots_info.end());
+        ASSERT_EQ(it->second.count, 0);
+    }
+}
+
+TEST_F(LotDequeTests, CreateLotsInfo_AddCentralLots_CentralLotsCountIncreases)
+{
+    auto entity = ld::create(mRegistryRef, kCentral, {});
+    auto&& deque = entity.GetComponent<ol::LotDequeComponent>();
+
+    deque.AddLotToTop(lot::SubtypeId{ 0u });
+    deque.AddLotToTop(lot::SubtypeId{ 0u });
+
+    auto lots_info = ld::createLotsInfo(mRegistryRef);
+
+    ASSERT_EQ(lots_info[kCentral].count, 2);
+}
+
+TEST_F(LotDequeTests,
+       CreateLotsInfo_AddCentralLots_NonCentralLotsCountDoesNotIncrease)
+{
+    auto entity = ld::create(mRegistryRef, kCentral, {});
+    auto&& deque = entity.GetComponent<ol::LotDequeComponent>();
+
+    deque.AddLotToTop(lot::SubtypeId{ 0u });
+    deque.AddLotToTop(lot::SubtypeId{ 0u });
+
+    auto lots_info = ld::createLotsInfo(mRegistryRef);
+
+    for (auto type = lot::Type::Begin; type != lot::Type::End; ++type) {
+        if (type == kCentral) {
+            continue;
+        }
+
+        ASSERT_EQ(lots_info[type].count, 0);
+    }
+}
+
+TEST_F(LotDequeTests,
+       CreateLotsInfo_NonCentralLotsCountIncreasesWhenAddingNonCentralLots)
+{
+    constexpr auto non_central = lot::Type::Begin;
+    auto entity = ld::create(mRegistryRef, non_central, {});
+    auto&& deque = entity.GetComponent<ol::LotDequeComponent>();
+
+    deque.AddLotToTop(lot::SubtypeId{ 0u });
+    deque.AddLotToTop(lot::SubtypeId{ 0u });
+
+    auto lots_info = ld::createLotsInfo(mRegistryRef);
+
+    ASSERT_EQ(lots_info[non_central].count, 2);
+}
+
+TEST_F(LotDequeTests,
+       CreateLotsInfo_AddNonCentralLots_CentralLotsCountDoesNotIncrease)
+{
+    constexpr auto non_central = lot::Type::Begin;
+
+    auto entity = ld::create(mRegistryRef, non_central, {});
+    auto&& deque = entity.GetComponent<ol::LotDequeComponent>();
+
+    deque.AddLotToTop(lot::SubtypeId{ 0u });
+    deque.AddLotToTop(lot::SubtypeId{ 0u });
+
+    auto lots_info = ld::createLotsInfo(mRegistryRef);
+
+    for (auto type = lot::Type::Begin; type != lot::Type::End; ++type) {
+        if (type == non_central) {
+            continue;
+        }
+
+        ASSERT_EQ(lots_info[type].count, 0);
+    }
+}
+
 } // namespace test
 
 int main(int argc, char** argv) {

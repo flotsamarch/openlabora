@@ -10,32 +10,14 @@
 //
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-#ifndef LOTDEQUE_HPP_
-#define LOTDEQUE_HPP_
-
-#include "ECS/Registry.hpp"
-#include "Components/LotDequeComponent.hpp"
+#ifndef UPDATEMARKERSEVENT_HPP_
+#define UPDATEMARKERSEVENT_HPP_
 
 namespace open_labora
 {
 
-namespace lot_deque
-{
-
-Entity create(RegistryRef, lot::Type, const Vector2f& position);
-
-struct LotsInfo
-{
-    Vector2f position;
-    size_t count{ 0u };
-};
-
-using LotsInfoMap = std::unordered_map<lot::Type, LotsInfo>;
-
-LotsInfoMap createLotsInfo(RegistryRef);
-
-} // namespace lot_deque
+struct UpdateMarkersEvent{};
 
 } // namespace open_labora
 
-#endif // LOTDEQUE_HPP_
+#endif // UPDATEMARKERSEVENT_HPP_

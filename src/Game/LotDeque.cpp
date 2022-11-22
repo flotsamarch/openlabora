@@ -37,6 +37,27 @@ Entity create(RegistryRef registry,
     return entity;
 }
 
+LotsInfoMap createLotsInfo(RegistryRef registry)
+{
+    auto lots_info = LotsInfoMap{};
+
+    for (auto lot_type : EnumRange<lot::Type>{}) {
+        lots_info.try_emplace(lot_type, LotsInfo{});
+    }
+
+    registry.ForEachComponent<LotDequeComponent>([&lots_info]
+    (Entity entity, const LotDequeComponent& deque)
+    {
+        auto it = lots_info.find(deque.GetLotType());
+        assert(it != lots_info.end());
+
+        it->second.position = entity.GetComponent<PositionComponent>();
+        it->second.count = deque.GetLotsCount();
+    });
+
+    return lots_info;
+}
+
 } // namespace lot_deque
 
 } // namespace open_labora

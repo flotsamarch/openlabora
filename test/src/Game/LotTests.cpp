@@ -131,6 +131,38 @@ TEST(LotTests, getOffsetX_OtherOffsetsLargerThanZero)
     ASSERT_FALSE(eq_zero);
 }
 
+TEST(LotTests, GetAnchorLotType_CentralIsAnchorToCentral)
+{
+    auto anchor = getAnchorLotType(Type::Central);
+
+    ASSERT_EQ(anchor, Type::Central);
+}
+
+TEST(LotTests, GetAnchorLotType_BeforeCentralNextIsAnchor)
+{
+    auto last = ol::lot::Type::Begin;
+
+    for (auto type = ol::lot::Type::Begin + 1; type != Type::Central; ++type) {
+        auto anchor = getAnchorLotType(last);
+
+        ASSERT_EQ(type, anchor);
+        last = anchor;
+    }
+}
+
+TEST(LotTests, GetAnchorLotType_AfterCentralPreviousIsAnchor)
+{
+    auto last = Type::Central;
+
+    for (auto type = Type::Central + 1; type != ol::lot::Type::End; ++type) {
+        auto anchor = getAnchorLotType(type);
+
+        ASSERT_EQ(anchor, last);
+        last = type;
+    }
+}
+
+
 TEST_F(LotSpriteTests, getSprite_CreatesAndStoresTexture)
 {
     auto expected_call_count{ 0u };

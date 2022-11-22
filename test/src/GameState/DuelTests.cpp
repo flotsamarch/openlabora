@@ -12,11 +12,11 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include "Resource/ResourceManagerDefaultActionTestBase.hpp"
 #include "GameState/DuelFwd.hpp"
 #include "GameState/Duel.hpp"
 #include "TestApplication.hpp"
 #include "GameWindowMock.hpp"
-#include "Resource/ResourceManagerMock.hpp"
 #include "GameState/ModelMock.hpp"
 
 namespace test
@@ -37,7 +37,7 @@ tgui::GuiSFML _gui; // Required to create GUI objects
 
 } // namespace anonymous
 
-class DuelTests : public testing::Test
+class DuelTests : public ResourceManagerDefaultActionTestBase
 {
     using WinPtr = std::shared_ptr<TestWindow>;
     using ResMgrPtr = std::shared_ptr<TestResourceMgr>;
@@ -47,7 +47,6 @@ protected:
 
     TestApplication mApp{};
     WinPtr mWindow = std::make_shared<TestWindow>();
-    ResMgrPtr mResourceMgr = std::make_shared<TestResourceMgr>();
     std::function<void(ol::Duel::VVMBindings)> mSetup = [] (const auto&) {};
     std::unique_ptr<ol::Model> mModel{ std::make_unique<ol::Model>() };
 };
@@ -98,7 +97,8 @@ TEST_F(DuelTests, StateHandleInput_MouseMoveUpdatesWorldMousePosition)
     event.mouseMove.y = 0;
 
     EXPECT_CALL(*mWindow, MapScreenToWorldCoords)
-        .WillOnce(Return(ol::Vector2f{ new_pos_x, new_pos_y }));
+        .Times(2)
+        .WillRepeatedly(Return(ol::Vector2f{ new_pos_x, new_pos_y }));
 
     input.HandleEvent(event);
     ol::stateHandleInput(state, ol::Input::PtrConst{ &input });
