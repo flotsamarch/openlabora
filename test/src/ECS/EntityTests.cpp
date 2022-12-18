@@ -61,11 +61,11 @@ TEST_F(EntityTests, IsValid_TrueByDefault)
 
 TEST(EntityIdTests, GetId_UniqueIds)
 {
-    constexpr auto entity_count{ 10u };
+    constexpr auto entity_count = 10;
     auto registry = ecs_hpp::registry{};
     auto ids = std::unordered_set<ol::EntityId>{};
 
-    for (auto i{ 0u }; i < entity_count; ++i) {
+    for (auto i = 0; i < entity_count; ++i) {
         auto entity = ol::Entity(registry.create_entity());
         ids.insert(entity.GetId());
     }
@@ -267,11 +267,11 @@ TEST_F(ConstEntityTests, IsValid_TrueByDefault)
 
 TEST(EntityIdTests, ConstGetId_UniqueIds)
 {
-    constexpr auto entity_count{ 10u };
+    constexpr auto entity_count = 10;
     auto registry = ecs_hpp::registry{};
     auto ids = std::unordered_set<ol::EntityId>{};
 
-    for (auto i{ 0u }; i < entity_count; ++i) {
+    for (auto i = 0; i < entity_count; ++i) {
         auto entity = ol::ConstEntity(registry.create_entity());
         ids.insert(entity.GetId());
     }

@@ -140,8 +140,8 @@ public:
     using KeyType = TEnumKey;
     using ValueType = TValue;
 
-    static constexpr size_t kItemCount =
-        static_cast<size_t>(EndKey) - static_cast<size_t>(BeginKey);
+    static constexpr int kItemCount =
+        static_cast<int>(EndKey) - static_cast<int>(BeginKey);
 
     using Container = std::array<ValueType, kItemCount>;
 
@@ -166,7 +166,7 @@ public:
 
     constexpr EnumMap(const std::initializer_list<InitItem>& init_list);
 
-    constexpr size_t GetSize() const noexcept { return kItemCount; }
+    constexpr int GetSize() const noexcept { return kItemCount; }
 
     constexpr TValue& operator[](TEnumKey key) { return Get(key); }
 

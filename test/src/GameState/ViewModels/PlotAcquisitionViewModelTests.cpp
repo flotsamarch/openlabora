@@ -240,7 +240,7 @@ TEST_F(PlotAcquisitionViewModelTests, AcquirePlot_CallsHandleEvent)
     marker::setPosition(marker, { position_x, position_y });
     marker::setInteractiveRect(marker, { 0.f, 0.f }, { width, height });
 
-    auto params = ol::plot::AcquirePlotParams{ ol::plot::TypeId{ 0u } };
+    auto params = ol::plot::AcquirePlotParams{ ol::plot::TypeId{ 0 } };
 
     mViewModel.SelectMarker({ mouse_x, mouse_y });
     mViewModel.AcquirePlot(params);

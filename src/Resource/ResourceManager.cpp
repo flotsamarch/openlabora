@@ -29,7 +29,7 @@ ResourceManager::ResourceManager(const std::filesystem::path& current_path)
     auto path = current_path.parent_path();
     auto dir = std::filesystem::directory_entry();
 
-    for (size_t count{ 0u }; path.has_parent_path(); ++count) {
+    for (int count = 0; path.has_parent_path(); ++count) {
         dir = std::filesystem::directory_entry(path / kResourceDirectoryName);
         if (dir.is_directory()) {
             break;

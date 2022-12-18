@@ -64,7 +64,7 @@ TEST_F(DuelTests, GetFlagIsFinal_False)
 
 TEST_F(DuelTests, GetDrawableObjects_NotEmpty)
 {
-    constexpr auto sprite_count{ 5u };
+    constexpr auto sprite_count = 5;
     auto sprites = std::vector<ol::Sprite>{ sprite_count };
 
     for (auto&& sprite : sprites) {

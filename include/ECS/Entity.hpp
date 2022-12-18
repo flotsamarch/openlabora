@@ -58,8 +58,8 @@ public:
     bool RemoveComponent() noexcept
     { return mEntity.remove_component<TComponent>(); }
 
-    size_t RemoveAllComponents() noexcept
-    { return mEntity.remove_all_components(); }
+    int RemoveAllComponents() noexcept
+    { return static_cast<int>(mEntity.remove_all_components()); }
 
     template<class TComponent>
     TComponent& GetComponent()
@@ -77,8 +77,8 @@ public:
     PtrView<const TComponent> FindComponent() const noexcept
     { return PtrView<const TComponent>{ mEntity.find_component<TComponent>() }; }
 
-    size_t GetComponentCount() const noexcept
-    { return mEntity.component_count(); }
+    int GetComponentCount() const noexcept
+    { return static_cast<int>(mEntity.component_count()); }
 };
 
 class ConstEntity final
@@ -107,8 +107,8 @@ public:
     PtrView<const TComponent> FindComponent() const noexcept
     { return PtrView<const TComponent>{ mEntity.find_component<TComponent>() }; }
 
-    size_t GetComponentCount() const noexcept
-    { return mEntity.component_count(); }
+    int GetComponentCount() const noexcept
+    { return static_cast<int>(mEntity.component_count()); }
 };
 
 } // namespace open_labora

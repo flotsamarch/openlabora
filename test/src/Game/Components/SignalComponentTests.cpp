@@ -31,9 +31,9 @@ TEST_F(SignalComponentTests, Connect)
     auto serial_2 = mComponent.Connect(ol::signals::kOnLeftPress, delegate);
     auto serial_3 = mComponent.Connect(ol::signals::kOnLeftPress, delegate);
 
-    EXPECT_EQ(serial_1, 0u);
-    EXPECT_EQ(serial_2, 1u);
-    ASSERT_EQ(serial_3, 2u);
+    EXPECT_EQ(serial_1, 0);
+    EXPECT_EQ(serial_2, 1);
+    ASSERT_EQ(serial_3, 2);
 }
 
 TEST_F(SignalComponentTests, Emit)

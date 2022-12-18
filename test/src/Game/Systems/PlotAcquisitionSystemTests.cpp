@@ -644,7 +644,7 @@ TEST_F(PlotAcquisitionSystemTests,
        SystemHandleEvent_UpdateMarkersEvent_InteractionAreasAreUpdated)
 {
     constexpr auto dt = 5.f;
-    constexpr auto point_count = static_cast<uint>(kTileHeight * 2 / dt);
+    constexpr auto point_count = static_cast<int>(kTileHeight * 2 / dt);
 
     auto points = std::vector<ol::Vector2f>{};
     points.reserve(point_count);

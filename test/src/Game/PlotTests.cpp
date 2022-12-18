@@ -23,9 +23,9 @@ TEST(LotTests, TypeId_Constructor)
 {
     bool ne_init{ false };
 
-    for(auto i = 0u; i < 10u; ++i) {
+    for(auto i = 0; i < 10; ++i) {
         auto subtype = ol::lot::SubtypeId{ i };
-        if (static_cast<size_t>(subtype) != i) {
+        if (static_cast<int>(subtype) != i) {
             ne_init = true;
         }
     }

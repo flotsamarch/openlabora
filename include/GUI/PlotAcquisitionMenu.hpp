@@ -14,7 +14,6 @@
 #define PLOTACQUISITIONMENU_HPP_
 
 #include "GuiTypedefs.hpp"
-#include "Misc/CommonTypedefs.hpp"
 #include "ConfirmationWindow.hpp"
 #include "Game/Plot.hpp"
 

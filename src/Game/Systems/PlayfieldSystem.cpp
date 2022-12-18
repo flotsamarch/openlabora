@@ -46,7 +46,7 @@ void systemHandleEvent(PlayfieldSystem& system,
      const PositionComponent& position,
      SpriteComponent& sprite)
     {
-        const auto plot_count = static_cast<uint>(deque.GetLotsCount());
+        const auto plot_count = deque.GetLotsCount();
         if (!dynamic_texture.NeedsUpdate() || plot_count == 0) {
             return;
         }
@@ -63,7 +63,7 @@ void systemHandleEvent(PlayfieldSystem& system,
         render_texture.create(width, height);
         render_texture.setView(View{ view_rect });
 
-        for (auto i{ 0u }; auto&& variant : deque) {
+        for (auto i = 0; auto&& variant : deque) {
             auto p_sprite = lot::getSprite(type, variant, resource_mgr);
             const auto offset_y = static_cast<float>(i * tile::kTileHeight);
             p_sprite.setPosition(Vector2f{ 0.f, offset_y });

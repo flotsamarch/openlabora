@@ -17,7 +17,6 @@
 #include "Resource/IResourceManager.hpp"
 #include "LibTypedefs.hpp"
 #include "Input/Input.hpp"
-#include "Misc/CommonTypedefs.hpp"
 
 namespace open_labora
 {
@@ -37,7 +36,7 @@ public:
     GameController(ApplicationContext::Ptr app,
                    IResourceManager::Ptr,
                    ModelPtr,
-                   uint player_count);
+                   int player_count);
 
     void HandleInput(Input::PtrConst);
 
@@ -60,7 +59,7 @@ template<class TModel>
 GameController<TModel>::GameController(ApplicationContext::Ptr app,
                                        IResourceManager::Ptr resource_mgr,
                                        typename TModel::Ptr model,
-                                       [[maybe_unused]]uint player_count)
+                                       [[maybe_unused]]int player_count)
     : mApp{ app },
       mResourceMgr{ resource_mgr },
       mModel{ model }

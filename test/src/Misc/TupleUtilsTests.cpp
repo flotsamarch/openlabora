@@ -64,34 +64,34 @@ TEST(TupleUtilsTests, CreateTuple_SizeFive)
 TEST(TupleUtilsTests, ApplyUntilFalse_AppliedOnce_FirstTrue)
 {
     constexpr auto init_value = 'a';
-    auto call_counter = 0u;
+    auto call_counter = 0;
     std::tuple<char> tuple{};
     std::get<0>(tuple) = init_value;
     auto pred_is_a = [] (auto value) { return value == 'a'; };
     auto mutator = [&call_counter] (auto) { ++call_counter; };
 
     applyUntilFalse(tuple, mutator, pred_is_a);
-    ASSERT_EQ(call_counter, 1u);
+    ASSERT_EQ(call_counter, 1);
 }
 
 TEST(TupleUtilsTests, ApplyUntilFalse_AppliedOnce_FirstFalse)
 {
     constexpr auto init_value = 'b';
-    auto call_counter = 0u;
+    auto call_counter = 0;
     std::tuple<char> tuple{};
     std::get<0>(tuple) = init_value;
     auto pred_is_a = [] (auto value) { return value == 'a'; };
     auto mutator = [&call_counter] (auto) { ++call_counter; };
 
     applyUntilFalse(tuple, mutator, pred_is_a);
-    ASSERT_EQ(call_counter, 1u);
+    ASSERT_EQ(call_counter, 1);
 }
 
 TEST(TupleUtilsTests, ApplyUntilFalse_AlwaysTrue)
 {
-    constexpr auto tuple_size = 3u;
+    constexpr auto tuple_size = 3;
     constexpr auto init_value = 'a';
-    auto call_counter = 0u;
+    auto call_counter = 0;
     auto tuple = createTuple<char, tuple_size>(init_value);
     auto pred_is_a = [] (auto value) { return value == 'a'; };
     auto mutator = [&call_counter] (auto) { ++call_counter; };
@@ -102,9 +102,9 @@ TEST(TupleUtilsTests, ApplyUntilFalse_AlwaysTrue)
 
 TEST(TupleUtilsTests, ApplyUntilFalse_AppliedPartially)
 {
-    constexpr auto tuple_size = 4u;
+    constexpr auto tuple_size = 4;
     constexpr auto init_value = 'a';
-    auto call_counter = 0u;
+    auto call_counter = 0;
     auto tuple = createTuple<char, tuple_size>(init_value);
     auto pred_is_a = [] (auto value) { return value == 'a'; };
     auto mutator = [&call_counter] (auto) { ++call_counter; };

@@ -24,8 +24,8 @@ enum class TestEnum
     Begin, Test1 = Begin, Test2, Test3, End
 };
 
-static constexpr size_t kItemCount =
-    static_cast<size_t>(TestEnum::End) - static_cast<size_t>(TestEnum::Begin);
+static constexpr auto kItemCount =
+    static_cast<int>(TestEnum::End) - static_cast<int>(TestEnum::Begin);
 
 TEST(EnumMapTests, GetSize_DefaultConstructor)
 {

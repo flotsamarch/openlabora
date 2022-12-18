@@ -17,7 +17,6 @@
 #include "ApplicationState/ApplicationContext.hpp"
 #include "Resource/IResourceManager.hpp"
 #include "Input/Input.hpp"
-#include "Misc/CommonTypedefs.hpp"
 
 namespace test
 {
@@ -30,7 +29,7 @@ struct GameControllerMock
     GameControllerMock(ol::ApplicationContext::Ptr,
                        ol::IResourceManager::Ptr,
                        ol::PtrView<TModel>,
-                       uint player_count) {};
+                       int player_count) {};
 
     MOCK_METHOD(void, HandleInput, (ol::Input::PtrConst));
 

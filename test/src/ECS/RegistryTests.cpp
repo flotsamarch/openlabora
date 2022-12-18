@@ -16,7 +16,6 @@
 #include "ECS/Feature.hpp"
 #include "ECS/System.hpp"
 #include "ECS/Predicates.hpp"
-#include "Misc/CommonTypedefs.hpp"
 
 namespace test
 {
@@ -34,7 +33,7 @@ namespace
 
 struct TestComponent1
 {
-    bool flag{ false };
+    bool flag = false;
 };
 
 struct TestComponent2
@@ -65,28 +64,28 @@ void systemHandleEvent(TestSystem& system, ol::RegistryRef, const TestEvent&)
 class RegistryWithEntitiesTests : public RegistryTests
 {
 protected:
-    static constexpr auto kHasOnlyBoolComponentCount{ 9u };
-    static constexpr auto kHasBothComponentsCount{ 7u };
-    static constexpr auto kHasOnlyFloatComponentCount{ 5u };
-    static constexpr auto kHasNoComponentsCount{ 3u };
+    static constexpr auto kHasOnlyBoolComponentCount = 9;
+    static constexpr auto kHasBothComponentsCount = 7;
+    static constexpr auto kHasOnlyFloatComponentCount = 5;
+    static constexpr auto kHasNoComponentsCount = 3;
 
 public:
     RegistryWithEntitiesTests() {
-        for( auto i{ 0u }; i < kHasNoComponentsCount; ++i) {
+        for( auto i = 0; i < kHasNoComponentsCount; ++i) {
             mRegistry.CreateEntity();
         }
 
-        for( auto i{ 0u }; i < kHasOnlyBoolComponentCount; ++i) {
+        for( auto i = 0; i < kHasOnlyBoolComponentCount; ++i) {
             mRegistry.CreateEntity()
                 .AssignComponent<TestComponent1>();
         }
 
-        for( auto i{ 0u }; i < kHasOnlyFloatComponentCount; ++i) {
+        for( auto i = 0; i < kHasOnlyFloatComponentCount; ++i) {
             mRegistry.CreateEntity()
                 .AssignComponent<TestComponent2>();
         }
 
-        for( auto i{ 0u }; i < kHasBothComponentsCount; ++i) {
+        for( auto i = 0; i < kHasBothComponentsCount; ++i) {
             auto entity = mRegistry.CreateEntity();
             entity.AssignComponent<TestComponent1>();
             entity.AssignComponent<TestComponent2>();
@@ -97,7 +96,7 @@ public:
 class PredicatesTests : public RegistryWithEntitiesTests
 {
 protected:
-    uint mCallCounter{ 0u };
+    int mCallCounter = 0;
 
     using IncrementCounter = std::function<void(ol::Entity)>;
     IncrementCounter mIncrementCounter = [&c = mCallCounter] (auto) { ++c; };
@@ -110,9 +109,9 @@ TEST_F(RegistryTests, EntityCount_ZeroByDefault)
 
 TEST_F(RegistryTests, EntityCount_IncreasedByCreateEntity)
 {
-    constexpr auto count{ 10u };
+    constexpr auto count = 10;
 
-    for (auto i{ 0u }; i < count; ++i) {
+    for (auto i = 0; i < count; ++i) {
         mRegistry.CreateEntity();
     }
 
@@ -121,10 +120,10 @@ TEST_F(RegistryTests, EntityCount_IncreasedByCreateEntity)
 
 TEST_F(RegistryTests, EntityCount_DecreasedByDestroyEntityById)
 {
-    constexpr auto count{ 5u };
+    constexpr auto count = 5;
     std::vector<ol::EntityId> to_destroy;
 
-    for (auto i{ 0u }; i < count * 2; ++i) {
+    for (auto i = 0; i < count * 2; ++i) {
         const auto& entity = mRegistry.CreateEntity();
         if (i < count) {
             to_destroy.push_back(entity.GetId());
@@ -143,9 +142,9 @@ TEST_F(RegistryTests, EntityCount_DecreasedByDestroyEntityById)
 
 TEST_F(RegistryTests, EntityCount_DecreasedByDestroyEntity)
 {
-    constexpr auto count{ 10u };
+    constexpr auto count = 10;
 
-    for (auto i{ 0u }; i < count; ++i) {
+    for (auto i = 0; i < count; ++i) {
         const auto& entity = mRegistry.CreateEntity();
         mRegistry.DestroyEntity(entity);
     }
@@ -155,10 +154,10 @@ TEST_F(RegistryTests, EntityCount_DecreasedByDestroyEntity)
 
 TEST_F(RegistryTests, EntityCount_IsEntityValid)
 {
-    constexpr auto count{ 10u };
-    bool all_entities_valid{ true };
+    constexpr auto count = 10;
+    bool all_entities_valid = true;
 
-    for (auto i{ 0u }; i < count; ++i) {
+    for (auto i = 0; i < count; ++i) {
         const auto& entity = mRegistry.CreateEntity();
         if (!mRegistry.IsEntityValid(entity)) {
             all_entities_valid = false;
@@ -170,10 +169,10 @@ TEST_F(RegistryTests, EntityCount_IsEntityValid)
 
 TEST_F(RegistryTests, EntityCount_IsEntityValidById)
 {
-    constexpr auto count{ 10u };
-    bool all_entities_valid{ true };
+    constexpr auto count = 10;
+    bool all_entities_valid = true;
 
-    for (auto i{ 0u }; i < count; ++i) {
+    for (auto i = 0; i < count; ++i) {
         const auto& entity = mRegistry.CreateEntity();
         if (!mRegistry.IsEntityValid(entity.GetId())) {
             all_entities_valid = false;
@@ -185,10 +184,10 @@ TEST_F(RegistryTests, EntityCount_IsEntityValidById)
 
 TEST_F(RegistryTests, CreateEntity_UniqueIds)
 {
-    constexpr auto entity_count{ 10u };
+    constexpr auto entity_count = 10;
     auto ids = std::unordered_set<ol::EntityId>{};
 
-    for (auto i{ 0u }; i < entity_count; ++i) {
+    for (auto i = 0; i < entity_count; ++i) {
         const auto id = mRegistry.CreateEntity().GetId();
         ids.insert(id);
     }
@@ -231,7 +230,7 @@ TEST_F(RegistryTests, GetOrCreateFeature_DoesNotReassign)
 
 TEST_F(RegistryTests, HandleEvent)
 {
-    bool flag{ false };
+    bool flag = false;
     mRegistry.AssignFeature<TestFeature>()
         .AddSystem<TestSystem>(flag);
 
@@ -242,7 +241,7 @@ TEST_F(RegistryTests, HandleEvent)
 
 TEST_F(RegistryWithEntitiesTests, ForEachEntity_CountAllEntities)
 {
-    auto counter{ 0u };
+    auto counter = 0;
     auto callback = [&counter] (ol::Entity) { ++counter; };
 
     mRegistry.ForEachEntity(callback);
@@ -331,7 +330,7 @@ TEST_F(PredicatesTests, Bool_ConditionIsNeverMet)
     auto none = ol::option::Bool{ false };
     mRegistry.ForEachEntity(mIncrementCounter, none);
 
-    ASSERT_EQ(mCallCounter, 0u);
+    ASSERT_EQ(mCallCounter, 0);
 }
 
 TEST_F(PredicatesTests, NegateBool_CountAllEntities)
@@ -360,7 +359,7 @@ TEST_F(PredicatesTests, BoolAnd_ConditionIsNeverMet)
                                 ol::option::Exists<TestComponent1>{});
     mRegistry.ForEachEntity(mIncrementCounter, none);
 
-    ASSERT_EQ(mCallCounter, 0u);
+    ASSERT_EQ(mCallCounter, 0);
 }
 
 TEST_F(PredicatesTests, BoolOr_CountAllEntities)
@@ -385,7 +384,7 @@ TEST_F(PredicatesTests, BoolOr_CountEntitiesThatHaveBoolComponent)
 
 TEST_F(RegistryWithEntitiesTests, ForEachEntityConst_CountAllEntities)
 {
-    auto counter{ 0u };
+    auto counter = 0;
     auto callback = [&counter] (ol::ConstEntity) { ++counter; };
 
     std::as_const(mRegistry).ForEachEntity(callback);
@@ -396,7 +395,7 @@ TEST_F(RegistryWithEntitiesTests, ForEachEntityConst_CountAllEntities)
 TEST_F(RegistryWithEntitiesTests,
        ForEachEntityConst_Predicates_CountEntitiesThatHaveBothComponents)
 {
-    auto counter{ 0u };
+    auto counter = 0;
     auto callback = [&counter] (ol::ConstEntity) { ++counter; };
 
     auto bool_and_float = ol::option::ExistsAll<TestComponent1,
@@ -409,7 +408,7 @@ TEST_F(RegistryWithEntitiesTests,
 TEST_F(RegistryWithEntitiesTests,
        ForEachComponent_CountEntitiesThatHaveComponent)
 {
-    auto counter{ 0u };
+    auto counter = 0;
     auto callback = [&counter] (ol::Entity, TestComponent1&) { ++counter; };
 
     mRegistry.ForEachComponent<TestComponent1>(callback);
@@ -420,7 +419,7 @@ TEST_F(RegistryWithEntitiesTests,
 TEST_F(RegistryWithEntitiesTests,
        ForEachComponent_Predicates_CountEntitiesThatHaveBothComponents)
 {
-    auto counter{ 0u };
+    auto counter = 0;
     auto callback = [&counter] (ol::Entity, TestComponent1&) { ++counter; };
 
     auto has_float = ol::option::Exists<TestComponent2>{};
@@ -432,7 +431,7 @@ TEST_F(RegistryWithEntitiesTests,
 TEST_F(RegistryWithEntitiesTests,
        ForEachComponentConst_CountEntitiesThatHaveComponent)
 {
-    auto counter{ 0u };
+    auto counter = 0;
     auto callback = [&counter] (ol::ConstEntity, const TestComponent1&)
     { ++counter; };
 
@@ -444,7 +443,7 @@ TEST_F(RegistryWithEntitiesTests,
 TEST_F(RegistryWithEntitiesTests,
        ForEachComponentConst_Predicates_CountEntitiesThatHaveBothComponents)
 {
-    auto counter{ 0u };
+    auto counter = 0;
     auto callback = [&counter] (ol::ConstEntity, const TestComponent1&)
     { ++counter; };
 
@@ -458,8 +457,8 @@ TEST_F(RegistryWithEntitiesTests,
 TEST_F(RegistryWithEntitiesTests,
        ForEachComponent_Multiple_CountEntitiesThatHaveComponent)
 {
-    auto counter_bool{ 0u };
-    auto counter_float{ 0u };
+    auto counter_bool = 0;
+    auto counter_float = 0;
     auto inc_bool = [&c = counter_bool] (ol::Entity, TestComponent1&) { ++c; };
     auto inc_float = [&c = counter_float] (ol::Entity, TestComponent2&) { ++c; };
 
@@ -475,8 +474,8 @@ TEST_F(RegistryWithEntitiesTests,
 TEST_F(RegistryWithEntitiesTests,
        ForEachComponentConst_Multiple_CountEntitiesThatHaveComponent)
 {
-    auto counter_bool{ 0u };
-    auto counter_float{ 0u };
+    auto counter_bool = 0;
+    auto counter_float = 0;
     auto inc_bool = [&c = counter_bool] (ol::Entity, TestComponent1&) { ++c; };
     auto inc_float = [&c = counter_float] (ol::Entity, TestComponent2&) { ++c; };
 
@@ -491,7 +490,7 @@ TEST_F(RegistryWithEntitiesTests,
 
 TEST_F(RegistryWithEntitiesTests, ForEachComponent_ModifiesEachComponent)
 {
-    auto counter{ 0u };
+    auto counter = 0;
     auto modify = [] (ol::Entity, TestComponent1& component)
     {
         component.flag = true;
@@ -512,7 +511,7 @@ TEST_F(RegistryWithEntitiesTests, ForEachComponent_ModifiesEachComponent)
 TEST_F(RegistryWithEntitiesTests,
        ForJoinedComponents_CountAllEntitiesThatHaveJoinedComponents)
 {
-    auto counter{ 0u };
+    auto counter = 0;
     auto callback = [&counter] (ol::Entity, TestComponent1&, TestComponent2&)
     { ++counter; };
 
@@ -524,7 +523,7 @@ TEST_F(RegistryWithEntitiesTests,
 TEST_F(RegistryWithEntitiesTests,
        ForJoinedComponents_Predicates_CountAllEntitiesThatHaveJoinedComponents)
 {
-    auto counter{ 0u };
+    auto counter = 0;
     auto callback = [&counter] (ol::Entity, TestComponent1&, TestComponent2&)
     { ++counter; };
 
@@ -538,7 +537,7 @@ TEST_F(RegistryWithEntitiesTests,
 TEST_F(RegistryWithEntitiesTests,
        ForJoinedComponents_Predicates_ConditionIsNeverMet)
 {
-    auto counter{ 0u };
+    auto counter = 0;
     auto callback = [&counter] (ol::Entity, TestComponent1&, TestComponent2&)
     { ++counter; };
 
@@ -546,15 +545,15 @@ TEST_F(RegistryWithEntitiesTests,
     mRegistry.ForJoinedComponents<TestComponent1, TestComponent2>(callback,
                                                                   pred_false);
 
-    ASSERT_EQ(counter, 0u);
+    ASSERT_EQ(counter, 0);
 }
 
 TEST_F(RegistryWithEntitiesTests,
        ForJoinedComponents_ModifiesEachEntityWithComponentCombination)
 {
-    constexpr auto xvalue{ 5.f };
-    constexpr auto yvalue{ 9.f };
-    auto counter{ 0u };
+    constexpr auto xvalue = 5.f;
+    constexpr auto yvalue = 9.f ;
+    auto counter = 0;
     auto modify = [] (ol::Entity, TestComponent1& c1, TestComponent2& c2)
     {
         c1.flag = true;
@@ -580,7 +579,7 @@ TEST_F(RegistryWithEntitiesTests,
 TEST_F(RegistryWithEntitiesTests,
        ForJoinedComponentsConst_CalledForEachEntityWithComponentCombination)
 {
-    auto counter{ 0u };
+    auto counter = 0;
     auto callback = [&counter]
     (ol::ConstEntity, const TestComponent1&, const TestComponent2&)
     { ++counter; };

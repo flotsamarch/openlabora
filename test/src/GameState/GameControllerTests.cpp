@@ -45,7 +45,7 @@ TEST_F(GameControllerTests, Construction) // TODO actual testing
     auto controller = GameController{ AppCtx::Ptr{ &mApp },
                                       mResourceMgr,
                                       ModelMock::Ptr{ &mModel },
-                                      0u };
+                                      0 };
 
     ASSERT_TRUE(true);
 }
@@ -55,7 +55,7 @@ TEST_F(GameControllerTests, HandleInput) // TODO actual testing
     auto controller = GameController{ AppCtx::Ptr{ &mApp },
                                       mResourceMgr,
                                       ModelMock::Ptr{ &mModel },
-                                      0u };
+                                      0 };
 
     controller.HandleInput(ol::Input::PtrConst{ &mInput });
 
@@ -68,7 +68,7 @@ TEST_F(GameControllerTests, Update) // TODO actual testing
     auto controller = GameController{ AppCtx::Ptr{ &mApp },
                                       mResourceMgr,
                                       ModelMock::Ptr{ &mModel },
-                                      0u };
+                                      0 };
 
     controller.Update(delta);
 
@@ -81,7 +81,7 @@ TEST_F(GameControllerTests, SetPaused_Pause)
     auto controller = GameController{ AppCtx::Ptr{ &mApp },
                                       mResourceMgr,
                                       ModelMock::Ptr{ &mModel },
-                                      0u };
+                                      0 };
 
     EXPECT_CALL(mModel, SetPaused(Eq(paused)));
 
@@ -94,7 +94,7 @@ TEST_F(GameControllerTests, SetPaused_Unpause)
     auto controller = GameController{ AppCtx::Ptr{ &mApp },
                                       mResourceMgr,
                                       ModelMock::Ptr{ &mModel },
-                                      0u };
+                                      0 };
 
     EXPECT_CALL(mModel, SetPaused(Eq(paused)));
 
@@ -106,7 +106,7 @@ TEST_F(GameControllerTests, GetModel)
     auto controller = GameController{ AppCtx::Ptr{ &mApp },
                                       mResourceMgr,
                                       ModelMock::Ptr{ &mModel },
-                                      0u };
+                                      0 };
 
     ASSERT_EQ(controller.GetModel().Get(), &mModel);
 }
@@ -116,7 +116,7 @@ TEST_F(GameControllerTests, GetResourceManager)
     auto controller = GameController{ AppCtx::Ptr{ &mApp },
                                       mResourceMgr,
                                       ModelMock::Ptr{ &mModel },
-                                      0u };
+                                      0 };
 
     ASSERT_EQ(controller.GetResourceManager(), mResourceMgr);
 }
@@ -127,7 +127,7 @@ TEST_F(GameControllerTests, SetWorldMousePositionCallsModelMethod)
     auto controller = GameController{ AppCtx::Ptr{ &mApp },
                                       mResourceMgr,
                                       ModelMock::Ptr{ &mModel },
-                                      0u };
+                                      0 };
 
     EXPECT_CALL(mModel, SetWorldMousePosition(Vector2fEq(new_position)));
 

@@ -74,7 +74,6 @@ set(headers
     include/Misc/PtrView.hpp
     include/Misc/EnumMap.hpp
     include/Misc/UID.hpp
-    include/Misc/CommonTypedefs.hpp
     include/Misc/IterableEnumUtilities.hpp
     # ECS
     include/ECS/MassAssignComponents.hpp

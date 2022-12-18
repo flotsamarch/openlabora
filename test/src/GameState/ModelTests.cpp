@@ -83,7 +83,7 @@ TEST(ModelTests, ClearDrawableObjects_DoesNotAddObjects)
 
 TEST(ModelTests, GetDrawableObject_AddDrawableObjectIncreasesObjectCount)
 {
-    constexpr auto sprite_count{ 5u };
+    constexpr auto sprite_count = 5;
     ol::Model model;
     std::vector<ol::Sprite> sprites{ sprite_count };
 
@@ -98,7 +98,7 @@ TEST(ModelTests, GetDrawableObject_AddDrawableObjectIncreasesObjectCount)
 
 TEST(ModelTests, GetDrawableObject_ClearDrawableObjectsRemovesAllObjects)
 {
-    constexpr auto sprite_count{ 5u };
+    constexpr auto sprite_count = 5;
     ol::Model model;
     std::vector<ol::Sprite> sprites{ sprite_count };
 

@@ -15,7 +15,6 @@
 
 #include "ECS/Registry.hpp"
 #include "Misc/PtrView.hpp"
-#include "Misc/CommonTypedefs.hpp"
 #include "LibTypedefs.hpp"
 
 namespace open_labora
@@ -27,7 +26,7 @@ class Model final
     DrawableContainer mDrawableObjects;
 
     bool bPaused{ false };
-    static constexpr uint kMaxPlayers = 4;
+    static constexpr int kMaxPlayers = 4;
 
     Vector2f mWorldMousePosition{};
 

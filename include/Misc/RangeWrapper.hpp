@@ -56,8 +56,8 @@ public:
     bool IsEmpty() const noexcept
     { return mBegin == mEnd; }
 
-    size_t GetSize() const
-    { return std::distance(mBegin, mEnd); }
+    int GetSize() const
+    { return static_cast<int>(std::distance(mBegin, mEnd)); }
 };
 
 template<IterableContainer Y>

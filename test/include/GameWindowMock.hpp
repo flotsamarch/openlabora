@@ -27,7 +27,7 @@ struct GameWindowMock : ol::IGameWindow
 
     MOCK_METHOD(const ol::View&, GetView, (), (const, override));
 
-    MOCK_METHOD(ol::Vector2u, GetWindowSize, (), (const, override));
+    MOCK_METHOD(ol::Vector2i, GetWindowSize, (), (const, override));
 
     MOCK_METHOD(ol::Vector2f, MapScreenToWorldCoords,
                 (const ol::Vector2i&), (const, override));

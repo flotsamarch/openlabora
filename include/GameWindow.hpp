@@ -36,8 +36,8 @@ public:
     const View& GetView() const override
     { return mWindow->getView(); }
 
-    Vector2u GetWindowSize() const override
-    { return mWindow->getSize(); }
+    Vector2i GetWindowSize() const override
+    { return static_cast<Vector2i>(mWindow->getSize()); }
 
     Vector2f MapScreenToWorldCoords(const Vector2i& point) const override
     { return mWindow->mapPixelToCoords(point); }

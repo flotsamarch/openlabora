@@ -31,9 +31,9 @@ struct WindowMock
     virtual ~WindowMock() = default;
 
     MOCK_METHOD(void, create, (ol::VideoMode,
-                               const std::string& window_title, uint32_t), ());
+                               const std::string& window_title, int), ());
 
-    MOCK_METHOD(void, setFramerateLimit, (uint32_t), ());
+    MOCK_METHOD(void, setFramerateLimit, (int), ());
 
     MOCK_METHOD(void, setVerticalSyncEnabled, (bool), ());
 

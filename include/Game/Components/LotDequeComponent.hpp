@@ -38,13 +38,13 @@ public:
     void AddLotToBottom(SubtypeId subtype)
     { mLots.push_back(subtype); }
 
-    size_t GetLotsCount() const noexcept
-    { return mLots.size(); }
+    int GetLotsCount() const noexcept
+    { return static_cast<int>(mLots.size()); }
 
     Type GetLotType() const noexcept
     { return mLotType; }
 
-    SubtypeId operator[](size_t index) const
+    SubtypeId operator[](int index) const
     { return mLots[index]; }
 
     LotContainer::const_iterator begin() const noexcept

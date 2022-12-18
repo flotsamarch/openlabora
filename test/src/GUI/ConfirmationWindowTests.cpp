@@ -40,7 +40,7 @@ protected:
     TestGameWindowPtr mGameWindow = std::make_shared<TestGameWindow>();
 
     inline static const auto kDefaultWindowSize =
-        ol::Vector2u{ kDefaultWidth, kDefaultHeight };
+        ol::Vector2i{ kDefaultWidth, kDefaultHeight };
 
     ConfirmationWindowTestsBase()
     {

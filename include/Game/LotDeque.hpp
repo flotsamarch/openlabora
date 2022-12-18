@@ -27,7 +27,7 @@ Entity create(RegistryRef, lot::Type, const Vector2f& position);
 struct LotsInfo
 {
     Vector2f position;
-    size_t count{ 0u };
+    int count = 0;
 };
 
 using LotsInfoMap = std::unordered_map<lot::Type, LotsInfo>;

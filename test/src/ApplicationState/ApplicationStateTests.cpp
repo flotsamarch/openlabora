@@ -35,7 +35,7 @@ TEST(ApplicationStateFreeFunctionsTests, StateUpdate)
 {
     auto app = AppCtx::Ptr{};
     auto state = ol::ApplicationState{};
-    auto calls_count{ 0u };
+    auto calls_count = 0;
     auto counter = UpdateCallsCounter{ ol::PtrView{ &calls_count } };
 
     state.ChangeState<TestState>(app, counter);
@@ -49,7 +49,7 @@ TEST(ApplicationStateFreeFunctionsTests, StateHandleInput)
     auto app = AppCtx::Ptr{};
     auto state = ol::ApplicationState{};
     auto input = ol::Input{};
-    auto calls_count{ 0u };
+    auto calls_count = 0;
     auto counter = HandleInputCallsCounter{ ol::PtrView{ &calls_count } };
 
     state.ChangeState<TestState>(app, counter);
@@ -62,7 +62,7 @@ TEST(ApplicationStateFreeFunctionsTests, StateGetDrawableObjects)
 {
     auto app = AppCtx::Ptr{};
     auto state = ol::ApplicationState{};
-    auto calls_count{ 0u };
+    auto calls_count = 0;
     auto counter = GetDrawableCallsCounter{ ol::PtrView{ &calls_count } };
 
     state.ChangeState<TestState>(app, counter);

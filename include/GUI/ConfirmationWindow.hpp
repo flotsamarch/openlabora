@@ -13,7 +13,6 @@
 #ifndef CONFIRMATIONWINDOW_HPP_
 #define CONFIRMATIONWINDOW_HPP_
 
-#include "Misc/CommonTypedefs.hpp"
 #include "LibTypedefs.hpp"
 #include "GuiTypedefs.hpp"
 #include "GUI/Common.hpp"
@@ -28,8 +27,8 @@ class ConfirmationWindow final
     inline static const GuiString kDeclineButtonLabel{ "Cancel" };
     inline static const GuiString kWindowTitle{ "" };
 
-    static constexpr uint kTitleBarButtons = TitleButtonStyle::None;
-    static constexpr uint kButtonsGroupHeight = 30;
+    static constexpr int kTitleBarButtons = TitleButtonStyle::None;
+    static constexpr int kButtonsGroupHeight = 30;
 
     Panel::Ptr mBlockingPanel = Panel::create();
 
@@ -51,7 +50,7 @@ public:
     ConfirmationWindow(IGameWindow::Ptr game_window,
                        TWidthLayout&& window_width,
                        THeightLayout&& window_height,
-                       uint title_bar_style = kTitleBarButtons,
+                       int title_bar_style = kTitleBarButtons,
                        GuiString window_title = kWindowTitle,
                        GuiString confirm_button_text = kConfirmButtonLabel,
                        GuiString decline_button_text = kDeclineButtonLabel);
@@ -87,7 +86,7 @@ template<class TWidthLayout, class THeightLayout>
 ConfirmationWindow::ConfirmationWindow(IGameWindow::Ptr game_window,
                                        TWidthLayout&& window_width,
                                        THeightLayout&& window_height,
-                                       uint title_bar_style,
+                                       int title_bar_style,
                                        GuiString window_title,
                                        GuiString confirm_button_text,
                                        GuiString decline_button_text)

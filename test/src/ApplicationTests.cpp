@@ -101,10 +101,10 @@ TEST(ApplicationMainLoopTests, AppStopsIfWindowIsNotOpen)
 TEST(ApplicationMainLoopTests, DisplayAndClearCalledEveryIteration)
 {
     auto app = TestApp{{}};
-    constexpr auto iterations{ 5u };
-    constexpr auto open_true_calls{ iterations };
-    constexpr auto poll_event_calls{ iterations };
-    constexpr auto display_calls{ iterations };
+    constexpr auto iterations = 5;
+    constexpr auto open_true_calls = iterations;
+    constexpr auto poll_event_calls = iterations;
+    constexpr auto display_calls = iterations;
 
     ol::state::changeState<state::TestState>(AppCtx::Ptr{ &app });
 
@@ -133,13 +133,13 @@ TEST(ApplicationMainLoopTests, DisplayAndClearCalledEveryIteration)
 
 TEST(ApplicationMainLoopTests, UpdateCalledEveryIteration)
 {
-    constexpr auto iterations{ 5u };
-    constexpr auto open_true_calls{ iterations };
-    constexpr auto poll_event_calls{ iterations };
-    constexpr auto update_calls{ iterations };
+    constexpr auto iterations = 5;
+    constexpr auto open_true_calls = iterations;
+    constexpr auto poll_event_calls = iterations;
+    constexpr auto update_calls = iterations;
 
     auto app = TestApp{{}};
-    auto calls_counter{ 0u };
+    auto calls_counter = 0;
     auto counter = UpdateCallsCounter{ ol::PtrView{ &calls_counter } };
 
     ol::state::changeState<state::TestState>(AppCtx::Ptr{ &app }, counter);
@@ -164,9 +164,9 @@ TEST(ApplicationMainLoopTests, UpdateCalledEveryIteration)
 
 TEST(ApplicationMainLoopTests, HandleEventCalledEveryIteration)
 {
-    constexpr auto iterations{ 5u };
-    constexpr auto poll_event_calls{ 2u };
-    constexpr auto open_true_calls{ iterations };
+    constexpr auto iterations = 5;
+    constexpr auto poll_event_calls = 2;
+    constexpr auto open_true_calls = iterations;
     auto app = TestApp{{}};
 
     ol::state::changeState<state::TestState>(AppCtx::Ptr{ &app });
@@ -185,7 +185,7 @@ TEST(ApplicationMainLoopTests, HandleEventCalledEveryIteration)
         .Times(iterations * poll_event_calls)
         .WillRepeatedly(Return(true));
 
-    for (auto i{ 0u }; i < iterations; ++i) {
+    for (auto i = 0; i < iterations; ++i) {
         EXPECT_CALL(renderer, PollEvent)
             .WillOnce(Return(std::nullopt))
             .RetiresOnSaturation();
@@ -201,12 +201,12 @@ TEST(ApplicationMainLoopTests, HandleEventCalledEveryIteration)
 
 TEST(ApplicationMainLoopTests, HandleInputCalledEveryIteration)
 {
-    constexpr auto iterations{ 5u };
-    constexpr auto poll_event_calls{ 1u };
-    constexpr auto open_true_calls{ iterations };
+    constexpr auto iterations = 5;
+    constexpr auto poll_event_calls = 1;
+    constexpr auto open_true_calls = iterations;
 
     auto app = TestApp{{}};
-    auto calls_counter{ 0u };
+    auto calls_counter = 0;
     auto event = sf::Event{};
     event.type = sf::Event::KeyPressed;
 
@@ -227,7 +227,7 @@ TEST(ApplicationMainLoopTests, HandleInputCalledEveryIteration)
         .Times(iterations * poll_event_calls)
         .WillRepeatedly(Return(false));
 
-    for (auto i{ 0u }; i < iterations; ++i) {
+    for (auto i = 0; i < iterations; ++i) {
         EXPECT_CALL(renderer, PollEvent)
             .WillOnce(Return(std::nullopt))
             .RetiresOnSaturation();
@@ -244,14 +244,14 @@ TEST(ApplicationMainLoopTests, HandleInputCalledEveryIteration)
 
 TEST(ApplicationMainLoopTests, HandleInput_GuiBlocksPropagation)
 {
-    constexpr auto iterations{ 5u };
-    constexpr auto open_true_calls{ iterations };
-    constexpr auto consumed_events_per_iteration{ 1u };
-    constexpr auto regular_events_per_iteration{ 2u };
-    constexpr auto expected_calls{ iterations * regular_events_per_iteration };
+    constexpr auto iterations = 5;
+    constexpr auto open_true_calls = iterations;
+    constexpr auto consumed_events_per_iteration = 1;
+    constexpr auto regular_events_per_iteration  = 2;
+    constexpr auto expected_calls = iterations * regular_events_per_iteration;
 
     auto app = TestApp{{}};
-    auto calls_counter{ 0u };
+    auto calls_counter = 0 ;
     auto event = sf::Event{};
     event.type = sf::Event::KeyPressed;
 
@@ -282,7 +282,7 @@ TEST(ApplicationMainLoopTests, HandleInput_GuiBlocksPropagation)
     EXPECT_CALL(renderer, HandleEvent(consumed_evt_match))
         .WillRepeatedly(Return(true));
 
-    for (size_t i{ 0u }; i < iterations; ++i) {
+    for (auto i = 0; i < iterations; ++i) {
         EXPECT_CALL(renderer, PollEvent())
             .WillOnce(Return(std::nullopt))
             .RetiresOnSaturation();

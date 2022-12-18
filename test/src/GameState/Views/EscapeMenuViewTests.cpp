@@ -120,8 +120,8 @@ TEST_F(EscapeMenuViewTests, ConstructorAddsWidgets)
 
 TEST_F(EscapeMenuViewTests, HandleInput_NoInput)
 {
-    auto lock_counter{ 0u };
-    auto unlock_counter{ 0u };
+    auto lock_counter = 0;
+    auto unlock_counter = 0;
     TestEscapeMenuView mView{ mApp, mWindow, ol::PtrView{ &mViewModel } };
 
     mViewModel.SetLockCameraMovementCallback([&lc = lock_counter] { ++lc; });
@@ -141,7 +141,7 @@ TEST_F(EscapeMenuViewTests, HandleInput_NoInput)
 
 TEST_F(EscapeMenuViewTests, HandleInput_SingleEscapeLocksCamera)
 {
-    auto lock_counter{ 0u };
+    auto lock_counter = 0;
     TestEscapeMenuView mView{ mApp, mWindow, ol::PtrView{ &mViewModel } };
 
     mViewModel.SetLockCameraMovementCallback([&lc = lock_counter] { ++lc; });
@@ -160,8 +160,8 @@ TEST_F(EscapeMenuViewTests, HandleInput_SingleEscapeLocksCamera)
 
 TEST_F(EscapeMenuViewTests, HandleInput_DoubleEscapeUnlocksCamera)
 {
-    auto lock_counter{ 0u };
-    auto unlock_counter{ 0u };
+    auto lock_counter = 0;
+    auto unlock_counter = 0;
     bool was_input_consumed{ false };
     TestEscapeMenuView mView{ mApp, mWindow, ol::PtrView{ &mViewModel } };
 

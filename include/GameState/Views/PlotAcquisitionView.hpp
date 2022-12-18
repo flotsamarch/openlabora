@@ -75,7 +75,8 @@ public:
                         IGameWindow::Ptr,
                         PtrView<TViewModel>);
 
-    size_t GetWindowCount() const noexcept { return mButtonToTypeIdMap.size(); }
+    int GetWindowCount() const noexcept
+    { return std::ssize(mButtonToTypeIdMap); }
 
     const PlotAcquisitionMenu& GetMenu() const noexcept { return mMenu; };
 

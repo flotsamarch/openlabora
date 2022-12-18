@@ -25,7 +25,7 @@ namespace open_labora
 
 class SignalComponent final
 {
-    using Serial = uint64_t;
+    using Serial = long long;
     using DelegateMap = std::map<Serial, std::function<void()>>; // Needs order
     using SignalMap = std::unordered_map<Signal, DelegateMap>;
     SignalMap mSignals;

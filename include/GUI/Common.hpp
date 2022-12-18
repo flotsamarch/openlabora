@@ -13,7 +13,6 @@
 #ifndef COMMON_HPP_
 #define COMMON_HPP_
 
-#include "Misc/CommonTypedefs.hpp"
 #include "IGameWindow.hpp"
 
 namespace open_labora
@@ -27,18 +26,18 @@ constexpr auto kBigTextRatio{ 20.f / 1080 };
 
 constexpr auto kMargin = 4;
 
-constexpr uint getRegularTextSize(uint window_height)
+constexpr int getRegularTextSize(int window_height)
 {
-    return static_cast<uint>(window_height * kRegularTextRatio);
+    return static_cast<int>(window_height * kRegularTextRatio);
 }
 
-constexpr uint getBigTextSize(uint window_height)
+constexpr int getBigTextSize(int window_height)
 {
-    return static_cast<uint>(window_height * kBigTextRatio);
+    return static_cast<int>(window_height * kBigTextRatio);
 }
 
 template<typename TSizeGetter>
-concept CSizeGetter = requires (TSizeGetter get_size, uint window_height)
+concept CSizeGetter = requires (TSizeGetter get_size, int window_height)
 {
     std::invoke(get_size, window_height);
 };

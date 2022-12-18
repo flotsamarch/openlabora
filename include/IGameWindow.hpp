@@ -34,7 +34,7 @@ struct IGameWindow
 
     virtual const View& GetView() const = 0;
 
-    virtual Vector2u GetWindowSize() const = 0;
+    virtual Vector2i GetWindowSize() const = 0;
 
     virtual Vector2f MapScreenToWorldCoords(const Vector2i& point) const = 0;
 

@@ -22,7 +22,7 @@ Sprite getSprite(Type type,
                  SubtypeId subtype,
                  IResourceManager::Ptr resource_mgr)
 {
-    const auto subtype_index = static_cast<size_t>(subtype);
+    const auto subtype_index = static_cast<int>(subtype);
     const auto texture_id = getLotSubtypeTextureNames(type)[subtype_index];
     auto&& stored_texture = resource_mgr->GetTexture(texture_id);
 

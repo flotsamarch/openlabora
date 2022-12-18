@@ -96,9 +96,9 @@ void createMissingMarkers(MarkerContainer& markers,
     }
 
     const auto anchor_lot_count = anchor_info.count;
-    const auto extra_marker_count = plot::getLotCount(type) - 1u;
+    const auto extra_marker_count = plot::getLotCount(type) - 1;
     const auto marker_count_no_lots = anchor_lot_count + extra_marker_count;
-    const auto total_count = info.count > 0 ? 2u : marker_count_no_lots;
+    const auto total_count = info.count > 0 ? 2 : marker_count_no_lots;
 
     while (markers.size() < total_count) {
         markers.push_back(create_marker(type, false));
@@ -121,7 +121,7 @@ void updateMarkerPositions(MarkerContainer& markers,
     assert(this_info_it != lots_info.end());
 
     constexpr auto tile_h = tile::kTileHeight;
-    const auto plot_lots_count = static_cast<uint>(plot::getLotCount(type));
+    const auto plot_lots_count = plot::getLotCount(type);
 
     auto info = this_info_it->second;
     if (info.count == 0) {

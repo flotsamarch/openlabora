@@ -41,11 +41,11 @@ TEST(LotDequeComponentTests, GetLotType_NeverChangedInConstructor)
 
 TEST(LotDequeComponentTests, GetLotsCount_IncreasedByAddingLotsToTop)
 {
-    constexpr auto count{ 10u };
+    constexpr auto count = 10;
     bool differs_from_index{ false };
     auto component = ol::LotDequeComponent{ ol::lot::Type::Begin };
 
-    for (auto i{ 0u }; i < count; ++i) {
+    for (auto i = 0; i < count; ++i) {
         component.AddLotToTop(0);
         if (component.GetLotsCount() != i + 1) {
             differs_from_index = true;
@@ -57,11 +57,11 @@ TEST(LotDequeComponentTests, GetLotsCount_IncreasedByAddingLotsToTop)
 
 TEST(LotDequeComponentTests, GetLotsCount_IncreasedByAddingLotsToBottom)
 {
-    constexpr auto count{ 10u };
+    constexpr auto count = 10;
     bool differs_from_index{ false };
     auto component = ol::LotDequeComponent{ ol::lot::Type::Begin };
 
-    for (auto i{ 0u }; i < count; ++i) {
+    for (auto i = 0; i < count; ++i) {
         component.AddLotToBottom(0);
         if (component.GetLotsCount() != i + 1) {
             differs_from_index = true;
@@ -73,11 +73,11 @@ TEST(LotDequeComponentTests, GetLotsCount_IncreasedByAddingLotsToBottom)
 
 TEST(LotDequeComponentTests, GetLotsCount_IncreasedByAddingLotsMixed)
 {
-    constexpr auto count{ 10u };
+    constexpr auto count = 10;
     bool differs_from_index{ false };
     auto component = ol::LotDequeComponent{ ol::lot::Type::Begin };
 
-    for (auto i{ 0u }; i < count; ++i) {
+    for (auto i = 0; i < count; ++i) {
         if (i % 2 == 0) {
             component.AddLotToBottom(0);
         } else {
@@ -93,16 +93,16 @@ TEST(LotDequeComponentTests, GetLotsCount_IncreasedByAddingLotsMixed)
 
 TEST(LotDequeComponentsTests, OperatorSquareBrackets)
 {
-    constexpr auto count{ 10u };
+    constexpr auto count = 10;
     bool differs_from_index{ false };
     auto component = ol::LotDequeComponent{ ol::lot::Type::Begin };
 
-    for (auto i{ 0u }; i < count; ++i) {
+    for (auto i = 0; i < count; ++i) {
         component.AddLotToBottom(i);
     }
 
-    for (auto i{ 0u }; i < count; ++i) {
-        if (static_cast<uint>(component[i]) != i) {
+    for (auto i = 0; i < count; ++i) {
+        if (static_cast<int>(component[i]) != i) {
             differs_from_index = true;
         }
     }
@@ -112,16 +112,16 @@ TEST(LotDequeComponentsTests, OperatorSquareBrackets)
 
 TEST(LotDequeComponentsTests, RangeBasedForLoop)
 {
-    constexpr auto count{ 10u };
+    constexpr auto count = 10;
     bool differs_from_index{ false };
     auto component = ol::LotDequeComponent{ ol::lot::Type::Begin };
 
-    for (auto i{ 0u }; i < count; ++i) {
+    for (auto i = 0; i < count; ++i) {
         component.AddLotToBottom(i);
     }
 
-    for (auto i{ 0u }; auto&& subtype : component) {
-        if (static_cast<uint>(subtype) != i) {
+    for (auto i = 0; auto&& subtype : component) {
+        if (static_cast<int>(subtype) != i) {
             differs_from_index = true;
         }
         ++i;

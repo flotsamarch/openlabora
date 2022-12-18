@@ -75,7 +75,7 @@ TEST_F(TestFRenderer, Clear)
 
 TEST_F(TestFRenderer, Draw)
 {
-    constexpr auto range_size{ 5u };
+    constexpr auto range_size = 5;
     auto sprites = std::vector<ol::Sprite>{ range_size };
     auto range = ol::DrawableContainer{};
 

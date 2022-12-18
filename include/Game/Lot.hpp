@@ -40,31 +40,31 @@ using Subtype = std::span<const Lot>;
 // Each predefined lot has its unique id
 struct SubtypeId
 {
-    uint value;
+    int value;
 
-    constexpr SubtypeId(uint subtype) noexcept
+    constexpr SubtypeId(int subtype) noexcept
         : value{ subtype } {}
 
-    constexpr explicit operator uint() const noexcept
-    { return static_cast<uint>(value); }
+    constexpr explicit operator int() const noexcept
+    { return static_cast<int>(value); }
 
     constexpr explicit operator size_t() const noexcept
     { return static_cast<size_t>(value); }
 };
 
-constexpr size_t kLotTypeCount
-{ static_cast<size_t>(Type::End) - static_cast<size_t>(Type::Begin)};
+constexpr int kLotTypeCount
+{ static_cast<int>(Type::End) - static_cast<int>(Type::Begin)};
 
-static constexpr uint kHeartlandOffsetY{ 26u * tile::kTileHeight };
+static constexpr int kHeartlandOffsetY{ 26 * tile::kTileHeight };
 
 // ------------------ DEFINE SUBTYPES FOR EACH LOT TYPE ------------------------
-enum CoastalSubtypes : uint
+enum CoastalSubtypes : int
 {
     kRegularCoast,
     kCoastalSubtypeCount // Must be the last. Represents the amount of entries
 };
 
-enum CentralSubtypes : uint
+enum CentralSubtypes : int
 {
     kCentralFFFFH, // Regular
     kCentralPFFHH, // Alternative
@@ -73,7 +73,7 @@ enum CentralSubtypes : uint
     kCentralSubtypeCount // Must be the last. Represents the amount of entries
 };
 
-enum MountainSubtypes : uint
+enum MountainSubtypes : int
 {
     kMountainTop,
     kMountainBottom,
@@ -126,19 +126,19 @@ constexpr Lot kMountainTopLot{ kMountainTopLotTiles };
 constexpr Lot kMountainBottomLot{ kMountainBottomLotTiles };
 
 // -------------------- DEFINE TILE COUNT FOR EACH LOT -------------------------
-constexpr EnumMap<Type, uint> kLotTileCount
+constexpr EnumMap<Type, int> kLotTileCount
 {
-    { Type::Coastal, 2u },
-    { Type::Central, 5u },
-    { Type::Mountain, 2u },
+    { Type::Coastal, 2 },
+    { Type::Central, 5 },
+    { Type::Mountain, 2 },
 };
 
 // ------------- DEFINE MAXIMUM AMOUNT OF LOTS FOR EACH LOT TYPE ---------------
-constexpr EnumMap<Type, uint> kMaximumLotCount
+constexpr EnumMap<Type, int> kMaximumLotCount
 {
-    { Type::Coastal, 18u },
-    { Type::Central, 11u },
-    { Type::Mountain, 18u },
+    { Type::Coastal, 18 },
+    { Type::Central, 11 },
+    { Type::Mountain, 18 },
 };
 
 // ----------------------- GROUP LOTS BY LOT SUBTYPE ---------------------------
@@ -207,14 +207,14 @@ constexpr EnumMap<Type, std::span<const std::string_view>> kLotTypeToTextures
     { Type::Mountain, { kMountainLotTextures } },
 };
 
-constexpr uint getTileCount(Type type)
+constexpr int getTileCount(Type type)
 {
     assert(type >= Type::Begin);
     assert(type < Type::End);
     return kLotTileCount[type];
 }
 
-constexpr uint getMaximumCount(Type type)
+constexpr int getMaximumCount(Type type)
 {
     assert(type >= Type::Begin);
     assert(type < Type::End);

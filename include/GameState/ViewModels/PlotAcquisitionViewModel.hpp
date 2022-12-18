@@ -148,7 +148,7 @@ plot::AcquireReturnType PlotAcquisitionViewModel<TModel>
     const auto& position = marker.GetComponent<PositionComponent>();
     DeselectMarker();
 
-    const auto index = static_cast<size_t>(params.type_id);
+    const auto index = static_cast<int>(params.type_id);
     auto plot = plot::getPlots(info.lot_type)[index];
 
     auto event = CreatePlotEvent{ plot, lot_type, to_top, position};

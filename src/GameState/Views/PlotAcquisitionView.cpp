@@ -64,7 +64,7 @@ CreateWindowResult createWindowChooseOne(CreateWindowParams& params)
     {
         auto id = *it;
         auto text = std::ostringstream{ "central_lot_", std::ios_base::ate };
-        text << static_cast<size_t>(id);
+        text << static_cast<int>(id);
 
         auto button = RadioButton::create();
         button->setText(text.str());
@@ -140,7 +140,7 @@ CreateWindowResult createWindowConfirm(CreateWindowParams& params)
     [hide_visible = params.hide_visible_callback,
      acquire_plot = params.acquire_plot_callback]
     {
-        auto params = plot::AcquirePlotParams{ plot::TypeId{ 0u } };
+        auto params = plot::AcquirePlotParams{ plot::TypeId{ 0 } };
         acquire_plot(params);
         hide_visible();
     };

@@ -119,8 +119,8 @@ TEST_F(PlotAcquisitionMarkerTests, Create_CallsStoreTextureOnce)
     marker::create(mRegistryRef, ol::lot::Type::Begin, true, mResourceMgr);
 }
 
-constexpr auto kBeginLotIndex = static_cast<uint>(ol::lot::Type::Begin);
-constexpr auto kEndLotIndex = static_cast<uint>(ol::lot::Type::End);
+constexpr auto kBeginLotIndex = static_cast<int>(ol::lot::Type::Begin);
+constexpr auto kEndLotIndex = static_cast<int>(ol::lot::Type::End);
 constexpr auto kLotsCount = kEndLotIndex - kBeginLotIndex;
 
 TEST_F(PlotAcquisitionMarkerTests,

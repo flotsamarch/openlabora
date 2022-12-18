@@ -15,7 +15,6 @@
 
 #include <cmath>
 #include <string_view>
-#include "Misc/CommonTypedefs.hpp"
 #include "Misc/EnumMap.hpp"
 #include "Misc/IterableEnumUtilities.hpp"
 #include "LibTypedefs.hpp"
@@ -33,10 +32,10 @@ enum class Type
     Water, Coast, Peat, End
 };
 
-constexpr uint kTileHeight{ 150u };
-constexpr uint kTileWidth{ 100u };
-constexpr uint kMaxFieldHeight{ 54u };
-constexpr uint kMaxFieldWidth{ 9u };
+constexpr int kTileHeight{ 150 };
+constexpr int kTileWidth{ 100 };
+constexpr int kMaxFieldHeight{ 54 };
+constexpr int kMaxFieldWidth{ 9 };
 
 inline bool IsValid(tile::Type type) noexcept
 { return type != tile::Type::None; }

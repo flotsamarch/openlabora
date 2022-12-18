@@ -23,7 +23,7 @@ namespace open_labora
 namespace uid
 {
 
-using Uid = uint64_t;
+using Uid = long long;
 
 enum Type
 {

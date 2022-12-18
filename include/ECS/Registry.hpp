@@ -63,8 +63,8 @@ public:
     bool IsEntityValid(const Entity& entity) const noexcept
     { return mRegistry.valid_entity(entity.GetId()); }
 
-    size_t EntityCount() const noexcept
-    { return mRegistry.entity_count(); }
+    int EntityCount() const noexcept
+    { return static_cast<int>(mRegistry.entity_count()); }
 
     template<class TComponent, class TCallable, class... Opts>
     void ForEachComponent(TCallable&& callable, Opts&&... opts)

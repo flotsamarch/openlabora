@@ -74,11 +74,11 @@ TEST(CameraViewModelTests, UnlockCameraMovement)
 
 TEST(CameraViewModelTests, MultipleLockers)
 {
-    constexpr auto lockers_count{ 3u };
+    constexpr auto lockers_count = 3;
     auto model = TestModel{};
     TestCameraViewModel view_model{ ol::PtrView{ &model } };
 
-    for(auto i{ 0u }; i < lockers_count; ++i) {
+    for(auto i = 0; i < lockers_count; ++i) {
         view_model.LockCameraMovement();
     }
     view_model.UnlockCameraMovement();
@@ -88,14 +88,14 @@ TEST(CameraViewModelTests, MultipleLockers)
 
 TEST(CameraViewModelTests, MultipleLockersUnlock)
 {
-    constexpr auto lockers_count{ 3u };
+    constexpr auto lockers_count = 3;
     auto model = TestModel{};
     TestCameraViewModel view_model{ ol::PtrView{ &model } };
 
-    for(auto i{ 0u }; i < lockers_count; ++i) {
+    for(auto i = 0; i < lockers_count; ++i) {
         view_model.LockCameraMovement();
     }
-    for(auto i{ 0u }; i < lockers_count; ++i) {
+    for(auto i = 0; i < lockers_count; ++i) {
         view_model.UnlockCameraMovement();
     }
 
@@ -104,16 +104,16 @@ TEST(CameraViewModelTests, MultipleLockersUnlock)
 
 TEST(CameraViewModelTests, LessUsualLockingPattern)
 {
-    constexpr auto lockers_count{ 7u };
+    constexpr auto lockers_count = 7;
     auto model = TestModel{};
     TestCameraViewModel view_model{ ol::PtrView{ &model } };
 
-    for(auto i{ 0u }; i < lockers_count; ++i) {
+    for(auto i = 0; i < lockers_count; ++i) {
         view_model.LockCameraMovement();
         view_model.LockCameraMovement();
         view_model.UnlockCameraMovement();
     }
-    for(auto i{ 0u }; i < lockers_count; ++i) {
+    for(auto i = 0; i < lockers_count; ++i) {
         view_model.UnlockCameraMovement();
         view_model.LockCameraMovement();
         view_model.UnlockCameraMovement();
@@ -150,7 +150,7 @@ TEST_F(CameraViewTests, HandleInput_NoMouseMovement)
 
 TEST_F(CameraViewTests, HandleInput_MouseMovesCamera)
 {
-    constexpr auto move_event_count{ 5u };
+    constexpr auto move_event_count = 5;
     bool was_input_consumed{ false };
     TestCameraView mView{ mApp, mWindow, ol::PtrView{ &mViewModel } };
     auto view = sf::View{};
@@ -163,7 +163,7 @@ TEST_F(CameraViewTests, HandleInput_MouseMovesCamera)
     event.mouseMove.x = 1.f;
     event.mouseMove.y = 1.f;
 
-    for(auto i{ 0u }; i < move_event_count; ++i) {
+    for(auto i = 0; i < move_event_count; ++i) {
         mInput.HandleEvent(event);
     }
 

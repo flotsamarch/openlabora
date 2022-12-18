@@ -25,7 +25,7 @@ template<class TModel>
 class CameraViewModel final
 {
     PtrView<TModel> mModel;
-    uint32_t mBlockersCount{ 0u };
+    int mBlockersCount{ 0 };
 
 public:
     CameraViewModel(PtrView<TModel> model)

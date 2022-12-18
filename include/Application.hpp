@@ -60,7 +60,7 @@ public:
     Application& operator=(Application&&) = delete;
 
     // Main application loop
-    uint32_t run();
+    int run();
 
     IResourceManager::Ptr GetResourceMgr() const
     { return mResourceMgr; }
@@ -89,7 +89,7 @@ template<class TGui,
          class TGameWindow,
          template<class...> class TRenderer,
          class TResourceManager>
-uint32_t Application<TGui, TWindow, TGameWindow, TRenderer, TResourceManager>
+int Application<TGui, TWindow, TGameWindow, TRenderer, TResourceManager>
 ::run()
 {
     auto start_time = Clock::now();

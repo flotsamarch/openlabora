@@ -55,9 +55,9 @@ TEST(LotTests, SubtypeId_Constructor)
 {
     bool ne_init{ false };
 
-    for(auto i = 0u; i < 10u; ++i) {
+    for(auto i = 0; i < 10; ++i) {
         auto subtype = ol::lot::SubtypeId{ i };
-        if (static_cast<size_t>(subtype) != i) {
+        if (static_cast<int>(subtype) != i) {
             ne_init = true;
         }
     }
@@ -165,7 +165,7 @@ TEST(LotTests, GetAnchorLotType_AfterCentralPreviousIsAnchor)
 
 TEST_F(LotSpriteTests, getSprite_CreatesAndStoresTexture)
 {
-    auto expected_call_count{ 0u };
+    auto expected_call_count = 0;
 
     for (auto type = Type::Begin; type < Type::End; ++type) {
         auto subtypes = ol::lot::getLotSubtypes(type);
@@ -182,7 +182,7 @@ TEST_F(LotSpriteTests, getSprite_CreatesAndStoresTexture)
 
     for (auto type = Type::Begin; type < Type::End; ++type) {
         auto subtypes = ol::lot::getLotSubtypes(type);
-        for (auto subtype{ 0u }; [[maybe_unused]]auto _ : subtypes) {
+        for (auto subtype = 0; [[maybe_unused]]auto _ : subtypes) {
             ol::lot::getSprite(type, subtype, mResourceMgr);
         }
     }
@@ -190,7 +190,7 @@ TEST_F(LotSpriteTests, getSprite_CreatesAndStoresTexture)
 
 TEST_F(LotSpriteTests, getSprite_ReusesStoredTexture)
 {
-    auto expected_call_count{ 0u };
+    auto expected_call_count = 0;
 
     for (auto type = Type::Begin; type < Type::End; ++type) {
         auto subtypes = ol::lot::getLotSubtypes(type);
@@ -206,7 +206,7 @@ TEST_F(LotSpriteTests, getSprite_ReusesStoredTexture)
 
     for (auto type = Type::Begin; type < Type::End; ++type) {
         auto subtypes = ol::lot::getLotSubtypes(type);
-        for (auto subtype{ 0u }; [[maybe_unused]]auto _ : subtypes) {
+        for (auto subtype = 0; [[maybe_unused]]auto _ : subtypes) {
             ol::lot::getSprite(type, subtype, mResourceMgr);
         }
     }

@@ -84,8 +84,8 @@ TEST_F(LotDequeTests, CreateLotsInfo_AddCentralLots_CentralLotsCountIncreases)
     auto entity = ld::create(mRegistryRef, kCentral, {});
     auto&& deque = entity.GetComponent<ol::LotDequeComponent>();
 
-    deque.AddLotToTop(lot::SubtypeId{ 0u });
-    deque.AddLotToTop(lot::SubtypeId{ 0u });
+    deque.AddLotToTop(lot::SubtypeId{ 0 });
+    deque.AddLotToTop(lot::SubtypeId{ 0 });
 
     auto lots_info = ld::createLotsInfo(mRegistryRef);
 
@@ -98,8 +98,8 @@ TEST_F(LotDequeTests,
     auto entity = ld::create(mRegistryRef, kCentral, {});
     auto&& deque = entity.GetComponent<ol::LotDequeComponent>();
 
-    deque.AddLotToTop(lot::SubtypeId{ 0u });
-    deque.AddLotToTop(lot::SubtypeId{ 0u });
+    deque.AddLotToTop(lot::SubtypeId{ 0 });
+    deque.AddLotToTop(lot::SubtypeId{ 0 });
 
     auto lots_info = ld::createLotsInfo(mRegistryRef);
 
@@ -119,8 +119,8 @@ TEST_F(LotDequeTests,
     auto entity = ld::create(mRegistryRef, non_central, {});
     auto&& deque = entity.GetComponent<ol::LotDequeComponent>();
 
-    deque.AddLotToTop(lot::SubtypeId{ 0u });
-    deque.AddLotToTop(lot::SubtypeId{ 0u });
+    deque.AddLotToTop(lot::SubtypeId{ 0 });
+    deque.AddLotToTop(lot::SubtypeId{ 0 });
 
     auto lots_info = ld::createLotsInfo(mRegistryRef);
 
@@ -135,8 +135,8 @@ TEST_F(LotDequeTests,
     auto entity = ld::create(mRegistryRef, non_central, {});
     auto&& deque = entity.GetComponent<ol::LotDequeComponent>();
 
-    deque.AddLotToTop(lot::SubtypeId{ 0u });
-    deque.AddLotToTop(lot::SubtypeId{ 0u });
+    deque.AddLotToTop(lot::SubtypeId{ 0 });
+    deque.AddLotToTop(lot::SubtypeId{ 0 });
 
     auto lots_info = ld::createLotsInfo(mRegistryRef);
 

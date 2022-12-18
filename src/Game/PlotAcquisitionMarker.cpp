@@ -121,7 +121,7 @@ lot::Type getLotType(Entity marker)
 Vector2f getSize(lot::Type lot_type)
 {
     const auto tile_count = lot::getTileCount(lot_type);
-    const auto lot_count = static_cast<uint>(plot::getLotCount(lot_type));
+    const auto lot_count = static_cast<int>(plot::getLotCount(lot_type));
     const auto marker_width = static_cast<float>(tile_count * tile::kTileWidth);
     const auto marker_height = static_cast<float>(lot_count * tile::kTileHeight);
 

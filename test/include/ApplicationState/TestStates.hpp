@@ -32,9 +32,9 @@ struct TestCreationState final
 
 struct UpdateCallsCounter
 {
-    ol::PtrView<uint32_t> counter;
+    ol::PtrView<int> counter;
 
-    uint32_t& operator*()
+    int& operator*()
     {
         return *counter;
     }
@@ -42,9 +42,9 @@ struct UpdateCallsCounter
 
 struct HandleInputCallsCounter
 {
-    ol::PtrView<uint32_t> counter;
+    ol::PtrView<int> counter;
 
-    uint32_t& operator*()
+    int& operator*()
     {
         return *counter;
     }
@@ -52,9 +52,9 @@ struct HandleInputCallsCounter
 
 struct GetDrawableCallsCounter
 {
-    ol::PtrView<uint32_t> counter;
+    ol::PtrView<int> counter;
 
-    uint32_t& operator*()
+    int& operator*()
     {
         return *counter;
     }

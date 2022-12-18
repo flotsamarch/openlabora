@@ -27,13 +27,13 @@ namespace plot
 // Each predefined plot has its unique id
 struct TypeId
 {
-    uint value;
+    int value;
 
-    constexpr TypeId(uint type) noexcept
+    constexpr TypeId(int type) noexcept
         : value{ type } {}
 
-    constexpr explicit operator uint() const noexcept
-    { return static_cast<uint>(value); }
+    constexpr explicit operator int() const noexcept
+    { return static_cast<int>(value); }
 
     constexpr explicit operator size_t() const noexcept
     { return static_cast<size_t>(value); }
@@ -54,20 +54,20 @@ using AcquireReturnType = void;
 using AcquireCallback = std::function<AcquireReturnType(AcquirePlotParams&)>;
 
 // ----------------- DEFINE PLOT TYPES FOR EACH LOT TYPE -----------------------
-enum CoastalPlotTypes : uint
+enum CoastalPlotTypes : int
 {
     kCoastal,
     kCoastalPlotTypeCount // Must be the last. Represents the amount of entries
 };
 
-enum CentralPlotTypes : uint
+enum CentralPlotTypes : int
 {
     kCentral,
     kCentralAlt,
     kCentralPlotTypeCount // Must be the last. Represents the amount of entries
 };
 
-enum MountainPlotTypes : uint
+enum MountainPlotTypes : int
 {
     kMountain,
     kMountainPlotTypeCount // Must be the last. Represents the amount of entries
@@ -124,11 +124,13 @@ constexpr std::span<const Plot> getPlots(lot::Type type)
     return kLotTypeToPlots[type];
 }
 
-constexpr size_t getLotCount(lot::Type type)
+constexpr int getLotCount(lot::Type type)
 {
     assert(type >= lot::Type::Begin);
     assert(type < lot::Type::End);
-    return kLotTypeToPlots[type][0].size();
+    const auto result = static_cast<int>(kLotTypeToPlots[type][0].size());
+    assert(result > 0);
+    return result;
 }
 
 } // namespace plot
