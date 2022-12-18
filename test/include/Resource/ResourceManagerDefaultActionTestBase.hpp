@@ -18,7 +18,7 @@
 namespace test
 {
 
-class ResourceManagerDefaultActionTestBase : public ::testing::Test
+class ResourceManagerDefaultActionTestBase : public testing::Test
 {
     using ResourceMgr = testing::NiceMock<ResourceManagerMock>;
     using ResourceMgrPtr = std::shared_ptr<ResourceMgr>;
@@ -33,10 +33,10 @@ public:
         : mTexture{ texture }
     {
         ON_CALL(*mResourceMgr, GetTexture)
-            .WillByDefault(::testing::Return(mTexture));
+            .WillByDefault(testing::Return(mTexture));
 
         ON_CALL(*mResourceMgr, GetTextureOrDefault)
-            .WillByDefault(::testing::ReturnRef(mTexture));
+            .WillByDefault(testing::ReturnRef(mTexture));
     }
 
     ResourceManagerDefaultActionTestBase()

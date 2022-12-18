@@ -16,7 +16,7 @@
 namespace test
 {
 
-class SelectableComponentsTests : public ::testing::Test
+class SelectableComponentsTests : public testing::Test
 {
 protected:
     open_labora::SelectableComponent mComponent{};
@@ -66,6 +66,6 @@ TEST_F(SelectableComponentsTests, Leave)
 
 int main(int argc, char** argv)
 {
-    ::testing::InitGoogleTest(&argc, argv);
+    testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

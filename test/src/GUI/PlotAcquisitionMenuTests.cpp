@@ -31,7 +31,7 @@ tgui::GuiSFML _gui; // Required to create GUI objects
 
 } // namespace anonymous
 
-class PlotAcquisitionMenuTests : public ::testing::Test
+class PlotAcquisitionMenuTests : public testing::Test
 {
     using WindowMock = sf::RenderTexture;
     using Gui = tgui::GuiSFML;

@@ -32,7 +32,7 @@ using testing::Return;
 using testing::_;
 using testing::Field;
 
-class TestFRenderer : public ::testing::Test
+class TestFRenderer : public testing::Test
 {
 protected:
     TestGui mGui;
@@ -128,7 +128,7 @@ TEST_F(TestFRenderer, HandleEventCloseWindow)
 
 int main(int argc, char** argv)
 {
-    ::testing::InitGoogleTest(&argc, argv);
-    ::testing::InitGoogleMock(&argc, argv);
+    testing::InitGoogleTest(&argc, argv);
+    testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 }

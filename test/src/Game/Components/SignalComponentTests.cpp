@@ -18,7 +18,7 @@ namespace test
 
 namespace ol = open_labora;
 
-class SignalComponentTests : public ::testing::Test
+class SignalComponentTests : public testing::Test
 {
 protected:
     ol::SignalComponent mComponent{};
@@ -75,6 +75,6 @@ TEST_F(SignalComponentTests, DisconnectAll)
 
 int main(int argc, char** argv)
 {
-    ::testing::InitGoogleTest(&argc, argv);
+    testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

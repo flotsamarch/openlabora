@@ -77,7 +77,7 @@ TEST_F(GameControllerTests, Update) // TODO actual testing
 
 TEST_F(GameControllerTests, SetPaused_Pause)
 {
-    bool paused{ true };
+    bool paused = true;
     auto controller = GameController{ AppCtx::Ptr{ &mApp },
                                       mResourceMgr,
                                       ModelMock::Ptr{ &mModel },
@@ -90,7 +90,7 @@ TEST_F(GameControllerTests, SetPaused_Pause)
 
 TEST_F(GameControllerTests, SetPaused_Unpause)
 {
-    bool paused{ false };
+    bool paused = false;
     auto controller = GameController{ AppCtx::Ptr{ &mApp },
                                       mResourceMgr,
                                       ModelMock::Ptr{ &mModel },

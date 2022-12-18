@@ -23,9 +23,9 @@
 namespace test
 {
 
-using ::testing::Return;
-using ::testing::Field;
-using ::testing::NiceMock;
+using testing::Return;
+using testing::Field;
+using testing::NiceMock;
 
 namespace ol = open_labora;
 
@@ -306,7 +306,7 @@ TEST(ApplicationMainLoopTests, HandleInput_GuiBlocksPropagation)
 
 int main(int argc, char** argv)
 {
-    ::testing::InitGoogleTest(&argc, argv);
-    ::testing::InitGoogleMock(&argc, argv);
+    testing::InitGoogleTest(&argc, argv);
+    testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 }

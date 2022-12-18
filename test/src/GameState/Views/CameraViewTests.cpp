@@ -187,7 +187,7 @@ TEST_F(CameraViewTests, HandleInput_MouseMovesCamera)
 
 } // namespace test
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     testing::InitGoogleMock(&argc, argv);
