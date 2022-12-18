@@ -21,8 +21,8 @@ namespace test
 
 namespace ol = open_labora;
 
-constexpr auto win_size_x{ 1920 };
-constexpr auto win_size_y{ 1080 };
+constexpr auto win_size_x = 1920;
+constexpr auto win_size_y = 1080;
 
 namespace
 {

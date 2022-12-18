@@ -20,8 +20,8 @@ namespace open_labora
 
 struct PositionComponent final
 {
-    float x{ 0.f };
-    float y{ 0.f };
+    float x = 0.f;
+    float y = 0.f;
 
     PositionComponent() noexcept = default;
 

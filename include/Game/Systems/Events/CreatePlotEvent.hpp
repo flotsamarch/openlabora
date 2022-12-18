@@ -22,7 +22,7 @@ struct CreatePlotEvent
 {
     Plot plot;
     lot::Type lot_type;
-    bool to_top{ false };
+    bool to_top = false;
     Vector2f position{ 0.f, 0.f }; // Requested plot position.
                                    // Used only for the first plot of a type
     // TODO Multiplayer: Player affiliation

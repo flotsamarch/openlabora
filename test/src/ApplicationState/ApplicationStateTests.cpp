@@ -24,7 +24,7 @@ TEST(ApplicationStateTests, ChangeState)
 {
     auto app = AppCtx::Ptr{};
     auto state = ol::ApplicationState{};
-    bool has_been_created{ false };
+    bool has_been_created = false;
 
     state.ChangeState<TestCreationState>(app, has_been_created);
 
@@ -75,7 +75,7 @@ TEST(ApplicationStateFreeFunctionsTests, StateGetFlagIsFinalTrue)
 {
     auto app = AppCtx::Ptr{};
     auto state = ol::ApplicationState{};
-    bool has_been_created{ false };
+    bool has_been_created = false;
 
     state.ChangeState<TestCreationState>(app, has_been_created);
 

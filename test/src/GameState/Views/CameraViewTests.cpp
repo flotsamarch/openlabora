@@ -151,7 +151,7 @@ TEST_F(CameraViewTests, HandleInput_NoMouseMovement)
 TEST_F(CameraViewTests, HandleInput_MouseMovesCamera)
 {
     constexpr auto move_event_count = 5;
-    bool was_input_consumed{ false };
+    bool was_input_consumed = false;
     TestCameraView mView{ mApp, mWindow, ol::PtrView{ &mViewModel } };
     auto view = sf::View{};
     auto event = sf::Event{};

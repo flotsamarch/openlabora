@@ -28,7 +28,7 @@ template<class T, size_t N>
 constexpr auto createTuple(const T& t)
 {
     if constexpr (N <= 0) {
-        throw std::invalid_argument{"Cannot create zero sized tuple."};
+        throw std::invalid_argument{ "Cannot create zero sized tuple." };
     } else if constexpr (N == 1) {
         return std::tuple<T>{ t };
     } else {

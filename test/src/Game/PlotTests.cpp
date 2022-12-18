@@ -21,7 +21,7 @@ namespace ol = open_labora;
 
 TEST(LotTests, TypeId_Constructor)
 {
-    bool ne_init{ false };
+    bool ne_init = false;
 
     for(auto i = 0; i < 10; ++i) {
         auto subtype = ol::lot::SubtypeId{ i };
@@ -35,7 +35,7 @@ TEST(LotTests, TypeId_Constructor)
 
 TEST(PlotTests, getPlots_AlwaysNotEmpty)
 {
-    bool was_empty{ false };
+    bool was_empty = false;
 
     for (auto type = ol::lot::Type::Begin; type < ol::lot::Type::End; ++type) {
         auto plots = ol::plot::getPlots(type);
@@ -49,7 +49,7 @@ TEST(PlotTests, getPlots_AlwaysNotEmpty)
 
 TEST(PlotTests, getPlots_PlotSizesAlwaysGreaterThanZero)
 {
-    bool was_empty{ false };
+    bool was_empty = false;
 
     for (auto type = ol::lot::Type::Begin; type < ol::lot::Type::End; ++type) {
         auto plots = ol::plot::getPlots(type);

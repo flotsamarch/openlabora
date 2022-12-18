@@ -27,7 +27,7 @@ TEST(LotDequeComponentTests, GetLotsCount_ZeroByDefault)
 
 TEST(LotDequeComponentTests, GetLotType_NeverChangedInConstructor)
 {
-    bool was_changed{ false };
+    bool was_changed = false;
 
     for (auto type = ol::lot::Type::Begin; type < ol::lot::Type::End; ++type) {
         auto component = ol::LotDequeComponent{ type };
@@ -42,7 +42,7 @@ TEST(LotDequeComponentTests, GetLotType_NeverChangedInConstructor)
 TEST(LotDequeComponentTests, GetLotsCount_IncreasedByAddingLotsToTop)
 {
     constexpr auto count = 10;
-    bool differs_from_index{ false };
+    bool differs_from_index = false;
     auto component = ol::LotDequeComponent{ ol::lot::Type::Begin };
 
     for (auto i = 0; i < count; ++i) {
@@ -58,7 +58,7 @@ TEST(LotDequeComponentTests, GetLotsCount_IncreasedByAddingLotsToTop)
 TEST(LotDequeComponentTests, GetLotsCount_IncreasedByAddingLotsToBottom)
 {
     constexpr auto count = 10;
-    bool differs_from_index{ false };
+    bool differs_from_index = false;
     auto component = ol::LotDequeComponent{ ol::lot::Type::Begin };
 
     for (auto i = 0; i < count; ++i) {
@@ -74,7 +74,7 @@ TEST(LotDequeComponentTests, GetLotsCount_IncreasedByAddingLotsToBottom)
 TEST(LotDequeComponentTests, GetLotsCount_IncreasedByAddingLotsMixed)
 {
     constexpr auto count = 10;
-    bool differs_from_index{ false };
+    bool differs_from_index = false;
     auto component = ol::LotDequeComponent{ ol::lot::Type::Begin };
 
     for (auto i = 0; i < count; ++i) {
@@ -94,7 +94,7 @@ TEST(LotDequeComponentTests, GetLotsCount_IncreasedByAddingLotsMixed)
 TEST(LotDequeComponentsTests, OperatorSquareBrackets)
 {
     constexpr auto count = 10;
-    bool differs_from_index{ false };
+    bool differs_from_index = false;
     auto component = ol::LotDequeComponent{ ol::lot::Type::Begin };
 
     for (auto i = 0; i < count; ++i) {
@@ -113,7 +113,7 @@ TEST(LotDequeComponentsTests, OperatorSquareBrackets)
 TEST(LotDequeComponentsTests, RangeBasedForLoop)
 {
     constexpr auto count = 10;
-    bool differs_from_index{ false };
+    bool differs_from_index = false;
     auto component = ol::LotDequeComponent{ ol::lot::Type::Begin };
 
     for (auto i = 0; i < count; ++i) {

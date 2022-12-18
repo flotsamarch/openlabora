@@ -24,7 +24,7 @@ class EscapeMenuViewModel final
     using LockCameraMovementCallback = std::function<void()>;
     using UnlockCameraMovementCallback = std::function<void()>;
 
-    bool bMenuOpen{ false };
+    bool bMenuOpen = false;
     LockCameraMovementCallback mLockCameraMovementCallback;
     UnlockCameraMovementCallback mUnlockCameraMovementCallback;
 

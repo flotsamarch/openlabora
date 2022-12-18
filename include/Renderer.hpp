@@ -32,7 +32,7 @@ namespace open_labora
 template<class TGui, class TWindow>
 class Renderer final
 {
-    static constexpr int kFramerateLimit{ 144 };
+    static constexpr int kFramerateLimit = 144;
     static constexpr std::string_view kWindowName{ "open_labora" };
     PtrView<TWindow> mWindow;
     PtrView<TGui> mGui;

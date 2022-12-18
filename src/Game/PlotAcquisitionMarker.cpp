@@ -150,9 +150,9 @@ void initilizeSpriteComponent(Entity marker,
         render_texture.create(marker_size.x, marker_size.y);
 
         auto lots = plot::getPlots(lot_type)[0];
-        for (auto offset_y{ 0.f }; auto&& lot : lots) {
+        for (auto offset_y = 0.f; auto&& lot : lots) {
             auto lot_sprite = lot::getSprite(lot_type, lot, resource_mgr);
-            lot_sprite.setPosition({0.f, offset_y});
+            lot_sprite.setPosition({ 0.f, offset_y });
             render_texture.draw(lot_sprite);
             offset_y += tile::kTileHeight;
         }

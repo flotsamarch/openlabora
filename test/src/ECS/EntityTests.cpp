@@ -27,7 +27,7 @@ struct TestComponent1
     TestComponent1() = default;
     TestComponent1(bool _flag) : flag{ _flag } {};
 
-    bool flag{ false };
+    bool flag = false;
 };
 
 class TestComponent2

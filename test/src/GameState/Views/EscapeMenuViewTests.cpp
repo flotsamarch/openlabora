@@ -86,7 +86,7 @@ TEST(EscapeMenuViewModelTests, SetClosed)
 
 TEST(EscapeMenuViewModelTests, SetOpen_LocksCamera)
 {
-    bool locked{ false };
+    bool locked = false;
     auto model = TestModel{};
     auto view_model = TestEscapeMenuViewModel{ ol::PtrView{ &model } };
     view_model.SetLockCameraMovementCallback([&locked] { locked = true; });
@@ -99,7 +99,7 @@ TEST(EscapeMenuViewModelTests, SetOpen_LocksCamera)
 
 TEST(EscapeMenuViewModelTests, SetClosed_UnlocksCamera)
 {
-    bool unlocked{ false };
+    bool unlocked = false;
     auto model = TestModel{};
     auto view_model = TestEscapeMenuViewModel{ ol::PtrView{ &model } };
     view_model.SetLockCameraMovementCallback([]{});
@@ -162,7 +162,7 @@ TEST_F(EscapeMenuViewTests, HandleInput_DoubleEscapeUnlocksCamera)
 {
     auto lock_counter = 0;
     auto unlock_counter = 0;
-    bool was_input_consumed{ false };
+    bool was_input_consumed = false;
     TestEscapeMenuView mView{ mApp, mWindow, ol::PtrView{ &mViewModel } };
 
     mViewModel.SetLockCameraMovementCallback([&lc = lock_counter] { ++lc; });

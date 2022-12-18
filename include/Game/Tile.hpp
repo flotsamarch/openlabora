@@ -32,10 +32,10 @@ enum class Type
     Water, Coast, Peat, End
 };
 
-constexpr int kTileHeight{ 150 };
-constexpr int kTileWidth{ 100 };
-constexpr int kMaxFieldHeight{ 54 };
-constexpr int kMaxFieldWidth{ 9 };
+constexpr int kTileHeight = 150;
+constexpr int kTileWidth = 100;
+constexpr int kMaxFieldHeight = 54;
+constexpr int kMaxFieldWidth = 9;
 
 inline bool IsValid(tile::Type type) noexcept
 { return type != tile::Type::None; }
@@ -65,7 +65,7 @@ struct TileInfo
 {
     Vector2f coord{ 0.f, 0.f };
     tile::Type type{ tile::Type::None };
-    bool valid{ false };
+    bool valid = false;
 };
 
 inline bool operator==(const TileInfo& lhs, const TileInfo& rhs)

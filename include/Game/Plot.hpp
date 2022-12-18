@@ -84,7 +84,7 @@ constexpr std::array<lot::SubtypeId, 1> kCentralAltLotArray
 { lot::kCentralPFFHH };
 
 constexpr std::array<lot::SubtypeId, 2> kMountainLotArray
-{ lot::kMountainTop, lot::kMountainBottom};
+{ lot::kMountainTop, lot::kMountainBottom };
 
 // -------------------- DEFINE PLOTS FOR EACH PLOT TYPE ------------------------
 constexpr Plot kCoastalPlot

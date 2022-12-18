@@ -30,8 +30,8 @@ inline const Signal kOnLeave{};
 
 class SelectableComponent final
 {
-    bool bIsSelected{ false };
-    bool bHasBeenEntered{ false };
+    bool bIsSelected = false;
+    bool bHasBeenEntered = false;
 
 public:
     bool IsSelected() const noexcept { return bIsSelected; }

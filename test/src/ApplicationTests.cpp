@@ -46,7 +46,7 @@ using TestApp = ol::Application<TestGui,
 TEST(ApplicationStatesTest, ChangeState_CreatesState)
 {
     TestApp app{{}};
-    bool has_been_created{ false };
+    bool has_been_created = false;
     ol::state::changeState<state::TestCreationState>(AppCtx::Ptr{ &app },
                                                      has_been_created);
 

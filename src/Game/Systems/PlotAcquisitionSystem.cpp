@@ -191,7 +191,7 @@ void updateMarkerInteractionAreas(MarkerContainer& markers)
     const auto clickarea_offset_y = outer_marker_clickarea_h - tile_h;
     const auto clickarea_offset_y_delta = rect_height - tile_h;
 
-    auto clickarea_offset = Vector2f{ 0.f, clickarea_offset_y};
+    auto clickarea_offset = Vector2f{ 0.f, clickarea_offset_y };
     std::for_each(std::next(markers.begin()),
                   std::prev(markers.end()),
     [rect_size, &clickarea_offset_y_delta, &clickarea_offset]

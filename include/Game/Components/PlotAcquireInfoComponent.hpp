@@ -21,7 +21,7 @@ namespace open_labora
 struct PlotAcquireInfoComponent final
 {
     lot::Type lot_type;
-    bool add_to_top{ false };
+    bool add_to_top = false;
 };
 
 } // namespace open_labora

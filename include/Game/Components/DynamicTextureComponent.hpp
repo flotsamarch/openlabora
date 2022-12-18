@@ -18,7 +18,7 @@ namespace open_labora
 
 class DynamicTextureComponent final
 {
-    bool bNeedsUpdate{ true };
+    bool bNeedsUpdate = true;
 
 public:
     bool NeedsUpdate() const noexcept

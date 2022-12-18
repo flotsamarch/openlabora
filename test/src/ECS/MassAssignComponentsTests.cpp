@@ -24,13 +24,13 @@ namespace
 
 struct TestComponent1
 {
-    bool flag{ false };
+    bool flag = false;
 };
 
 struct TestComponent2
 {
-    float x{ 0.f };
-    float y{ 0.f };
+    float x = 0.f;
+    float y = 0.f;
 };
 
 } // namespace anonymous

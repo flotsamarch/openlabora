@@ -25,7 +25,7 @@ class Model final
     Registry mRegistry;
     DrawableContainer mDrawableObjects;
 
-    bool bPaused{ false };
+    bool bPaused = false;
     static constexpr int kMaxPlayers = 4;
 
     Vector2f mWorldMousePosition{};

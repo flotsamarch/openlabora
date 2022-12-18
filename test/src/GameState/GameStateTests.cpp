@@ -50,8 +50,8 @@ struct TestView1 final
     ol::ApplicationContext::Ptr app;
     ol::IGameWindow::Ptr window;
     ViewModelPtr view_model;
-    bool handle_input_called{ false };
-    float update_timer{ 0.f };
+    bool handle_input_called = false;
+    float update_timer = 0.f;
 
     TestView1(ol::ApplicationContext::Ptr _app,
              ol::IGameWindow::Ptr _window,
@@ -86,8 +86,8 @@ struct TestView2 final
     ol::ApplicationContext::Ptr app;
     ol::IGameWindow::Ptr window;
     ViewModelPtr view_model;
-    bool handle_input_called{ false };
-    float update_timer{ 0.f };
+    bool handle_input_called = false;
+    float update_timer = 0.f;
 
     TestView2(ol::ApplicationContext::Ptr _app,
               ol::IGameWindow::Ptr _window,
@@ -141,7 +141,7 @@ using TestGameState = ol::GameState<NiceGameControllerMock,
 
 TEST_F(GameStateTests, SetupIntermoduleInteraction)
 {
-    bool called{ false };
+    bool called = false;
     auto setup = [&called] (const auto&) { called = true; };
     auto game_state = TestGameState{ AppCtx::Ptr{ &mApp },
                                      mWindow,

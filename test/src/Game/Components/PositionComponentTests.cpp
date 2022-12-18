@@ -28,8 +28,8 @@ TEST(PositionComponentTests, DefaultConstructor)
 
 TEST(PositionComponentTests, Constructor)
 {
-    constexpr auto value_x{ 3489.f };
-    constexpr auto value_y{ 209.f };
+    constexpr auto value_x = 3489.f;
+    constexpr auto value_y = 209.f;
 
     auto component = ol::PositionComponent{ value_x, value_y };
 
@@ -39,8 +39,8 @@ TEST(PositionComponentTests, Constructor)
 
 TEST(PositionComponentTests, ConstructorFromVector)
 {
-    constexpr auto value_x{ 349.f };
-    constexpr auto value_y{ 290.f };
+    constexpr auto value_x = 349.f;
+    constexpr auto value_y = 290.f;
 
     auto component = ol::PositionComponent{ ol::Vector2f{ value_x, value_y } };
 
@@ -50,8 +50,8 @@ TEST(PositionComponentTests, ConstructorFromVector)
 
 TEST(PositionComponentTests, OperatorVector)
 {
-    constexpr auto value_x{ 489.f };
-    constexpr auto value_y{ 2900.f };
+    constexpr auto value_x = 489.f;
+    constexpr auto value_y = 2900.f;
 
     auto component = ol::PositionComponent{ value_x, value_y };
     auto vector = ol::Vector2f{ component };

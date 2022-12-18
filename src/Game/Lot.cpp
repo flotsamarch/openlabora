@@ -43,7 +43,7 @@ Sprite getSprite(Type type,
                 auto&& texture = resource_mgr->GetTextureOrDefault(texture_name);
                 sprite.setTexture(texture);
                 render_texture.draw(sprite);
-                sprite.move({tile::kTileWidth, 0.f});
+                sprite.move({ tile::kTileWidth, 0.f });
             }
         }
 

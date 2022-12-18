@@ -85,7 +85,7 @@ void PlotAcquisitionViewModel<TModel>::HighlightMarker(const Vector2f& mouse_pos
 template<class TModel>
 bool PlotAcquisitionViewModel<TModel>::SelectMarker(const Vector2f& mouse_pos)
 {
-    bool has_been_selected{ false };
+    bool has_been_selected = false;
 
     auto&& registry = mModel->GetRegistry();
     registry.template ForJoinedComponents<PlotAcquireInfoComponent,
@@ -151,7 +151,7 @@ plot::AcquireReturnType PlotAcquisitionViewModel<TModel>
     const auto index = static_cast<int>(params.type_id);
     auto plot = plot::getPlots(info.lot_type)[index];
 
-    auto event = CreatePlotEvent{ plot, lot_type, to_top, position};
+    auto event = CreatePlotEvent{ plot, lot_type, to_top, position };
     registry.HandleEvent(event);
     registry.HandleEvent(UpdateMarkersEvent{});
 }

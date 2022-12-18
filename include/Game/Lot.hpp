@@ -53,7 +53,7 @@ struct SubtypeId
 };
 
 constexpr int kLotTypeCount
-{ static_cast<int>(Type::End) - static_cast<int>(Type::Begin)};
+{ static_cast<int>(Type::End) - static_cast<int>(Type::Begin) };
 
 static constexpr int kHeartlandOffsetY{ 26 * tile::kTileHeight };
 

@@ -38,8 +38,8 @@ struct TestComponent1
 
 struct TestComponent2
 {
-    float x{ 0.f };
-    float y{ 0.f };
+    float x = 0.f;
+    float y = 0.f;
 };
 
 struct TestComponent3{}; // Never added to anything

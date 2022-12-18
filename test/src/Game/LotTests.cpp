@@ -27,7 +27,7 @@ using LotSpriteTests = ResourceManagerDefaultActionTestBase;
 
 TEST(LotTests, getTileCount_AlwaysGreaterThanZero)
 {
-    bool eq_zero{ false };
+    bool eq_zero = false;
 
     for (auto type = Type::Begin; type < Type::End; ++type) {
         if (ol::lot::getTileCount(type) == 0) {
@@ -40,7 +40,7 @@ TEST(LotTests, getTileCount_AlwaysGreaterThanZero)
 
 TEST(LotTests, getMaximumCount_AlwaysGreaterThanZero)
 {
-    bool eq_zero{ false };
+    bool eq_zero = false;
 
     for (auto type = Type::Begin; type < Type::End; ++type) {
         if (ol::lot::getTileCount(type) == 0) {
@@ -53,7 +53,7 @@ TEST(LotTests, getMaximumCount_AlwaysGreaterThanZero)
 
 TEST(LotTests, SubtypeId_Constructor)
 {
-    bool ne_init{ false };
+    bool ne_init = false;
 
     for(auto i = 0; i < 10; ++i) {
         auto subtype = ol::lot::SubtypeId{ i };
@@ -67,7 +67,7 @@ TEST(LotTests, SubtypeId_Constructor)
 
 TEST(LotTests, getLotSubtypes_AlwaysNotEmpty)
 {
-    bool was_empty{ false };
+    bool was_empty = false;
 
     for (auto type = Type::Begin; type < Type::End; ++type) {
         auto subtypes = ol::lot::getLotSubtypes(type);
@@ -83,7 +83,7 @@ TEST(LotTests, getLotSubtypes_AlwaysNotEmpty)
 
 TEST(LotTests, getLotSubtypeTextureNames_AlwaysNotEmpty)
 {
-    bool was_empty{ false };
+    bool was_empty = false;
 
     for (auto type = Type::Begin; type < Type::End; ++type) {
         auto texture_names = ol::lot::getLotSubtypeTextureNames(type);
@@ -97,7 +97,7 @@ TEST(LotTests, getLotSubtypeTextureNames_AlwaysNotEmpty)
 
 TEST(LotTests, getLotSubtypeTextureNames_AlwaysNotEmptyString)
 {
-    bool was_empty{ false };
+    bool was_empty = false;
 
     for (auto type = Type::Begin; type < Type::End; ++type) {
         auto texture_names = ol::lot::getLotSubtypeTextureNames(type);
@@ -120,7 +120,7 @@ TEST(LotTests, getOffsetX_FirstOffsetEqualsToZero)
 
 TEST(LotTests, getOffsetX_OtherOffsetsLargerThanZero)
 {
-    bool eq_zero{ false };
+    bool eq_zero = false;
 
     for (auto type = Type::Begin + 1; type < Type::End; ++type) {
         if (!std::islessgreater(ol::lot::getOffsetX(type), 0.f)) {

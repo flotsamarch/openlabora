@@ -29,7 +29,7 @@ struct TestFeature{};
 
 struct TestSystemSingle : public ol::System<TestSystemSingle, TestEvent1>
 {
-    bool flag{ false };
+    bool flag = false;
 };
 
 void systemHandleEvent(TestSystemSingle& system, // Used in ol::System<...>
@@ -43,8 +43,8 @@ struct TestSystemDouble : public ol::System<TestSystemDouble,
                                             TestEvent1,
                                             TestEvent2>
 {
-    bool flag1{ false };
-    bool flag2{ false };
+    bool flag1 = false;
+    bool flag2 = false;
 };
 
 void systemHandleEvent(TestSystemDouble& system, // Used in ol::System<...>
