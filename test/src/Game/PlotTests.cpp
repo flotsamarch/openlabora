@@ -12,6 +12,7 @@
 
 #include <gtest/gtest.h>
 #include <unordered_set>
+#include <sstream>
 #include "Game/Plot.hpp"
 
 namespace test
@@ -19,48 +20,37 @@ namespace test
 
 namespace ol = open_labora;
 
+testing::Message& operator<<(testing::Message& msg, ol::lot::Type type)
+{
+    return msg << "LotType = " << static_cast<int>(type);
+}
+
 TEST(LotTests, TypeId_Constructor)
 {
-    bool ne_init = false;
-
     for(auto i = 0; i < 10; ++i) {
         auto subtype = ol::lot::SubtypeId{ i };
-        if (static_cast<int>(subtype) != i) {
-            ne_init = true;
-        }
+        ASSERT_EQ(static_cast<int>(subtype), i);
     }
-
-    ASSERT_FALSE(ne_init);
 }
 
 TEST(PlotTests, getPlots_AlwaysNotEmpty)
 {
-    bool was_empty = false;
-
-    for (auto type = ol::lot::Type::Begin; type < ol::lot::Type::End; ++type) {
+    for (auto type : ol::EnumRange<ol::lot::Type>{}) {
         auto plots = ol::plot::getPlots(type);
-        if (plots.empty()) {
-            was_empty = true;
-        }
+        ASSERT_FALSE(plots.empty()) << "No plots defined for lot type: "
+                                    << static_cast<int>(type);
     }
-
-    ASSERT_FALSE(was_empty);
 }
 
 TEST(PlotTests, getPlots_PlotSizesAlwaysGreaterThanZero)
 {
-    bool was_empty = false;
-
-    for (auto type = ol::lot::Type::Begin; type < ol::lot::Type::End; ++type) {
+    for (auto type : ol::EnumRange<ol::lot::Type>{}) {
         auto plots = ol::plot::getPlots(type);
         for (auto plot : plots) {
-            if (plot.empty()) {
-                was_empty = true;
-            }
+            ASSERT_FALSE(plot.empty()) << "Empty plot defined for lot type: "
+                                       << static_cast<int>(type);
         }
     }
-
-    ASSERT_FALSE(was_empty);
 }
 
 } // namespace test
