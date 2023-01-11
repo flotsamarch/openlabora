@@ -15,7 +15,7 @@ option(${PROJECT_NAME}_WARNINGS_AS_ERRORS "Treat compiler warnings as errors." O
 # Package managers
 #
 
-option(${PROJECT_NAME}_ENABLE_VCPKG "Enable the Vcpkg package manager for this project." ON)
+option(${PROJECT_NAME}_ENABLE_VCPKG "Enable the Vcpkg package manager for this project." OFF)
 
 #
 # Unit testing

@@ -1,20 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
-
-#
-# Save/Load user config
-#
-include(cmake/UserConfig.cmake OPTIONAL RESULT_VARIABLE USER_CONFIG_FOUND)
-if(USER_CONFIG_FOUND STREQUAL NOTFOUND)
-  message(STATUS "User config file not found, creating new one.")
-  file(TO_CMAKE_PATH ${CMAKE_TOOLCHAIN_FILE} CMAKE_TOOLCHAIN_FILE)
-  configure_file(
-    ${CMAKE_CURRENT_LIST_DIR}/cmake/UserConfig.cmake.in
-    ${CMAKE_CURRENT_LIST_DIR}/cmake/UserConfig.cmake
-    @ONLY
-  )
-else()
-  message(STATUS "User config file found in cmake/UserConfig.cmake.")
-endif()
+cmake_minimum_required(VERSION 3.24)
 
 #
 # Project details
@@ -27,8 +11,10 @@ project(
 )
 
 #
-# Set project options
+# Set project options and language standard
 #
+
+set(CMAKE_CXX_STANDARD 20)
 
 include(cmake/StandardSettings.cmake)
 include(cmake/StaticAnalyzers.cmake)
@@ -59,15 +45,12 @@ if(${PROJECT_SOURCE_DIR} STREQUAL ${PROJECT_BINARY_DIR})
 endif()
 
 #
-# Enable package manager
+# Fetch and setup external dependencies
 #
-include(cmake/Vcpkg.cmake)
 
-#
-# Install external projects
-#
-include(ExternalProject)
 include(cmake/ExternalProjects.cmake)
+
+message(STATUS "Finished fetching dependencies.\n")
 
 #
 # Create library, setup header and source files
@@ -104,14 +87,8 @@ endif()
 message(STATUS "Added all header and implementation files.\n")
 
 #
-# Set the project standard and warnings
+# Set the project warnings
 #
-
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
-
-if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-  target_compile_features(${PROJECT_NAME}_LIB PUBLIC cxx_std_20)
-endif()
 
 include(cmake/CompilerWarnings.cmake)
 set_project_warnings(${PROJECT_NAME})
@@ -122,46 +99,27 @@ verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}
 # Model project dependencies
 #
 
-# Identify and link with the specific "packages" the project uses
-#find_package(package_name package_version REQUIRED package_type [other_options])
-#target_link_libraries(
-#  ${PROJECT_NAME}
-#  PUBLIC
-#    dependency1 ...
-#  PRIVATE
-#    dependency2 ...
-#    ${PROJECT_NAME}_PROJECT_OPTIONS
-#    ${PROJECT_NAME}_PROJECT_WARNINGS
-# )
-#if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-#  target_link_libraries(
-#    ${PROJECT_NAME}_LIB
-#    PUBLIC
-#      dependency1 ...
-#  )
-#endif()
-#
-find_package(Freetype REQUIRED)
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
 find_package(TGUI CONFIG REQUIRED)
 
 target_link_libraries(
   ${PROJECT_NAME}
-      PRIVATE
-      sfml-system sfml-network sfml-graphics sfml-window
-      Freetype::Freetype
-      tgui
+  PRIVATE
+  sfml-system sfml-network sfml-graphics sfml-window sfml-audio
+  tgui
 )
 
 if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
   target_link_libraries(
     ${PROJECT_NAME}_LIB
     PRIVATE
-    sfml-system sfml-network sfml-graphics sfml-window
-    Freetype::Freetype
+    sfml-system sfml-network sfml-graphics sfml-window sfml-audio
     tgui
   )
 endif()
+
+Win32CopyDlls(${PROJECT_NAME})
+
 # For Windows, it is necessary to link with the MultiThreaded library.
 # Depending on how the rest of the project's dependencies are linked, it might be necessary
 # to change the line to statically link with the library.
@@ -203,7 +161,7 @@ if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
   )
 endif()
 
-message(STATUS "Finished setting up include directories.")
+message(STATUS "Finished setting up include directories.\n")
 
 #
 # Provide alias to library for
