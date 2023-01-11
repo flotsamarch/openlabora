@@ -325,7 +325,9 @@ constexpr EnumMap<TEnumKey, TValue>
         assert(key < TEnumKey::End);
 
         mItems[index] = std::move(value);
+        #ifndef NDEBUG
         indices_count[index] += 1;
+        #endif
     }
 
     #ifndef NDEBUG
